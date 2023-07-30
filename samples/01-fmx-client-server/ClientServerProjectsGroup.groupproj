@@ -1,0 +1,48 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{69FCF119-FD56-46AD-9433-DE9FF44B966B}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="FMXSampleServer.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="FMXSampleClient.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="FMXSampleServer">
+        <MSBuild Projects="FMXSampleServer.dproj"/>
+    </Target>
+    <Target Name="FMXSampleServer:Clean">
+        <MSBuild Projects="FMXSampleServer.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="FMXSampleServer:Make">
+        <MSBuild Projects="FMXSampleServer.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="FMXSampleClient">
+        <MSBuild Projects="FMXSampleClient.dproj"/>
+    </Target>
+    <Target Name="FMXSampleClient:Clean">
+        <MSBuild Projects="FMXSampleClient.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="FMXSampleClient:Make">
+        <MSBuild Projects="FMXSampleClient.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="FMXSampleServer;FMXSampleClient"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="FMXSampleServer:Clean;FMXSampleClient:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="FMXSampleServer:Make;FMXSampleClient:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>
