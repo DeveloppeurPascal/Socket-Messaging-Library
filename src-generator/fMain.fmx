@@ -1,0 +1,72 @@
+object Form1: TForm1
+  Left = 0
+  Top = 0
+  Caption = 'Form1'
+  ClientHeight = 480
+  ClientWidth = 640
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  OnCreate = FormCreate
+  DesignerMasterStyle = 0
+  object MainMenu1: TMainMenu
+    Left = 368
+    Top = 104
+    object mnuMacOS: TMenuItem
+      Text = 'mnuMacOS'
+    end
+    object mnuFile: TMenuItem
+      Text = '&File'
+      object mnuNewFile: TMenuItem
+        Locked = True
+        Text = '&New'
+      end
+      object mnuOpenFile: TMenuItem
+        Locked = True
+        Text = '&Open'
+      end
+      object mnuSave: TMenuItem
+        Locked = True
+        Text = '&Save'
+      end
+      object mnuClose: TMenuItem
+        Locked = True
+        Text = '&Close'
+      end
+      object mnuQuit: TMenuItem
+        Locked = True
+        Text = '&Quit'
+        OnClick = mnuQuitClick
+      end
+    end
+    object mnuTools: TMenuItem
+      Text = '&Tools'
+      object mnuOptions: TMenuItem
+        Locked = True
+        Text = '&Options'
+        OnClick = mnuOptionsClick
+      end
+    end
+    object mnuHelp: TMenuItem
+      Text = '&Help'
+      object mnuAbout: TMenuItem
+        Locked = True
+        Text = '&About'
+        OnClick = mnuAboutClick
+      end
+    end
+  end
+  object OlfAboutDialog1: TOlfAboutDialog
+    Titre = 'Socket Message Generator'
+    VersionNumero = '1.0'
+    VersionDate = '20230731'
+    MultiResBitmap = <
+      item
+      end>
+    URL = 'https://socketmessaging.developpeur-pascal.fr/'
+    onURLClick = OlfAboutDialog1URLClick
+    Langue = EN
+    Left = 512
+    Top = 88
+  end
+end
