@@ -28,6 +28,7 @@ type
     procedure mnuAboutClick(Sender: TObject);
     procedure OlfAboutDialog1URLClick(const AURL: string);
     procedure mnuOptionsClick(Sender: TObject);
+    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
   private
     { Déclarations privées }
   public
@@ -42,6 +43,11 @@ implementation
 {$R *.fmx}
 
 uses u_urlOpen;
+
+procedure TForm1.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+begin
+  // TODO : check if a project is opened and if it has been modified
+end;
 
 procedure TForm1.FormCreate(Sender: TObject);
 begin

@@ -8,10 +8,11 @@ object Form1: TForm1
   FormFactor.Height = 480
   FormFactor.Devices = [Desktop]
   OnCreate = FormCreate
+  OnCloseQuery = FormCloseQuery
   DesignerMasterStyle = 0
   object MainMenu1: TMainMenu
-    Left = 368
-    Top = 104
+    Left = 384
+    Top = 48
     object mnuMacOS: TMenuItem
       Text = 'mnuMacOS'
     end
@@ -66,7 +67,7 @@ object Form1: TForm1
     URL = 'https://socketmessaging.developpeur-pascal.fr/'
     onURLClick = OlfAboutDialog1URLClick
     Langue = EN
-    Left = 512
-    Top = 88
+    Left = 520
+    Top = 48
   end
 end
