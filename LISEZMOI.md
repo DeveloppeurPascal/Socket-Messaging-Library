@@ -20,6 +20,7 @@ Pour télécharger ce projet il est recommandé de passer par "git" mais vous po
 
 Ce dépôt de code dépend des dépôts suivants :
 
+* [DeveloppeurPascal/AboutDialog-Delphi-Component](https://github.com/DeveloppeurPascal/AboutDialog-Delphi-Component) dans le sous-dossier ./lib-externes/AboutDialog-Delphi-Component
 * [DeveloppeurPascal/librairies](https://github.com/DeveloppeurPascal/librairies) dans le sous-dossier ./lib-externes/librairies
 
 ## Comment demander une nouvelle fonctionnalité, signaler un bogue ou une faille de sécurité ?
