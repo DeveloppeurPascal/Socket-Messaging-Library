@@ -201,6 +201,8 @@ begin
     CurrentField.DelphiFieldName := ''
   else
     CurrentField.DelphiFieldName := ToDelphiConst(edtFieldDelphiFieldName.Text);
+
+  RefreshFormCaption;
 end;
 
 procedure TForm1.btnMessageCancelClick(Sender: TObject);
@@ -237,6 +239,8 @@ begin
     cbMessageRegisterOnServer.IsChecked;
   CurrentMessage.RegisterMessageInTheClient :=
     cbMessageRegisterOnClient.IsChecked;
+
+  RefreshFormCaption;
 end;
 
 procedure TForm1.btnNewFieldClick(Sender: TObject);
@@ -325,7 +329,6 @@ begin
   end;
   CurrentProject.Name := edtProjectName.Text;
   (tvProject.tagobject as ttreeviewitem).Text := CurrentProject.Name;
-  RefreshFormCaption;
 
   CurrentProject.Description := edtProjectDescription.Text;
 
@@ -335,6 +338,8 @@ begin
   else
     CurrentProject.DelphiUnitName :=
       ToDelphiConst(edtProjectDelphiUnitName.Text);
+
+  RefreshFormCaption;
 end;
 
 procedure TForm1.edtFieldNameChange(Sender: TObject);
@@ -500,6 +505,8 @@ begin
     end;
   end;
 
+  tvproject.ExpandAll;
+
   tvProject.Selected := ProjectItem;
 
   RefreshFormCaption;
@@ -554,9 +561,12 @@ begin
     and (tpath.GetExtension(ExportSaveDialog.FileName) = '.' +
     ExportSaveDialog.DefaultExt) then
   begin
+    caption := OlfAboutDialog1.Titre + ' (v' +
+      OlfAboutDialog1.VersionNumero + ')';
     tfile.WriteAllText(ExportSaveDialog.FileName, CurrentProject.AsDelphi,
       tencoding.UTF8);
-    ShowMessage('Project exported.');
+    RefreshFormCaption;
+    ShowMessage('Export done.');
   end;
 end;
 

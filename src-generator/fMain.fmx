@@ -77,15 +77,15 @@ object Form1: TForm1
   object OlfAboutDialog1: TOlfAboutDialog
     Titre = 'Socket Message Generator'
     VersionNumero = '1.0'
-    VersionDate = '20230731'
+    VersionDate = '20230801'
     MultiResBitmap = <
       item
       end>
     URL = 'https://socketmessaging.developpeur-pascal.fr/'
     onURLClick = OlfAboutDialog1URLClick
     Langue = EN
-    Left = 184
-    Top = 136
+    Left = 56
+    Top = 48
   end
   object lHomeScreen: TLayout
     Align = Contents
@@ -845,6 +845,7 @@ object Form1: TForm1
         Size.Height = 649.000000000000000000
         Size.PlatformDefault = False
         TabOrder = 0
+        AlternatingRowBackground = True
         OnChange = tvProjectChange
         Viewport.Width = 286.000000000000000000
         Viewport.Height = 645.000000000000000000
