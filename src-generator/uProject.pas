@@ -159,6 +159,8 @@ type
   end;
 
 function ToDelphiConst(Texte: string): string;
+function WrapTextWithPrefix(Const Prefix, Texte: string;
+  Const Suffix: string = ''; Const MaxCol: integer = 80): string;
 
 implementation
 
@@ -168,6 +170,7 @@ uses
 {$ELSE}
   FMX.Forms,
 {$ENDIF}
+  System.Classes,
   System.SysUtils,
   System.IOUtils,
   System.StrUtils,
@@ -232,6 +235,27 @@ begin
   end;
   while Result.IndexOf('__') > -1 do
     Result := ReplaceText(Result, '__', '_');
+end;
+
+function WrapTextWithPrefix(Const Prefix, Texte: string;
+  Const Suffix: string = ''; Const MaxCol: integer = 80): string;
+var
+  sl: tstringlist;
+  i: integer;
+begin
+  Result := '';
+  sl := tstringlist.Create;
+  try
+    sl.Text := wraptext(Texte);
+    for i := 0 to sl.Count - 1 do
+    begin
+      if not Result.IsEmpty then
+        Result := Result + sLineBreak;
+      Result := Result + Prefix + sl[i].Trim + Suffix;
+    end;
+  finally
+    sl.Free;
+  end;
 end;
 
 { TMessageField }
@@ -600,85 +624,85 @@ begin
   for i := 0 to Count - 1 do
   begin
     msg := items[i];
-    Result := Result + '{ ' + msg.DelphiClassName + ' }' + slinebreak;
-    Result := Result + slinebreak;
+    Result := Result + '{ ' + msg.DelphiClassName + ' }' + sLineBreak;
+    Result := Result + sLineBreak;
 
     Result := Result + 'constructor ' + msg.DelphiClassName + '.Create;' +
-      slinebreak;
-    Result := Result + 'begin' + slinebreak;
-    Result := Result + '  inherited;' + slinebreak;
+      sLineBreak;
+    Result := Result + 'begin' + sLineBreak;
+    Result := Result + '  inherited;' + sLineBreak;
     Result := Result + '  MessageID := ' + msg.MessageID.ToString + ';' +
-      slinebreak;
+      sLineBreak;
     for j := 0 to msg.Fields.Count - 1 do
     begin
       fld := msg.Fields[j];
       Result := Result + '  F' + fld.DelphiFieldName + ' := ' + fld.DefaultValue
-        + ';' + slinebreak;
+        + ';' + sLineBreak;
     end;
-    Result := Result + 'end;' + slinebreak;
-    Result := Result + slinebreak;
+    Result := Result + 'end;' + sLineBreak;
+    Result := Result + sLineBreak;
 
     Result := Result + 'function ' + msg.DelphiClassName +
-      '.GetNewInstance: TOlfSocketMessage;' + slinebreak;
-    Result := Result + 'begin' + slinebreak;
+      '.GetNewInstance: TOlfSocketMessage;' + sLineBreak;
+    Result := Result + 'begin' + sLineBreak;
     Result := Result + '  result := ' + msg.DelphiClassName + '.Create;' +
-      slinebreak;
-    Result := Result + 'end;' + slinebreak;
-    Result := Result + slinebreak;
+      sLineBreak;
+    Result := Result + 'end;' + sLineBreak;
+    Result := Result + sLineBreak;
 
     Result := Result + 'procedure ' + msg.DelphiClassName +
-      '.LoadFromStream(Stream: TStream);' + slinebreak;
-    Result := Result + 'begin' + slinebreak;
-    Result := Result + '  inherited;' + slinebreak;
+      '.LoadFromStream(Stream: TStream);' + sLineBreak;
+    Result := Result + 'begin' + sLineBreak;
+    Result := Result + '  inherited;' + sLineBreak;
     for j := 0 to msg.Fields.Count - 1 do
     begin
       fld := msg.Fields[j];
       if (fld.DelphiFieldType.tolower = 'string') then
         Result := Result + '  F' + fld.DelphiFieldName +
-          ' := LoadStringFromStream(Stream);' + slinebreak
+          ' := LoadStringFromStream(Stream);' + sLineBreak
       else
       begin
         Result := Result + '  if (Stream.read(F' + fld.DelphiFieldName +
           ', sizeof(F' + fld.DelphiFieldName + ')) <> sizeof(F' +
-          fld.DelphiFieldName + ')) then' + slinebreak;
+          fld.DelphiFieldName + ')) then' + sLineBreak;
         Result := Result + '    raise exception.Create(''Can''''t load "' +
-          fld.DelphiFieldName + '" value.'');' + slinebreak;
+          fld.DelphiFieldName + '" value.'');' + sLineBreak;
         // TODO : use Name instead of DelphiFieldName (or choose in the field editor)
       end;
     end;
-    Result := Result + 'end;' + slinebreak;
-    Result := Result + slinebreak;
+    Result := Result + 'end;' + sLineBreak;
+    Result := Result + sLineBreak;
 
     Result := Result + 'procedure ' + msg.DelphiClassName +
-      '.SaveToStream(Stream: TStream);' + slinebreak;
-    Result := Result + 'begin' + slinebreak;
-    Result := Result + '  inherited;' + slinebreak;
+      '.SaveToStream(Stream: TStream);' + sLineBreak;
+    Result := Result + 'begin' + sLineBreak;
+    Result := Result + '  inherited;' + sLineBreak;
     for j := 0 to msg.Fields.Count - 1 do
     begin
       fld := msg.Fields[j];
       if (fld.DelphiFieldType.tolower = 'string') then
         Result := Result + '  SaveStringToStream(F' + fld.DelphiFieldName +
-          ', Stream);' + slinebreak
+          ', Stream);' + sLineBreak
       else
       begin
         Result := Result + '  Stream.Write(F' + fld.DelphiFieldName +
-          ', sizeof(F' + fld.DelphiFieldName + '));' + slinebreak;
+          ', sizeof(F' + fld.DelphiFieldName + '));' + sLineBreak;
       end;
     end;
-    Result := Result + 'end;' + slinebreak;
-    Result := Result + slinebreak;
+    Result := Result + 'end;' + sLineBreak;
+    Result := Result + sLineBreak;
 
     for j := 0 to msg.Fields.Count - 1 do
     begin
       fld := msg.Fields[j];
       Result := Result + 'procedure ' + msg.DelphiClassName + '.Set' +
         fld.DelphiFieldName + '(const Value: ' + fld.DelphiFieldType + ');' +
-        slinebreak;
-      Result := Result + 'begin' + slinebreak;
+        sLineBreak;
+      Result := Result + 'begin' + sLineBreak;
       Result := Result + '  F' + fld.DelphiFieldName + ' := Value;' +
-        slinebreak;
-      Result := Result + 'end;' + slinebreak;
-      Result := Result + slinebreak;
+        sLineBreak;
+      Result := Result + 'end;' + sLineBreak;
+      Result := Result + sLineBreak;
     end;
 
   end;
@@ -695,61 +719,63 @@ begin
     msg := items[i];
     if not msg.name.IsEmpty then
     begin
-      Result := Result + '/// <summary>' + slinebreak;
-      Result := Result + '/// ' + msg.name + slinebreak;
-      Result := Result + '/// </summary>' + slinebreak;
+      Result := Result + '  /// <summary>' + sLineBreak;
+      Result := Result + WrapTextWithPrefix('  /// ', msg.name) + sLineBreak;
+      Result := Result + '  /// </summary>' + sLineBreak;
     end;
     if not msg.Description.IsEmpty then
     begin
-      Result := Result + '/// <remarks>' + slinebreak;
-      Result := Result + '/// ' + msg.Description + slinebreak;
-      // TODO : use wraptext() and add the "///" before each generated line
-      Result := Result + '/// </remarks>' + slinebreak;
+      Result := Result + '  /// <remarks>' + sLineBreak;
+      Result := Result + WrapTextWithPrefix('  /// ', msg.Description) +
+        sLineBreak;
+      Result := Result + '  /// </remarks>' + sLineBreak;
     end;
-    Result := Result + msg.DelphiClassName + ' = class(TOlfSocketMessage)' +
-      slinebreak;
-    Result := Result + 'private' + slinebreak;
+    Result := Result + '  ' + msg.DelphiClassName +
+      ' = class(TOlfSocketMessage)' + sLineBreak;
+    Result := Result + '  private' + sLineBreak;
     for j := 0 to msg.Fields.Count - 1 do
     begin
       fld := msg.Fields[j];
-      Result := Result + 'F' + fld.DelphiFieldName + ':' + fld.DelphiFieldType +
-        ';' + slinebreak;
+      Result := Result + '    F' + fld.DelphiFieldName + ': ' +
+        fld.DelphiFieldType + ';' + sLineBreak;
     end;
     for j := 0 to msg.Fields.Count - 1 do
     begin
       fld := msg.Fields[j];
-      Result := Result + 'procedure Set' + fld.DelphiFieldName +
-        '(const Value: ' + fld.DelphiFieldType + ');' + slinebreak;
+      Result := Result + '    procedure Set' + fld.DelphiFieldName +
+        '(const Value: ' + fld.DelphiFieldType + ');' + sLineBreak;
     end;
-    Result := Result + 'public' + slinebreak;
+    Result := Result + '  public' + sLineBreak;
     for j := 0 to msg.Fields.Count - 1 do
     begin
       fld := msg.Fields[j];
       if not fld.name.IsEmpty then
       begin
-        Result := Result + '/// <summary>' + slinebreak;
-        Result := Result + '/// ' + fld.name + slinebreak;
-        Result := Result + '/// </summary>' + slinebreak;
+        Result := Result + '    /// <summary>' + sLineBreak;
+        Result := Result + WrapTextWithPrefix('    /// ', fld.name) +
+          sLineBreak;
+        Result := Result + '    /// </summary>' + sLineBreak;
       end;
       if not fld.Description.IsEmpty then
       begin
-        Result := Result + '/// <remarks>' + slinebreak;
-        Result := Result + '/// ' + fld.Description + slinebreak;
-        Result := Result + '/// </remarks>' + slinebreak;
+        Result := Result + '    /// <remarks>' + sLineBreak;
+        Result := Result + WrapTextWithPrefix('    /// ', fld.Description) +
+          sLineBreak;
+        Result := Result + '    /// </remarks>' + sLineBreak;
       end;
-      Result := Result + 'property ' + fld.DelphiFieldName + ': ' +
+      Result := Result + '    property ' + fld.DelphiFieldName + ': ' +
         fld.DelphiFieldType + ' read F' + fld.DelphiFieldName + ' write Set' +
-        fld.DelphiFieldName + ';' + slinebreak;
+        fld.DelphiFieldName + ';' + sLineBreak;
     end;
-    Result := Result + 'constructor Create; override;' + slinebreak;
-    Result := Result + 'procedure LoadFromStream(Stream: TStream); override;' +
-      slinebreak;
-    Result := Result + 'procedure SaveToStream(Stream: TStream); override;' +
-      slinebreak;
-    Result := Result + 'function GetNewInstance: TOlfSocketMessage; override;' +
-      slinebreak;
-    Result := Result + 'end;' + slinebreak;
-    Result := Result + slinebreak;
+    Result := Result + '    constructor Create; override;' + sLineBreak;
+    Result := Result +
+      '    procedure LoadFromStream(Stream: TStream); override;' + sLineBreak;
+    Result := Result + '    procedure SaveToStream(Stream: TStream); override;'
+      + sLineBreak;
+    Result := Result +
+      '    function GetNewInstance: TOlfSocketMessage; override;' + sLineBreak;
+    Result := Result + '  end;' + sLineBreak;
+    Result := Result + sLineBreak;
   end;
 end;
 
@@ -890,81 +916,85 @@ begin
       break;
   end;
   Messages.SortByDelphiClassName;
-  Result := 'unit ' + DelphiUnitName + ';' + slinebreak;
-  Result := Result + '(*' + slinebreak;
-  Result := Result + slinebreak;
-  Result := Result + WrapText(Name, 80) + slinebreak;
-  Result := Result + slinebreak;
+  Result := 'unit ' + DelphiUnitName + ';' + sLineBreak;
+  Result := Result + sLineBreak;
+  Result := Result + '// ****************************************' + sLineBreak;
+  Result := Result + WrapTextWithPrefix('// * ', name) + sLineBreak;
+  Result := Result + '// ****************************************' + sLineBreak;
+  Result := Result + '// ' + sLineBreak;
   if not Description.IsEmpty then
   begin
-    Result := Result + WrapText(Description, 80) + slinebreak;
-    Result := Result + slinebreak;
+    Result := Result + WrapTextWithPrefix('// ', Description) + sLineBreak;
+    Result := Result + '// ' + sLineBreak;
   end;
-  Result := Result + '*)' + slinebreak;
-  Result := Result + slinebreak;
-  Result := Result + '// This file has been generated by ' +
-    application.MainForm.Caption + slinebreak;
-  Result := Result + '// Date : ' + DateTimeToStr(now) + slinebreak;
+  Result := Result + '// ****************************************' + sLineBreak;
+  Result := Result + '// File generator : ' + application.MainForm.Caption +
+    sLineBreak;
+  Result := Result +
+    '// Website : https://socketmessaging.developpeur-pascal.fr/ ' + sLineBreak;
+  Result := Result + '// Generation date : ' + DateTimeToStr(now) + sLineBreak;
+  Result := Result + '// ' + sLineBreak;
   Result := Result +
     '// Don''t do any change on this file. They will be erased by next generation !'
-    + slinebreak;
-  Result := Result + slinebreak;
+    + sLineBreak;
+  Result := Result + '// ****************************************' + sLineBreak;
+  Result := Result + sLineBreak;
   if NeedOlfRTLStreamsUnit then
   begin
     Result := Result +
-      '// To compile this unit you need Olf.RTL.Streams.pas from' + slinebreak;
+      '// To compile this unit you need Olf.RTL.Streams.pas from' + sLineBreak;
     Result := Result + '// https://github.com/DeveloppeurPascal/librairies' +
-      slinebreak;
-    Result := Result + slinebreak;
+      sLineBreak;
+    Result := Result + sLineBreak;
   end;
-  Result := Result + 'interface' + slinebreak;
-  Result := Result + slinebreak;
-  Result := Result + 'uses' + slinebreak;
-  Result := Result + '  System.Classes,' + slinebreak;
-  Result := Result + '  Olf.Net.Socket.Messaging;' + slinebreak;
-  Result := Result + slinebreak;
+  Result := Result + 'interface' + sLineBreak;
+  Result := Result + sLineBreak;
+  Result := Result + 'uses' + sLineBreak;
+  Result := Result + '  System.Classes,' + sLineBreak;
+  Result := Result + '  Olf.Net.Socket.Messaging;' + sLineBreak;
+  Result := Result + sLineBreak;
   if (Messages.Count > 0) then
   begin
-    Result := Result + 'type' + slinebreak;
+    Result := Result + 'type' + sLineBreak;
     Result := Result + Messages.GetDelphiInterface;
   end;
   Result := Result +
-    'procedure RegisterMessagesReceivedByTheServer(Const Server:TOlfSocketMessagingServer);'
-    + slinebreak;
+    'procedure RegisterMessagesReceivedByTheServer(Const Server' + sLineBreak;
+  Result := Result + '  : TOlfSocketMessagingServer);' + sLineBreak;
   Result := Result +
-    'procedure RegisterMessagesReceivedByTheClient(Const Client:TOlfSocketMessagingClient);'
-    + slinebreak;
-  Result := Result + slinebreak;
-  Result := Result + 'implementation' + slinebreak;
-  Result := Result + slinebreak;
-  Result := Result + 'uses' + slinebreak;
+    'procedure RegisterMessagesReceivedByTheClient(Const Client' + sLineBreak;
+  Result := Result + '  : TOlfSocketMessagingClient);' + sLineBreak;
+  Result := Result + sLineBreak;
+  Result := Result + 'implementation' + sLineBreak;
+  Result := Result + sLineBreak;
+  Result := Result + 'uses' + sLineBreak;
   if NeedOlfRTLStreamsUnit then
-    Result := Result + '  Olf.RTL.Streams,' + slinebreak;
-  Result := Result + '  System.SysUtils;' + slinebreak;
-  Result := Result + slinebreak;
+    Result := Result + '  Olf.RTL.Streams,' + sLineBreak;
+  Result := Result + '  System.SysUtils;' + sLineBreak;
+  Result := Result + sLineBreak;
   Result := Result +
-    'procedure RegisterMessagesReceivedByTheServer(Const Server:TOlfSocketMessagingServer);'
-    + slinebreak;
-  Result := Result + 'begin' + slinebreak;
+    'procedure RegisterMessagesReceivedByTheServer(Const Server' + sLineBreak;
+  Result := Result + '  : TOlfSocketMessagingServer);' + sLineBreak;
+  Result := Result + 'begin' + sLineBreak;
   for i := 0 to Messages.Count - 1 do
     if Messages[i].RegisterMessageInTheServer then
       Result := Result + '  Server.RegisterMessageToReceive(' + Messages[i]
-        .DelphiClassName + '.Create);' + slinebreak;
-  Result := Result + 'end;' + slinebreak;
-  Result := Result + slinebreak;
+        .DelphiClassName + '.Create);' + sLineBreak;
+  Result := Result + 'end;' + sLineBreak;
+  Result := Result + sLineBreak;
   Result := Result +
-    'procedure RegisterMessagesReceivedByTheClient(Const Client:TOlfSocketMessagingClient);'
-    + slinebreak;
-  Result := Result + 'begin' + slinebreak;
+    'procedure RegisterMessagesReceivedByTheClient(Const Client' + sLineBreak;
+  Result := Result + '  : TOlfSocketMessagingClient);' + sLineBreak;
+  Result := Result + 'begin' + sLineBreak;
   for i := 0 to Messages.Count - 1 do
     if Messages[i].RegisterMessageInTheClient then
       Result := Result + '  Client.RegisterMessageToReceive(' + Messages[i]
-        .DelphiClassName + '.Create);' + slinebreak;
-  Result := Result + 'end;' + slinebreak;
-  Result := Result + slinebreak;
+        .DelphiClassName + '.Create);' + sLineBreak;
+  Result := Result + 'end;' + sLineBreak;
+  Result := Result + sLineBreak;
   if (Messages.Count > 0) then
     Result := Result + Messages.GetDelphiImplementation;
-  Result := Result + 'end.' + slinebreak;
+  Result := Result + 'end.' + sLineBreak;
 end;
 
 function TProject.GetAsJSON: TJSONObject;
