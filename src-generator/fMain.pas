@@ -355,7 +355,8 @@ begin
   cbMessageRegisterOnClient.IsChecked :=
     CurrentMessage.RegisterMessageInTheClient;
 
-  lblMessageID.Text := CurrentMessage.messageid.ToString;
+  lblMessageID.Text := 'Internal message ID : ' +
+    CurrentMessage.messageid.ToString;
 
   tthread.ForceQueue(nil,
     procedure
