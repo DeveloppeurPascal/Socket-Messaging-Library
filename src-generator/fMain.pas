@@ -286,8 +286,8 @@ end;
 
 procedure TForm1.edtMessageNameChange(Sender: TObject);
 begin
-  edtMessageDelphiClassName.TextPrompt := CurrentProject.DefaultDelphiUnitName
-    (edtProjectName.Text);
+  edtMessageDelphiClassName.TextPrompt := CurrentMessage.DefaultDelphiClassName
+    (edtMessageName.Text);
 end;
 
 procedure TForm1.edtProjectNameChange(Sender: TObject);
@@ -460,8 +460,11 @@ begin
   ExportSaveDialog.Filter := 'Pascal file|*.pas';
 
   if ExportSaveDialog.InitialDir.IsEmpty then
-    ExportSaveDialog.InitialDir := tpath.GetDirectoryName
-      (CurrentProject.FileName);
+    if CurrentProject.FileName.IsEmpty then
+      ExportSaveDialog.InitialDir := tpath.getdocumentspath
+    else
+      ExportSaveDialog.InitialDir := tpath.GetDirectoryName
+        (CurrentProject.FileName);
   // TODO : restore previous "exportsavedialog" from settings or the project settings
 
   ExportSaveDialog.FileName := tpath.Combine(ExportSaveDialog.InitialDir,
@@ -482,7 +485,7 @@ begin
   mnuCloseClick(Sender);
 
   CurrentProject := TProject.Create;
-  CurrentProject.Name := 'new socket messaging project';
+  CurrentProject.Name := 'Project ' + datetostr(now);
   CurrentScreen := TSMGScreen.Project;
 end;
 
