@@ -116,6 +116,7 @@ type
     procedure SortByDelphiClassName;
     constructor Create(AParent: TProject);
     function GetMaxMessageID: TOlfMessageId;
+    function Add(Const Value: TMessage): integer;
   end;
 
   TProject = class
@@ -567,6 +568,13 @@ begin
 end;
 
 { TMessagesList }
+
+function TMessagesList.Add(const Value: TMessage): integer;
+begin
+  if (Value.MessageID < 1) then
+    Value.MessageID := GetMaxMessageID + 1;
+  Result := inherited Add(Value);
+end;
 
 constructor TMessagesList.Create(AParent: TProject);
 begin
