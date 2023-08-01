@@ -30,6 +30,7 @@ type
     procedure SetAsJSON(const Value: TJSONObject);
     function GetAsJSON: TJSONObject;
     function GetDelphiFieldName: string;
+    function GetDefaultDelphiFieldName: string;
   protected
     procedure ValueChanged;
   public
@@ -39,9 +40,10 @@ type
     property DefaultValue: string read FDefaultValue write SetDefaultValue;
     property DelphiFieldName: string read GetDelphiFieldName
       write SetDelphiFieldName;
-    property AsJSON: TJSONObject read GetAsJSON write SetAsJSON;
+    property DefaultDelphiFieldName: string read GetDefaultDelphiFieldName;
     property DelphiFieldType: string read FDelphiFieldType
       write SetDelphiFieldType;
+    property AsJSON: TJSONObject read GetAsJSON write SetAsJSON;
     constructor Create(AParent: TMessageFieldsList); virtual;
   end;
 
@@ -78,19 +80,21 @@ type
     function GetAsJSON: TJSONObject;
     procedure SetAsJSON(const Value: TJSONObject);
     function GetDelphiClassName: string;
+    function GetDefaultDelphiClassName: string;
   protected
     procedure ValueChanged;
   public
     property MessageID: integer read FMessageID write SetMessageID;
     property Name: string read FName write SetName;
     property Description: string read FDescription write SetDescription;
-    property Fields: TMessageFieldsList read FFields write SetFields;
     property DelphiClassName: string read GetDelphiClassName
       write SetDelphiClassName;
+    property DefaultDelphiClassName: string read GetDefaultDelphiClassName;
     property RegisterMessageInTheServer: boolean
       read FRegisterMessageInTheServer write SetRegisterMessageInTheServer;
     property RegisterMessageInTheClient: boolean
       read FRegisterMessageInTheClient write SetRegisterMessageInTheClient;
+    property Fields: TMessageFieldsList read FFields write SetFields;
     property AsJSON: TJSONObject read GetAsJSON write SetAsJSON;
     constructor Create(AParent: TMessagesList); virtual;
     destructor Destroy; override;
@@ -131,6 +135,7 @@ type
     procedure SetAsJSON(const Value: TJSONObject);
     function GetAsDelphi: string;
     function GetDelphiUnitName: string;
+    function GetDefaultDelphiUnitName: string;
   protected
     procedure ValueChanged;
   public
@@ -138,8 +143,9 @@ type
     property Description: string read FDescription write SetDescription;
     property DelphiUnitName: string read GetDelphiUnitName
       write SetDelphiUnitName;
-    property HasChanged: boolean read FHasChanged write SetHasChanged;
+    property DefaultDelphiUnitName: string read GetDefaultDelphiUnitName;
     property Messages: TMessagesList read FMessages write SetMessages;
+    property HasChanged: boolean read FHasChanged write SetHasChanged;
     property AsString: string read GetAsString write SetAsString;
     property AsJSON: TJSONObject read GetAsJSON write SetAsJSON;
     property AsDelphi: string read GetAsDelphi;
@@ -248,10 +254,15 @@ begin
   Result.AddPair('defaultvalue', FDefaultValue);
 end;
 
+function TMessageField.GetDefaultDelphiFieldName: string;
+begin
+  Result := ToDelphiConst(name);
+end;
+
 function TMessageField.GetDelphiFieldName: string;
 begin
   if FDelphiFieldName.IsEmpty then
-    Result := ToDelphiConst(name)
+    Result := DefaultDelphiFieldName
   else
     Result := FDelphiFieldName;
 end;
@@ -419,10 +430,15 @@ begin
   Result.AddPair('fields', Fields.AsJSON);
 end;
 
+function TMessage.GetDefaultDelphiClassName: string;
+begin
+  Result := 'T' + ToDelphiConst(name);
+end;
+
 function TMessage.GetDelphiClassName: string;
 begin
   if FDelphiClassName.IsEmpty then
-    Result := 'T' + ToDelphiConst(name)
+    Result := DefaultDelphiClassName
   else
     Result := FDelphiClassName;
 end;
@@ -782,10 +798,15 @@ begin
   end;
 end;
 
+function TProject.GetDefaultDelphiUnitName: string;
+begin
+  Result := ToDelphiConst(name);
+end;
+
 function TProject.GetDelphiUnitName: string;
 begin
   if FDelphiUnitName.IsEmpty then
-    Result := ToDelphiConst(name)
+    Result := DefaultDelphiUnitName
   else
     Result := FDelphiUnitName;
 end;
