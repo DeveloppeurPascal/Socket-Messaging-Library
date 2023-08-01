@@ -292,6 +292,7 @@
         </DCCReference>
         <DCCReference Include="..\lib-externes\librairies\u_urlOpen.pas"/>
         <DCCReference Include="uProject.pas"/>
+        <DCCReference Include="..\src-library\Olf.Net.Socket.Messaging.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
