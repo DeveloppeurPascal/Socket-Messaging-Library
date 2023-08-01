@@ -4,7 +4,8 @@ interface
 
 uses
   System.JSON,
-  System.Generics.Collections;
+  System.Generics.Collections,
+  Olf.Net.Socket.Messaging;
 
 type
   TMessageFieldsList = class;
@@ -68,11 +69,11 @@ type
     FDelphiClassName: string;
     FFields: TMessageFieldsList;
     FDescription: string;
-    FMessageID: integer;
+    FMessageID: TOlfMessageId;
     procedure SetDelphiClassName(const Value: string);
     procedure SetDescription(const Value: string);
     procedure SetFields(const Value: TMessageFieldsList);
-    procedure SetMessageID(const Value: integer);
+    procedure SetMessageID(const Value: TOlfMessageId);
     procedure SetName(const Value: string);
     procedure SetRegisterMessageInTheClient(const Value: boolean);
     procedure SetRegisterMessageInTheServer(const Value: boolean);
@@ -82,7 +83,7 @@ type
   protected
     procedure ValueChanged;
   public
-    property MessageID: integer read FMessageID write SetMessageID;
+    property MessageID: TOlfMessageId read FMessageID write SetMessageID;
     property Name: string read FName write SetName;
     property Description: string read FDescription write SetDescription;
     property DelphiClassName: string read GetDelphiClassName
@@ -112,6 +113,7 @@ type
     procedure SortByMessageID;
     procedure SortByDelphiClassName;
     constructor Create(AParent: TProject);
+    function GetMaxMessageID: TOlfMessageId;
   end;
 
   TProject = class
@@ -456,7 +458,7 @@ begin
     exit;
 
   ValueChanged;
-  if not Value.TryGetValue<integer>('msgid', FMessageID) then
+  if not Value.TryGetValue<TOlfMessageId>('msgid', FMessageID) then
     FMessageID := 0;
   if not Value.TryGetValue<string>('name', FName) then
     FName := '';
@@ -507,7 +509,7 @@ begin
   FFields := Value;
 end;
 
-procedure TMessage.SetMessageID(const Value: integer);
+procedure TMessage.SetMessageID(const Value: TOlfMessageId);
 begin
   if (FMessageID = Value) then
     exit;
@@ -721,6 +723,16 @@ begin
     Result := Result + 'end;' + slinebreak;
     Result := Result + slinebreak;
   end;
+end;
+
+function TMessagesList.GetMaxMessageID: TOlfMessageId;
+var
+  msg: TMessage;
+begin
+  Result := 0;
+  for msg in self do
+    if Result < msg.MessageID then
+      Result := msg.MessageID;
 end;
 
 procedure TMessagesList.SetAsJSON(const Value: TJSONArray);
