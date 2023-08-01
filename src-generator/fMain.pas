@@ -88,6 +88,21 @@ type
     btnNewField: TButton;
     btnNewMessage: TButton;
     btnMessageDelete: TButton;
+    lblFieldOrder: TLabel;
+    lblFieldName: TLabel;
+    edtFieldName: TEdit;
+    lblFieldDefaultValue: TLabel;
+    edtFieldDefaultValue: TEdit;
+    lblFieldDelphiFieldType: TLabel;
+    edtFieldDelphiFieldType: TEdit;
+    lblFieldDelphiFieldName: TLabel;
+    edtFieldDelphiFieldName: TEdit;
+    lblFieldDescription: TLabel;
+    edtFieldDescription: TMemo;
+    GridPanelLayout3: TGridPanelLayout;
+    btnFieldOk: TButton;
+    btnFieldCancel: TButton;
+    btnFieldDelete: TButton;
     procedure FormCreate(Sender: TObject);
     procedure mnuQuitClick(Sender: TObject);
     procedure mnuAboutClick(Sender: TObject);
@@ -110,6 +125,10 @@ type
     procedure btnMessageDeleteClick(Sender: TObject);
     procedure btnNewMessageClick(Sender: TObject);
     procedure btnNewFieldClick(Sender: TObject);
+    procedure btnFieldDeleteClick(Sender: TObject);
+    procedure btnFieldCancelClick(Sender: TObject);
+    procedure btnFieldOkClick(Sender: TObject);
+    procedure edtFieldNameChange(Sender: TObject);
   private
     FCurrentProject: TProject;
     FCurrentScreen: TSMGScreen;
@@ -149,6 +168,40 @@ uses
   FMX.DialogService,
   System.IOUtils,
   u_urlOpen;
+
+procedure TForm1.btnFieldCancelClick(Sender: TObject);
+begin
+  InitEditFieldTab;
+end;
+
+procedure TForm1.btnFieldDeleteClick(Sender: TObject);
+begin
+  // TODO : à compléter
+end;
+
+procedure TForm1.btnFieldOkClick(Sender: TObject);
+begin
+  edtFieldName.Text := edtFieldName.Text.trim;
+  if edtFieldName.Text.IsEmpty then
+  begin
+    edtFieldName.SetFocus;
+    raise Exception.Create('Your field needs a name !');
+  end;
+  CurrentField.Name := edtFieldName.Text;
+  (tvProject.tagobject as ttreeviewitem).Text := CurrentField.Name;
+
+  CurrentField.DelphiFieldType := edtFieldDelphiFieldType.Text;
+
+  CurrentField.DefaultValue := edtFieldDefaultValue.Text;
+
+  CurrentField.Description := edtFieldDescription.Text;
+
+  edtFieldDelphiFieldName.Text := edtFieldDelphiFieldName.Text.trim;
+  if edtFieldDelphiFieldName.Text.IsEmpty then
+    CurrentField.DelphiFieldName := ''
+  else
+    CurrentField.DelphiFieldName := ToDelphiConst(edtFieldDelphiFieldName.Text);
+end;
 
 procedure TForm1.btnMessageCancelClick(Sender: TObject);
 begin
@@ -284,6 +337,12 @@ begin
       ToDelphiConst(edtProjectDelphiUnitName.Text);
 end;
 
+procedure TForm1.edtFieldNameChange(Sender: TObject);
+begin
+  edtFieldDelphiFieldName.TextPrompt := CurrentField.DefaultDelphiFieldName
+    (edtFieldName.Text);
+end;
+
 procedure TForm1.edtMessageNameChange(Sender: TObject);
 begin
   edtMessageDelphiClassName.TextPrompt := CurrentMessage.DefaultDelphiClassName
@@ -335,7 +394,27 @@ procedure TForm1.InitEditFieldTab;
 begin
   if not assigned(CurrentField) then
     raise Exception.Create('No field to display !');
-  // TODO : à compléter
+
+  edtFieldName.Text := CurrentField.Name;
+
+  if (CurrentField.DelphiFieldName = CurrentField.DefaultDelphiFieldName) then
+    edtFieldDelphiFieldName.Text := ''
+  else
+    edtFieldDelphiFieldName.Text := CurrentField.DelphiFieldName;
+
+  edtFieldDelphiFieldType.Text := CurrentField.DelphiFieldType;
+
+  edtFieldDefaultValue.Text := CurrentField.DefaultValue;
+
+  edtFieldDescription.Text := CurrentField.Description;
+
+  lblFieldOrder.Text := 'Internal : ' + CurrentField.order.ToString;
+
+  tthread.ForceQueue(nil,
+    procedure
+    begin
+      edtFieldName.SetFocus;
+    end);
 end;
 
 procedure TForm1.InitEditMessageTab;
