@@ -51,7 +51,6 @@ type
     lProjectScreen: TLayout;
     OpenProjectDialog: TOpenDialog;
     SaveProjectDialog: TSaveDialog;
-    tvProject: TTreeView;
     Splitter1: TSplitter;
     tcProject: TTabControl;
     tiProjectEdit: TTabItem;
@@ -67,11 +66,28 @@ type
     edtProjectDelphiUnitName: TEdit;
     edtProjectDescription: TMemo;
     GridPanelLayout1: TGridPanelLayout;
-    btnProjectSave: TButton;
+    btnProjectOk: TButton;
     btnProjectCancel: TButton;
     mnuProject: TMenuItem;
     mnuDelphiExport: TMenuItem;
     ExportSaveDialog: TSaveDialog;
+    lblMessageName: TLabel;
+    edtMessageName: TEdit;
+    lblMessageDelphiClassName: TLabel;
+    edtMessageDelphiClassName: TEdit;
+    lblMessageDescription: TLabel;
+    edtMessageDescription: TMemo;
+    GridPanelLayout2: TGridPanelLayout;
+    btnMessageOk: TButton;
+    btnMessageCancel: TButton;
+    cbMessageRegisterOnServer: TCheckBox;
+    cbMessageRegisterOnClient: TCheckBox;
+    lblMessageID: TLabel;
+    lProjectLeft: TLayout;
+    tvProject: TTreeView;
+    btnNewField: TButton;
+    btnNewMessage: TButton;
+    btnMessageDelete: TButton;
     procedure FormCreate(Sender: TObject);
     procedure mnuQuitClick(Sender: TObject);
     procedure mnuAboutClick(Sender: TObject);
@@ -86,13 +102,23 @@ type
     procedure tvProjectChange(Sender: TObject);
     procedure edtProjectNameChange(Sender: TObject);
     procedure btnProjectCancelClick(Sender: TObject);
-    procedure btnProjectSaveClick(Sender: TObject);
+    procedure btnProjectOkClick(Sender: TObject);
     procedure mnuDelphiExportClick(Sender: TObject);
+    procedure btnMessageCancelClick(Sender: TObject);
+    procedure btnMessageOkClick(Sender: TObject);
+    procedure edtMessageNameChange(Sender: TObject);
+    procedure btnMessageDeleteClick(Sender: TObject);
+    procedure btnNewMessageClick(Sender: TObject);
+    procedure btnNewFieldClick(Sender: TObject);
   private
-    FOpenedProject: TProject;
+    FCurrentProject: TProject;
     FCurrentScreen: TSMGScreen;
-    procedure SetOpenedProject(const Value: TProject);
+    FCurrentMessage: TMessage;
+    FCurrentField: TMessageField;
+    procedure SetCurrentProject(const Value: TProject);
     procedure SetCurrentScreen(const Value: TSMGScreen);
+    procedure SetCurrentField(const Value: TMessageField);
+    procedure SetCurrentMessage(const Value: TMessage);
   protected
     procedure InitHomeScreen;
     procedure InitProjectScreen;
@@ -102,7 +128,12 @@ type
     procedure InitEditMessageTab;
     procedure InitEditFieldTab;
   public
-    property OpenedProject: TProject read FOpenedProject write SetOpenedProject;
+    property CurrentProject: TProject read FCurrentProject
+      write SetCurrentProject;
+    property CurrentMessage: TMessage read FCurrentMessage
+      write SetCurrentMessage;
+    property CurrentField: TMessageField read FCurrentField
+      write SetCurrentField;
     property CurrentScreen: TSMGScreen read FCurrentScreen
       write SetCurrentScreen;
   end;
@@ -119,12 +150,119 @@ uses
   System.IOUtils,
   u_urlOpen;
 
+procedure TForm1.btnMessageCancelClick(Sender: TObject);
+begin
+  InitEditMessageTab;
+end;
+
+procedure TForm1.btnMessageDeleteClick(Sender: TObject);
+begin
+  // TODO : à compléter
+end;
+
+procedure TForm1.btnMessageOkClick(Sender: TObject);
+begin
+  edtMessageName.Text := edtMessageName.Text.trim;
+  if edtMessageName.Text.IsEmpty then
+  begin
+    edtMessageName.SetFocus;
+    raise Exception.Create('Your message needs a name !');
+  end;
+  CurrentMessage.Name := edtMessageName.Text;
+  (tvProject.tagobject as ttreeviewitem).Text := CurrentMessage.Name;
+
+  CurrentMessage.Description := edtMessageDescription.Text;
+
+  edtMessageDelphiClassName.Text := edtMessageDelphiClassName.Text.trim;
+  if edtMessageDelphiClassName.Text.IsEmpty then
+    CurrentMessage.DelphiClassName := ''
+  else
+    CurrentMessage.DelphiClassName :=
+      ToDelphiConst(edtMessageDelphiClassName.Text);
+
+  CurrentMessage.RegisterMessageInTheServer :=
+    cbMessageRegisterOnServer.IsChecked;
+  CurrentMessage.RegisterMessageInTheClient :=
+    cbMessageRegisterOnClient.IsChecked;
+end;
+
+procedure TForm1.btnNewFieldClick(Sender: TObject);
+var
+  msg: TMessage;
+  fld: TMessageField;
+  MessageItem, FieldItem: ttreeviewitem;
+begin
+  if not assigned(CurrentProject) then
+    exit;
+
+  if not assigned(tvProject.Selected) then
+    exit;
+
+  case tvProject.Selected.tag of
+    1:
+      begin
+        MessageItem := tvProject.Selected;
+        msg := CurrentMessage;
+      end;
+    2:
+      begin
+        MessageItem := tvProject.Selected.ParentItem;
+        if assigned(MessageItem) and assigned(MessageItem.tagobject) and
+          (MessageItem.tagobject is TMessage) then
+          msg := MessageItem.tagobject as TMessage
+        else
+          raise Exception.Create
+            ('Can''t find the parent message for this new field. (error code 1)');
+      end;
+  else
+    raise Exception.Create
+      ('Can''t find the parent message for this new field. (error code 2)');
+  end;
+
+  fld := TMessageField.Create(msg.Fields);
+  msg.Fields.Add(fld);
+  fld.Name := 'Field ' + fld.order.ToString;
+  fld.DelphiFieldType := 'integer';
+  fld.DefaultValue := '0';
+
+  FieldItem := ttreeviewitem.Create(tvProject);
+  FieldItem.Parent := MessageItem;
+  // théoriquement le projet, sinon chercher celui qui a un Tag=0
+  FieldItem.Text := fld.Name;
+  FieldItem.tagobject := fld;
+  FieldItem.tag := 2;
+
+  tvProject.Selected := FieldItem;
+end;
+
+procedure TForm1.btnNewMessageClick(Sender: TObject);
+var
+  msg: TMessage;
+  MessageItem: ttreeviewitem;
+begin
+  if not assigned(CurrentProject) then
+    exit;
+
+  msg := TMessage.Create(CurrentProject.Messages);
+  CurrentProject.Messages.Add(msg);
+  msg.Name := 'Message ' + msg.messageid.ToString;
+
+  MessageItem := ttreeviewitem.Create(tvProject);
+  MessageItem.Parent := tvProject.Items[0];
+  // théoriquement le projet, sinon chercher celui qui a un Tag=0
+  MessageItem.Text := msg.Name;
+  MessageItem.tagobject := msg;
+  MessageItem.tag := 1;
+
+  tvProject.Selected := MessageItem;
+end;
+
 procedure TForm1.btnProjectCancelClick(Sender: TObject);
 begin
   InitEditProjectTab;
 end;
 
-procedure TForm1.btnProjectSaveClick(Sender: TObject);
+procedure TForm1.btnProjectOkClick(Sender: TObject);
 begin
   edtProjectName.Text := edtProjectName.Text.trim;
   if edtProjectName.Text.IsEmpty then
@@ -132,23 +270,29 @@ begin
     edtProjectName.SetFocus;
     raise Exception.Create('Your project needs a name !');
   end;
-  OpenedProject.Name := edtProjectName.Text;
-  (tvProject.tagobject as ttreeviewitem).Text := OpenedProject.Name;
+  CurrentProject.Name := edtProjectName.Text;
+  (tvProject.tagobject as ttreeviewitem).Text := CurrentProject.Name;
   RefreshFormCaption;
 
-  OpenedProject.Description := edtProjectDescription.Text;
+  CurrentProject.Description := edtProjectDescription.Text;
 
   edtProjectDelphiUnitName.Text := edtProjectDelphiUnitName.Text.trim;
   if edtProjectDelphiUnitName.Text.IsEmpty then
-    OpenedProject.DelphiUnitName := ''
+    CurrentProject.DelphiUnitName := ''
   else
-    OpenedProject.DelphiUnitName :=
+    CurrentProject.DelphiUnitName :=
       ToDelphiConst(edtProjectDelphiUnitName.Text);
+end;
+
+procedure TForm1.edtMessageNameChange(Sender: TObject);
+begin
+  edtMessageDelphiClassName.TextPrompt := CurrentProject.DefaultDelphiUnitName
+    (edtProjectName.Text);
 end;
 
 procedure TForm1.edtProjectNameChange(Sender: TObject);
 begin
-  edtProjectDelphiUnitName.TextPrompt := OpenedProject.DefaultDelphiUnitName
+  edtProjectDelphiUnitName.TextPrompt := CurrentProject.DefaultDelphiUnitName
     (edtProjectName.Text);
 end;
 
@@ -159,7 +303,7 @@ end;
 
 procedure TForm1.FormCreate(Sender: TObject);
 begin
-  FOpenedProject := nil;
+  FCurrentProject := nil;
   FCurrentScreen := TSMGScreen.None;
   tcProject.TabPosition := TTabPosition.None;
 
@@ -183,28 +327,54 @@ end;
 
 procedure TForm1.FormDestroy(Sender: TObject);
 begin
-  if assigned(OpenedProject) then
-    freeandnil(OpenedProject);
+  if assigned(CurrentProject) then
+    freeandnil(CurrentProject);
 end;
 
 procedure TForm1.InitEditFieldTab;
 begin
+  if not assigned(CurrentField) then
+    raise Exception.Create('No field to display !');
   // TODO : à compléter
 end;
 
 procedure TForm1.InitEditMessageTab;
 begin
-  // TODO : à compléter
+  if not assigned(CurrentMessage) then
+    raise Exception.Create('No message to display !');
+
+  edtMessageName.Text := CurrentMessage.Name;
+  if (CurrentMessage.DelphiClassName = CurrentMessage.DefaultDelphiClassName)
+  then
+    edtMessageDelphiClassName.Text := ''
+  else
+    edtMessageDelphiClassName.Text := CurrentMessage.DelphiClassName;
+  edtMessageDescription.Text := CurrentMessage.Description;
+  cbMessageRegisterOnServer.IsChecked :=
+    CurrentMessage.RegisterMessageInTheServer;
+  cbMessageRegisterOnClient.IsChecked :=
+    CurrentMessage.RegisterMessageInTheClient;
+
+  lblMessageID.Text := CurrentMessage.messageid.ToString;
+
+  tthread.ForceQueue(nil,
+    procedure
+    begin
+      edtMessageName.SetFocus;
+    end);
 end;
 
 procedure TForm1.InitEditProjectTab;
 begin
-  edtProjectName.Text := OpenedProject.Name;
-  edtProjectDescription.Text := OpenedProject.Description;
-  if (OpenedProject.DelphiUnitName = OpenedProject.DefaultDelphiUnitName) then
+  if not assigned(CurrentProject) then
+    raise Exception.Create('No project to display !');
+
+  edtProjectName.Text := CurrentProject.Name;
+  if (CurrentProject.DelphiUnitName = CurrentProject.DefaultDelphiUnitName) then
     edtProjectDelphiUnitName.Text := ''
   else
-    edtProjectDelphiUnitName.Text := OpenedProject.DelphiUnitName;
+    edtProjectDelphiUnitName.Text := CurrentProject.DelphiUnitName;
+  edtProjectDescription.Text := CurrentProject.Description;
 
   tthread.ForceQueue(nil,
     procedure
@@ -220,7 +390,7 @@ end;
 
 procedure TForm1.InitProjectScreen;
 var
-  msg: tmessage;
+  msg: TMessage;
   fld: TMessageField;
   ProjectItem, MessageItem, FieldItem: ttreeviewitem;
 begin
@@ -229,24 +399,24 @@ begin
 
   ProjectItem := ttreeviewitem.Create(tvProject);
   ProjectItem.Parent := tvProject;
-  ProjectItem.Text := OpenedProject.Name;
-  ProjectItem.tagobject := OpenedProject;
-  ProjectItem.Tag := 0;
+  ProjectItem.Text := CurrentProject.Name;
+  ProjectItem.tagobject := CurrentProject;
+  ProjectItem.tag := 0;
 
-  for msg in OpenedProject.Messages do
+  for msg in CurrentProject.Messages do
   begin
     MessageItem := ttreeviewitem.Create(tvProject);
     MessageItem.Parent := ProjectItem;
     MessageItem.Text := msg.Name;
     MessageItem.tagobject := msg;
-    MessageItem.Tag := 1;
+    MessageItem.tag := 1;
     for fld in msg.Fields do
     begin
       FieldItem := ttreeviewitem.Create(tvProject);
       FieldItem.Parent := MessageItem;
       FieldItem.Text := fld.Name;
       FieldItem.tagobject := fld;
-      FieldItem.Tag := 2;
+      FieldItem.tag := 2;
     end;
   end;
 
@@ -262,10 +432,10 @@ end;
 
 procedure TForm1.mnuCloseClick(Sender: TObject);
 begin
-  if not assigned(OpenedProject) then
+  if not assigned(CurrentProject) then
     exit;
 
-  if OpenedProject.HasChanged then
+  if CurrentProject.HasChanged then
     TDialogService.MessageDialog
       ('Current project has been changed. Do you want to save it ?',
       tmsgdlgtype.mtConfirmation, [TMsgDlgBtn.mbYes, TMsgDlgBtn.mbNo],
@@ -274,12 +444,12 @@ begin
       begin
         if AModalResult = mryes then
           mnuSaveClick(Sender);
-        freeandnil(OpenedProject);
+        freeandnil(CurrentProject);
         CurrentScreen := TSMGScreen.Home;
       end)
   else
   begin
-    freeandnil(OpenedProject);
+    freeandnil(CurrentProject);
     CurrentScreen := TSMGScreen.Home;
   end;
 end;
@@ -291,17 +461,17 @@ begin
 
   if ExportSaveDialog.InitialDir.IsEmpty then
     ExportSaveDialog.InitialDir := tpath.GetDirectoryName
-      (OpenProjectDialog.FileName);
+      (CurrentProject.FileName);
   // TODO : restore previous "exportsavedialog" from settings or the project settings
 
   ExportSaveDialog.FileName := tpath.Combine(ExportSaveDialog.InitialDir,
-    OpenedProject.DelphiUnitName + '.' + ExportSaveDialog.DefaultExt);
+    CurrentProject.DelphiUnitName + '.' + ExportSaveDialog.DefaultExt);
 
   if ExportSaveDialog.Execute and (length(trim(ExportSaveDialog.FileName)) > 0)
     and (tpath.GetExtension(ExportSaveDialog.FileName) = '.' +
     ExportSaveDialog.DefaultExt) then
   begin
-    tfile.WriteAllText(ExportSaveDialog.FileName, OpenedProject.AsDelphi,
+    tfile.WriteAllText(ExportSaveDialog.FileName, CurrentProject.AsDelphi,
       tencoding.UTF8);
     ShowMessage('Project exported.');
   end;
@@ -311,8 +481,8 @@ procedure TForm1.mnuNewFileClick(Sender: TObject);
 begin
   mnuCloseClick(Sender);
 
-  OpenedProject := TProject.Create;
-  OpenedProject.Name := 'new socket messaging project';
+  CurrentProject := TProject.Create;
+  CurrentProject.Name := 'new socket messaging project';
   CurrentScreen := TSMGScreen.Project;
 end;
 
@@ -329,8 +499,8 @@ begin
     OpenProjectDialog.DefaultExt) and tfile.Exists(OpenProjectDialog.FileName)
   then
   begin
-    OpenedProject := TProject.Create;
-    OpenedProject.LoadFromFile(OpenProjectDialog.FileName);
+    CurrentProject := TProject.Create;
+    CurrentProject.LoadFromFile(OpenProjectDialog.FileName);
     CurrentScreen := TSMGScreen.Project;
   end;
 end;
@@ -348,12 +518,12 @@ end;
 
 procedure TForm1.mnuSaveClick(Sender: TObject);
 begin
-  if not assigned(OpenedProject) then
+  if not assigned(CurrentProject) then
     exit;
 
-  if not OpenedProject.FileName.IsEmpty then
+  if not CurrentProject.FileName.IsEmpty then
   begin
-    OpenedProject.SaveToFile;
+    CurrentProject.SaveToFile;
     exit;
   end;
 
@@ -365,7 +535,7 @@ begin
     0) and (tpath.GetExtension(SaveProjectDialog.FileName) = '.' +
     SaveProjectDialog.DefaultExt) then
   begin
-    OpenedProject.SaveToFile(SaveProjectDialog.FileName);
+    CurrentProject.SaveToFile(SaveProjectDialog.FileName);
     RefreshFormCaption;
   end;
 end;
@@ -381,10 +551,10 @@ begin
 {$IFDEF DEBUG}
   caption := '[DEBUG] ' + caption;
 {$ENDIF}
-  if assigned(OpenedProject) then
+  if assigned(CurrentProject) then
   begin
-    caption := caption + ' - ' + OpenedProject.Name;
-    if OpenedProject.HasChanged then
+    caption := caption + ' - ' + CurrentProject.Name;
+    if CurrentProject.HasChanged then
       caption := caption + '*';
   end;
 end;
@@ -405,7 +575,7 @@ begin
       ;
   else
     raise Exception.Create('Can''t show screen ' + ord(FCurrentScreen)
-      .tostring + ' !');
+      .ToString + ' !');
   end;
 
   lHomeScreen.Visible := (FCurrentScreen = TSMGScreen.Home);
@@ -414,22 +584,35 @@ begin
   UpdateButtonsAndMenus;
 end;
 
-procedure TForm1.SetOpenedProject(const Value: TProject);
+procedure TForm1.SetCurrentField(const Value: TMessageField);
 begin
-  FOpenedProject := Value;
+  FCurrentField := Value;
+  InitEditFieldTab;
+end;
+
+procedure TForm1.SetCurrentMessage(const Value: TMessage);
+begin
+  FCurrentMessage := Value;
+  InitEditMessageTab;
+end;
+
+procedure TForm1.SetCurrentProject(const Value: TProject);
+begin
+  FCurrentProject := Value;
+  InitEditProjectTab;
 end;
 
 procedure TForm1.tvProjectChange(Sender: TObject);
 begin
   if assigned(tvProject.tagobject) then
   begin
-    // TODO : check if something has changed nd ask for a SAVE or CANCEL operation on it
+    // TODO : check if something has changed and ask for a SAVE or CANCEL operation on it
   end;
 
   tvProject.tagobject := tvProject.Selected;
   if assigned(tvProject.Selected) then
   begin
-    case tvProject.Selected.Tag of
+    case tvProject.Selected.tag of
       0:
         begin
           InitEditProjectTab;
@@ -437,12 +620,17 @@ begin
         end;
       1:
         begin
-          InitEditMessageTab;
+          if not(tvProject.Selected.tagobject is TMessage) then
+            raise Exception.Create('This should be a message but it''s not.');
+          CurrentMessage := (tvProject.Selected.tagobject as TMessage);
           tcProject.ActiveTab := tiMessageEdit;
         end;
       2:
         begin
-          InitEditFieldTab;
+          if not(tvProject.Selected.tagobject is TMessageField) then
+            raise Exception.Create
+              ('This should be a message field but it''s not.');
+          CurrentField := (tvProject.Selected.tagobject as TMessageField);
           tcProject.ActiveTab := tiFieldEdit;
         end;
     end;
@@ -450,14 +638,18 @@ begin
   end
   else
     tcProject.Visible := false;
+
+  btnNewMessage.Visible := assigned(tvProject.Selected);
+  btnNewField.Visible := assigned(tvProject.Selected) and
+    (tvProject.Selected.tag in [1, 2]);
 end;
 
 procedure TForm1.UpdateButtonsAndMenus;
 begin
-  mnuSave.Enabled := assigned(OpenedProject);
-  mnuClose.Enabled := assigned(OpenedProject);
-  mnuProject.Enabled := assigned(OpenedProject);
-  mnuDelphiExport.Enabled := assigned(OpenedProject);
+  mnuSave.Enabled := assigned(CurrentProject);
+  mnuClose.Enabled := assigned(CurrentProject);
+  mnuProject.Enabled := assigned(CurrentProject);
+  mnuDelphiExport.Enabled := assigned(CurrentProject);
 end;
 
 initialization
