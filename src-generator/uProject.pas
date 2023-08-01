@@ -143,8 +143,9 @@ type
     property AsString: string read GetAsString write SetAsString;
     property AsJSON: TJSONObject read GetAsJSON write SetAsJSON;
     property AsDelphi: string read GetAsDelphi;
-    procedure SaveToFile(AFilename: string = ''; AForceWrite: boolean = true);
-    procedure LoadFromFile(AFilename: string);
+    property FileName: string read FFileName;
+    procedure SaveToFile(AFileName: string = ''; AForceWrite: boolean = true);
+    procedure LoadFromFile(AFileName: string);
     constructor Create; virtual;
     destructor Destroy; override;
   end;
@@ -890,35 +891,35 @@ begin
   Result.AddPair('messages', Messages.AsJSON);
 end;
 
-procedure TProject.LoadFromFile(AFilename: string);
+procedure TProject.LoadFromFile(AFileName: string);
 begin
-  AFilename := AFilename.Trim;
+  AFileName := AFileName.Trim;
 
-  if AFilename.IsEmpty then
+  if AFileName.IsEmpty then
     raise exception.Create('Empty filename !');
 
-  if not tfile.Exists(AFilename) then
+  if not tfile.Exists(AFileName) then
     raise exception.Create('This file does not exist !');
 
-  AsString := tfile.ReadAllText(AFilename, tencoding.UTF8);
-  FFileName := AFilename;
+  AsString := tfile.ReadAllText(AFileName, tencoding.UTF8);
+  FFileName := AFileName;
   HasChanged := false;
 end;
 
-procedure TProject.SaveToFile(AFilename: string; AForceWrite: boolean);
+procedure TProject.SaveToFile(AFileName: string; AForceWrite: boolean);
 begin
-  AFilename := AFilename.Trim;
-  if AFilename.IsEmpty then
-    AFilename := FFileName;
+  AFileName := AFileName.Trim;
+  if AFileName.IsEmpty then
+    AFileName := FFileName;
 
-  if AFilename.IsEmpty then
+  if AFileName.IsEmpty then
     raise exception.Create('Empty filename !');
 
-  if (not AForceWrite) and tfile.Exists(AFilename) then
+  if (not AForceWrite) and tfile.Exists(AFileName) then
     raise exception.Create('This file already exists !');
 
-  tfile.WriteAllText(AFilename, AsString, tencoding.UTF8);
-  FFileName := AFilename;
+  tfile.WriteAllText(AFileName, AsString, tencoding.UTF8);
+  FFileName := AFileName;
   HasChanged := false;
 end;
 
@@ -928,7 +929,11 @@ var
 begin
   jso := TJSONObject.ParseJSONValue(Value) as TJSONObject;
   if assigned(jso) then
-    SetAsJSON(jso);
+    try
+      AsJSON := jso;
+    finally
+      jso.Free;
+    end;
 end;
 
 procedure TProject.SetDelphiUnitName(const Value: string);
