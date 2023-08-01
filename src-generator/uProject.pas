@@ -30,7 +30,6 @@ type
     procedure SetAsJSON(const Value: TJSONObject);
     function GetAsJSON: TJSONObject;
     function GetDelphiFieldName: string;
-    function GetDefaultDelphiFieldName: string;
   protected
     procedure ValueChanged;
   public
@@ -40,11 +39,11 @@ type
     property DefaultValue: string read FDefaultValue write SetDefaultValue;
     property DelphiFieldName: string read GetDelphiFieldName
       write SetDelphiFieldName;
-    property DefaultDelphiFieldName: string read GetDefaultDelphiFieldName;
     property DelphiFieldType: string read FDelphiFieldType
       write SetDelphiFieldType;
     property AsJSON: TJSONObject read GetAsJSON write SetAsJSON;
     constructor Create(AParent: TMessageFieldsList); virtual;
+    function DefaultDelphiFieldName(AName: string = ''): string;
   end;
 
   TMessageFieldsList = class(tobjectlist<TMessageField>)
@@ -80,7 +79,6 @@ type
     function GetAsJSON: TJSONObject;
     procedure SetAsJSON(const Value: TJSONObject);
     function GetDelphiClassName: string;
-    function GetDefaultDelphiClassName: string;
   protected
     procedure ValueChanged;
   public
@@ -89,7 +87,6 @@ type
     property Description: string read FDescription write SetDescription;
     property DelphiClassName: string read GetDelphiClassName
       write SetDelphiClassName;
-    property DefaultDelphiClassName: string read GetDefaultDelphiClassName;
     property RegisterMessageInTheServer: boolean
       read FRegisterMessageInTheServer write SetRegisterMessageInTheServer;
     property RegisterMessageInTheClient: boolean
@@ -98,6 +95,7 @@ type
     property AsJSON: TJSONObject read GetAsJSON write SetAsJSON;
     constructor Create(AParent: TMessagesList); virtual;
     destructor Destroy; override;
+    function DefaultDelphiClassName(AName: string = ''): string;
   end;
 
   TMessagesList = class(tobjectlist<TMessage>)
@@ -135,7 +133,6 @@ type
     procedure SetAsJSON(const Value: TJSONObject);
     function GetAsDelphi: string;
     function GetDelphiUnitName: string;
-    function GetDefaultDelphiUnitName: string;
   protected
     procedure ValueChanged;
   public
@@ -143,7 +140,6 @@ type
     property Description: string read FDescription write SetDescription;
     property DelphiUnitName: string read GetDelphiUnitName
       write SetDelphiUnitName;
-    property DefaultDelphiUnitName: string read GetDefaultDelphiUnitName;
     property Messages: TMessagesList read FMessages write SetMessages;
     property HasChanged: boolean read FHasChanged write SetHasChanged;
     property AsString: string read GetAsString write SetAsString;
@@ -154,7 +150,10 @@ type
     procedure LoadFromFile(AFileName: string);
     constructor Create; virtual;
     destructor Destroy; override;
+    function DefaultDelphiUnitName(AName: string = ''): string;
   end;
+
+function ToDelphiConst(Texte: string): string;
 
 implementation
 
@@ -254,9 +253,12 @@ begin
   Result.AddPair('defaultvalue', FDefaultValue);
 end;
 
-function TMessageField.GetDefaultDelphiFieldName: string;
+function TMessageField.DefaultDelphiFieldName(AName: string): string;
 begin
-  Result := ToDelphiConst(name);
+  if AName.IsEmpty then
+    Result := ToDelphiConst(name)
+  else
+    Result := ToDelphiConst(AName);
 end;
 
 function TMessageField.GetDelphiFieldName: string;
@@ -430,9 +432,12 @@ begin
   Result.AddPair('fields', Fields.AsJSON);
 end;
 
-function TMessage.GetDefaultDelphiClassName: string;
+function TMessage.DefaultDelphiClassName(AName: string): string;
 begin
-  Result := 'T' + ToDelphiConst(name);
+  if AName.IsEmpty then
+    Result := 'T' + ToDelphiConst(name)
+  else
+    Result := 'T' + ToDelphiConst(AName);
 end;
 
 function TMessage.GetDelphiClassName: string;
@@ -798,9 +803,12 @@ begin
   end;
 end;
 
-function TProject.GetDefaultDelphiUnitName: string;
+function TProject.DefaultDelphiUnitName(AName: string): string;
 begin
-  Result := ToDelphiConst(name);
+  if AName.IsEmpty then
+    Result := ToDelphiConst(name)
+  else
+    Result := ToDelphiConst(AName);
 end;
 
 function TProject.GetDelphiUnitName: string;
