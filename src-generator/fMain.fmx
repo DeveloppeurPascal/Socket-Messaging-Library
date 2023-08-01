@@ -9,6 +9,7 @@ object Form1: TForm1
   FormFactor.Devices = [Desktop]
   OnCreate = FormCreate
   OnCloseQuery = FormCloseQuery
+  OnDestroy = FormDestroy
   DesignerMasterStyle = 0
   object MainMenu1: TMainMenu
     Left = 384
@@ -21,18 +22,22 @@ object Form1: TForm1
       object mnuNewFile: TMenuItem
         Locked = True
         Text = '&New'
+        OnClick = mnuNewFileClick
       end
       object mnuOpenFile: TMenuItem
         Locked = True
         Text = '&Open'
+        OnClick = mnuOpenFileClick
       end
       object mnuSave: TMenuItem
         Locked = True
         Text = '&Save'
+        OnClick = mnuSaveClick
       end
       object mnuClose: TMenuItem
         Locked = True
         Text = '&Close'
+        OnClick = mnuCloseClick
       end
       object mnuQuit: TMenuItem
         Locked = True
@@ -69,5 +74,73 @@ object Form1: TForm1
     Langue = EN
     Left = 520
     Top = 48
+  end
+  object lHomeScreen: TLayout
+    Align = Contents
+    Size.Width = 640.000000000000000000
+    Size.Height = 480.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 2
+    object lButtons: TLayout
+      Align = Center
+      Size.Width = 218.000000000000000000
+      Size.Height = 138.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 0
+      object btnNewProjectFile: TButton
+        Align = Top
+        Margins.Left = 10.000000000000000000
+        Margins.Top = 10.000000000000000000
+        Margins.Right = 10.000000000000000000
+        Margins.Bottom = 10.000000000000000000
+        Position.X = 10.000000000000000000
+        Position.Y = 10.000000000000000000
+        Size.Width = 198.000000000000000000
+        Size.Height = 48.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 0
+        Text = 'New project'
+        OnClick = mnuNewFileClick
+      end
+      object btnOpenProjectFile: TButton
+        Align = Top
+        Margins.Left = 10.000000000000000000
+        Margins.Top = 10.000000000000000000
+        Margins.Right = 10.000000000000000000
+        Margins.Bottom = 10.000000000000000000
+        Position.X = 10.000000000000000000
+        Position.Y = 78.000000000000000000
+        Size.Width = 198.000000000000000000
+        Size.Height = 48.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 1
+        Text = 'Open project'
+        OnClick = mnuOpenFileClick
+      end
+    end
+  end
+  object lProjectScreen: TLayout
+    Align = Contents
+    Size.Width = 640.000000000000000000
+    Size.Height = 480.000000000000000000
+    Size.PlatformDefault = False
+    Visible = False
+    TabOrder = 3
+  end
+  object OpenDialog1: TOpenDialog
+    DefaultExt = 'smgdat'
+    Filter = 'Socket Messages Generator Files|*.smgdat'
+    Options = [ofPathMustExist, ofFileMustExist, ofEnableSizing]
+    Title = 'Open a Socket Messaging Generator project'
+    Left = 480
+    Top = 144
+  end
+  object SaveDialog1: TSaveDialog
+    DefaultExt = 'smgdat'
+    Filter = 'Socket Messages Generator Files|*.smgdat'
+    Options = [ofOverwritePrompt, ofHideReadOnly, ofPathMustExist, ofNoReadOnlyReturn, ofEnableSizing, ofDontAddToRecent]
+    Title = 'Save this project as'
+    Left = 568
+    Top = 144
   end
 end
