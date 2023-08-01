@@ -58,6 +58,7 @@ type
     property AsJSON: TJSONArray read GetAsJSON write SetAsJSON;
     procedure SortByOrder;
     constructor Create(AParent: TMessage); virtual;
+    function GetMaxOrder: integer;
   end;
 
   TMessage = class
@@ -360,6 +361,16 @@ begin
   Result := TJSONArray.Create;
   for i := 0 to Count - 1 do
     Result.add(items[i].AsJSON);
+end;
+
+function TMessageFieldsList.GetMaxOrder: integer;
+var
+  fld: TMessageField;
+begin
+  Result := 0;
+  for fld in self do
+    if Result < fld.Order then
+      Result := fld.Order;
 end;
 
 procedure TMessageFieldsList.SetAsJSON(const Value: TJSONArray);
