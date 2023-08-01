@@ -21,16 +21,19 @@ object Form1: TForm1
       Text = '&File'
       object mnuNewFile: TMenuItem
         Locked = True
+        ShortCut = 16462
         Text = '&New'
         OnClick = mnuNewFileClick
       end
       object mnuOpenFile: TMenuItem
         Locked = True
+        ShortCut = 16463
         Text = '&Open'
         OnClick = mnuOpenFileClick
       end
       object mnuSave: TMenuItem
         Locked = True
+        ShortCut = 16467
         Text = '&Save'
         OnClick = mnuSaveClick
       end
@@ -80,6 +83,7 @@ object Form1: TForm1
     Size.Width = 640.000000000000000000
     Size.Height = 480.000000000000000000
     Size.PlatformDefault = False
+    Visible = False
     TabOrder = 2
     object lButtons: TLayout
       Align = Center
@@ -124,8 +128,256 @@ object Form1: TForm1
     Size.Width = 640.000000000000000000
     Size.Height = 480.000000000000000000
     Size.PlatformDefault = False
-    Visible = False
     TabOrder = 3
+    object tvProject: TTreeView
+      Align = Left
+      Size.Width = 300.000000000000000000
+      Size.Height = 480.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 0
+      OnChange = tvProjectChange
+      Viewport.Width = 296.000000000000000000
+      Viewport.Height = 476.000000000000000000
+    end
+    object Splitter1: TSplitter
+      Align = Left
+      Cursor = crHSplit
+      MinSize = 20.000000000000000000
+      Position.X = 300.000000000000000000
+      Size.Width = 10.000000000000000000
+      Size.Height = 480.000000000000000000
+      Size.PlatformDefault = False
+    end
+    object tcProject: TTabControl
+      Align = Client
+      Size.Width = 330.000000000000000000
+      Size.Height = 480.000000000000000000
+      Size.PlatformDefault = False
+      TabIndex = 0
+      TabOrder = 2
+      TabPosition = PlatformDefault
+      Sizes = (
+        330s
+        454s
+        330s
+        454s
+        330s
+        454s)
+      object tiProjectEdit: TTabItem
+        CustomIcon = <
+          item
+          end>
+        IsSelected = True
+        Size.Width = 84.000000000000000000
+        Size.Height = 26.000000000000000000
+        Size.PlatformDefault = False
+        StyleLookup = ''
+        TabOrder = 0
+        Text = 'tiProjectEdit'
+        ExplicitSize.cx = 84.000000000000000000
+        ExplicitSize.cy = 26.000000000000000000
+        object VertScrollBox1: TVertScrollBox
+          Align = Client
+          Size.Width = 330.000000000000000000
+          Size.Height = 454.000000000000000000
+          Size.PlatformDefault = False
+          TabOrder = 0
+          Viewport.Width = 330.000000000000000000
+          Viewport.Height = 454.000000000000000000
+          object lblProjectDescription: TLabel
+            Align = Top
+            Margins.Left = 10.000000000000000000
+            Margins.Top = 10.000000000000000000
+            Margins.Right = 10.000000000000000000
+            Margins.Bottom = 5.000000000000000000
+            Position.X = 10.000000000000000000
+            Position.Y = 79.000000000000000000
+            Size.Width = 310.000000000000000000
+            Size.Height = 17.000000000000000000
+            Size.PlatformDefault = False
+            Text = 'Project description'
+            TabOrder = 2
+          end
+          object edtProjectName: TEdit
+            Touch.InteractiveGestures = [LongTap, DoubleTap]
+            Align = Top
+            TabOrder = 1
+            Position.X = 10.000000000000000000
+            Position.Y = 37.000000000000000000
+            Margins.Left = 10.000000000000000000
+            Margins.Top = 5.000000000000000000
+            Margins.Right = 10.000000000000000000
+            Margins.Bottom = 10.000000000000000000
+            Size.Width = 310.000000000000000000
+            Size.Height = 22.000000000000000000
+            Size.PlatformDefault = False
+            OnChange = edtProjectNameChange
+            OnChangeTracking = edtProjectNameChange
+          end
+          object lblProjectName: TLabel
+            Align = Top
+            Margins.Left = 10.000000000000000000
+            Margins.Top = 10.000000000000000000
+            Margins.Right = 10.000000000000000000
+            Margins.Bottom = 5.000000000000000000
+            Position.X = 10.000000000000000000
+            Position.Y = 10.000000000000000000
+            Size.Width = 310.000000000000000000
+            Size.Height = 17.000000000000000000
+            Size.PlatformDefault = False
+            Text = 'Project name'
+            TabOrder = 0
+          end
+          object lblProjectDelphiUnitName: TLabel
+            Align = Top
+            Margins.Left = 10.000000000000000000
+            Margins.Top = 10.000000000000000000
+            Margins.Right = 10.000000000000000000
+            Margins.Bottom = 5.000000000000000000
+            Position.X = 10.000000000000000000
+            Position.Y = 226.000000000000000000
+            Size.Width = 310.000000000000000000
+            Size.Height = 17.000000000000000000
+            Size.PlatformDefault = False
+            Text = 'Delphi unit name'
+            TabOrder = 4
+          end
+          object edtProjectDelphiUnitName: TEdit
+            Touch.InteractiveGestures = [LongTap, DoubleTap]
+            Align = Top
+            TabOrder = 5
+            Position.X = 10.000000000000000000
+            Position.Y = 253.000000000000000000
+            Margins.Left = 10.000000000000000000
+            Margins.Top = 5.000000000000000000
+            Margins.Right = 10.000000000000000000
+            Margins.Bottom = 10.000000000000000000
+            Size.Width = 310.000000000000000000
+            Size.Height = 22.000000000000000000
+            Size.PlatformDefault = False
+          end
+          object edtProjectDescription: TMemo
+            Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
+            DataDetectorTypes = []
+            Align = Top
+            Margins.Left = 10.000000000000000000
+            Margins.Top = 5.000000000000000000
+            Margins.Right = 10.000000000000000000
+            Margins.Bottom = 10.000000000000000000
+            Position.X = 10.000000000000000000
+            Position.Y = 106.000000000000000000
+            Size.Width = 310.000000000000000000
+            Size.Height = 100.000000000000000000
+            Size.PlatformDefault = False
+            TabOrder = 3
+            Viewport.Width = 306.000000000000000000
+            Viewport.Height = 96.000000000000000000
+          end
+          object GridPanelLayout1: TGridPanelLayout
+            Align = Top
+            Position.Y = 285.000000000000000000
+            Size.Width = 330.000000000000000000
+            Size.Height = 68.000000000000000000
+            Size.PlatformDefault = False
+            TabOrder = 6
+            ColumnCollection = <
+              item
+                Value = 50.000000000000000000
+              end
+              item
+                Value = 50.000000000000000000
+              end>
+            ControlCollection = <
+              item
+                Column = 0
+                Control = btnProjectSave
+                Row = 0
+              end
+              item
+                Column = 1
+                Control = btnProjectCancel
+                Row = 0
+              end>
+            RowCollection = <
+              item
+                Value = 100.000000000000000000
+              end>
+            object btnProjectSave: TButton
+              Align = Client
+              Margins.Left = 10.000000000000000000
+              Margins.Top = 10.000000000000000000
+              Margins.Right = 10.000000000000000000
+              Margins.Bottom = 10.000000000000000000
+              Size.Width = 145.000000000000000000
+              Size.Height = 48.000000000000000000
+              Size.PlatformDefault = False
+              TabOrder = 0
+              Text = 'Save'
+              OnClick = btnProjectSaveClick
+            end
+            object btnProjectCancel: TButton
+              Align = Client
+              Margins.Left = 10.000000000000000000
+              Margins.Top = 10.000000000000000000
+              Margins.Right = 10.000000000000000000
+              Margins.Bottom = 10.000000000000000000
+              Size.Width = 145.000000000000000000
+              Size.Height = 48.000000000000000000
+              Size.PlatformDefault = False
+              TabOrder = 1
+              Text = 'Cancel'
+              OnClick = btnProjectCancelClick
+            end
+          end
+        end
+      end
+      object tiMessageEdit: TTabItem
+        CustomIcon = <
+          item
+          end>
+        IsSelected = False
+        Size.Width = 94.000000000000000000
+        Size.Height = 26.000000000000000000
+        Size.PlatformDefault = False
+        StyleLookup = ''
+        TabOrder = 0
+        Text = 'tiMessageEdit'
+        ExplicitSize.cx = 94.000000000000000000
+        ExplicitSize.cy = 26.000000000000000000
+        object VertScrollBox2: TVertScrollBox
+          Align = Client
+          Size.Width = 330.000000000000000000
+          Size.Height = 454.000000000000000000
+          Size.PlatformDefault = False
+          TabOrder = 0
+          Viewport.Width = 330.000000000000000000
+          Viewport.Height = 454.000000000000000000
+        end
+      end
+      object tiFieldEdit: TTabItem
+        CustomIcon = <
+          item
+          end>
+        IsSelected = False
+        Size.Width = 73.000000000000000000
+        Size.Height = 26.000000000000000000
+        Size.PlatformDefault = False
+        StyleLookup = ''
+        TabOrder = 0
+        Text = 'tiFieldEdit'
+        ExplicitSize.cx = 73.000000000000000000
+        ExplicitSize.cy = 26.000000000000000000
+        object VertScrollBox3: TVertScrollBox
+          Align = Client
+          Size.Width = 330.000000000000000000
+          Size.Height = 454.000000000000000000
+          Size.PlatformDefault = False
+          TabOrder = 0
+          Viewport.Width = 330.000000000000000000
+          Viewport.Height = 454.000000000000000000
+        end
+      end
+    end
   end
   object OpenDialog1: TOpenDialog
     DefaultExt = 'smgdat'

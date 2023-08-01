@@ -18,7 +18,13 @@ uses
   FMX.Controls.Presentation,
   FMX.StdCtrls,
   FMX.Layouts,
-  uProject;
+  uProject,
+  FMX.TabControl,
+  FMX.TreeView,
+  FMX.Memo.Types,
+  FMX.ScrollBox,
+  FMX.Memo,
+  FMX.Edit;
 
 type
 {$SCOPEDENUMS ON}
@@ -45,6 +51,24 @@ type
     lProjectScreen: TLayout;
     OpenDialog1: TOpenDialog;
     SaveDialog1: TSaveDialog;
+    tvProject: TTreeView;
+    Splitter1: TSplitter;
+    tcProject: TTabControl;
+    tiProjectEdit: TTabItem;
+    tiMessageEdit: TTabItem;
+    tiFieldEdit: TTabItem;
+    VertScrollBox1: TVertScrollBox;
+    VertScrollBox2: TVertScrollBox;
+    VertScrollBox3: TVertScrollBox;
+    lblProjectDescription: TLabel;
+    edtProjectName: TEdit;
+    lblProjectName: TLabel;
+    lblProjectDelphiUnitName: TLabel;
+    edtProjectDelphiUnitName: TEdit;
+    edtProjectDescription: TMemo;
+    GridPanelLayout1: TGridPanelLayout;
+    btnProjectSave: TButton;
+    btnProjectCancel: TButton;
     procedure FormCreate(Sender: TObject);
     procedure mnuQuitClick(Sender: TObject);
     procedure mnuAboutClick(Sender: TObject);
@@ -56,6 +80,10 @@ type
     procedure mnuCloseClick(Sender: TObject);
     procedure mnuSaveClick(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
+    procedure tvProjectChange(Sender: TObject);
+    procedure edtProjectNameChange(Sender: TObject);
+    procedure btnProjectCancelClick(Sender: TObject);
+    procedure btnProjectSaveClick(Sender: TObject);
   private
     FOpenedProject: TProject;
     FCurrentScreen: TSMGScreen;
@@ -66,6 +94,9 @@ type
     procedure InitProjectScreen;
     procedure UpdateButtonsAndMenus;
     procedure RefreshFormCaption;
+    procedure InitEditProjectTab;
+    procedure InitEditMessageTab;
+    procedure InitEditFieldTab;
   public
     property OpenedProject: TProject read FOpenedProject write SetOpenedProject;
     property CurrentScreen: TSMGScreen read FCurrentScreen
@@ -84,6 +115,39 @@ uses
   System.IOUtils,
   u_urlOpen;
 
+procedure TForm1.btnProjectCancelClick(Sender: TObject);
+begin
+  InitEditProjectTab;
+end;
+
+procedure TForm1.btnProjectSaveClick(Sender: TObject);
+begin
+  edtProjectName.Text := edtProjectName.Text.trim;
+  if edtProjectName.Text.IsEmpty then
+  begin
+    edtProjectName.SetFocus;
+    raise Exception.Create('Your project needs a name !');
+  end;
+  OpenedProject.Name := edtProjectName.Text;
+  (tvProject.tagobject as ttreeviewitem).Text := OpenedProject.Name;
+  RefreshFormCaption;
+
+  OpenedProject.Description := edtProjectDescription.Text;
+
+  edtProjectDelphiUnitName.Text := edtProjectDelphiUnitName.Text.trim;
+  if edtProjectDelphiUnitName.Text.IsEmpty then
+    OpenedProject.DelphiUnitName := ''
+  else
+    OpenedProject.DelphiUnitName :=
+      ToDelphiConst(edtProjectDelphiUnitName.Text);
+end;
+
+procedure TForm1.edtProjectNameChange(Sender: TObject);
+begin
+  edtProjectDelphiUnitName.TextPrompt := OpenedProject.DefaultDelphiUnitName
+    (edtProjectName.Text);
+end;
+
 procedure TForm1.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
 begin
   mnuCloseClick(Sender);
@@ -93,6 +157,7 @@ procedure TForm1.FormCreate(Sender: TObject);
 begin
   FOpenedProject := nil;
   FCurrentScreen := TSMGScreen.None;
+  tcProject.TabPosition := TTabPosition.None;
 
   // Window title
   RefreshFormCaption;
@@ -118,14 +183,71 @@ begin
     freeandnil(OpenedProject);
 end;
 
+procedure TForm1.InitEditFieldTab;
+begin
+  // TODO : à compléter
+end;
+
+procedure TForm1.InitEditMessageTab;
+begin
+  // TODO : à compléter
+end;
+
+procedure TForm1.InitEditProjectTab;
+begin
+  edtProjectName.Text := OpenedProject.Name;
+  edtProjectDescription.Text := OpenedProject.Description;
+  if (OpenedProject.DelphiUnitName = OpenedProject.DefaultDelphiUnitName) then
+    edtProjectDelphiUnitName.Text := ''
+  else
+    edtProjectDelphiUnitName.Text := OpenedProject.DelphiUnitName;
+
+  tthread.ForceQueue(nil,
+    procedure
+    begin
+      edtProjectName.SetFocus;
+    end);
+end;
+
 procedure TForm1.InitHomeScreen;
 begin
   RefreshFormCaption;
 end;
 
 procedure TForm1.InitProjectScreen;
+var
+  msg: tmessage;
+  fld: TMessageField;
+  ProjectItem, MessageItem, FieldItem: ttreeviewitem;
 begin
-  // TODO : à compléter
+  tvProject.Clear;
+  tvProject.tagobject := nil;
+
+  ProjectItem := ttreeviewitem.Create(tvProject);
+  ProjectItem.Parent := tvProject;
+  ProjectItem.Text := OpenedProject.Name;
+  ProjectItem.tagobject := OpenedProject;
+  ProjectItem.Tag := 0;
+
+  for msg in OpenedProject.Messages do
+  begin
+    MessageItem := ttreeviewitem.Create(tvProject);
+    MessageItem.Parent := ProjectItem;
+    MessageItem.Text := msg.Name;
+    MessageItem.tagobject := msg;
+    MessageItem.Tag := 1;
+    for fld in msg.Fields do
+    begin
+      FieldItem := ttreeviewitem.Create(tvProject);
+      FieldItem.Parent := MessageItem;
+      FieldItem.Text := fld.Name;
+      FieldItem.tagobject := fld;
+      FieldItem.Tag := 2;
+    end;
+  end;
+
+  tvProject.Selected := ProjectItem;
+
   RefreshFormCaption;
 end;
 
@@ -244,35 +366,22 @@ begin
   if FCurrentScreen = Value then
     exit;
 
-  case FCurrentScreen of
-    TSMGScreen.None:
-      ;
-    TSMGScreen.Home:
-      lHomeScreen.Visible := false;
-    TSMGScreen.Project:
-      lProjectScreen.Visible := false;
-  else
-    raise exception.Create('Can''t hide screen ' + ord(FCurrentScreen)
-      .tostring + ' !');
-  end;
-
   FCurrentScreen := Value;
 
   case FCurrentScreen of
     TSMGScreen.Home:
-      begin
-        InitHomeScreen;
-        lHomeScreen.Visible := true;
-      end;
+      InitHomeScreen;
     TSMGScreen.Project:
-      begin
-        InitProjectScreen;
-        lProjectScreen.Visible := true;
-      end;
+      InitProjectScreen;
+    TSMGScreen.None:
+      ;
   else
-    raise exception.Create('Can''t show screen ' + ord(FCurrentScreen)
+    raise Exception.Create('Can''t show screen ' + ord(FCurrentScreen)
       .tostring + ' !');
   end;
+
+  lHomeScreen.Visible := (FCurrentScreen = TSMGScreen.Home);
+  lProjectScreen.Visible := (FCurrentScreen = TSMGScreen.Project);
 
   UpdateButtonsAndMenus;
 end;
@@ -280,6 +389,39 @@ end;
 procedure TForm1.SetOpenedProject(const Value: TProject);
 begin
   FOpenedProject := Value;
+end;
+
+procedure TForm1.tvProjectChange(Sender: TObject);
+begin
+  if assigned(tvProject.tagobject) then
+  begin
+    // TODO : check if something has changed nd ask for a SAVE or CANCEL operation on it
+  end;
+
+  tvProject.tagobject := tvProject.Selected;
+  if assigned(tvProject.Selected) then
+  begin
+    case tvProject.Selected.Tag of
+      0:
+        begin
+          InitEditProjectTab;
+          tcProject.ActiveTab := tiProjectEdit;
+        end;
+      1:
+        begin
+          InitEditMessageTab;
+          tcProject.ActiveTab := tiMessageEdit;
+        end;
+      2:
+        begin
+          InitEditFieldTab;
+          tcProject.ActiveTab := tiFieldEdit;
+        end;
+    end;
+    tcProject.Visible := true;
+  end
+  else
+    tcProject.Visible := false;
 end;
 
 procedure TForm1.UpdateButtonsAndMenus;
