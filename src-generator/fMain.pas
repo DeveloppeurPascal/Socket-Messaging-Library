@@ -49,8 +49,8 @@ type
     btnOpenProjectFile: TButton;
     lHomeScreen: TLayout;
     lProjectScreen: TLayout;
-    OpenDialog1: TOpenDialog;
-    SaveDialog1: TSaveDialog;
+    OpenProjectDialog: TOpenDialog;
+    SaveProjectDialog: TSaveDialog;
     tvProject: TTreeView;
     Splitter1: TSplitter;
     tcProject: TTabControl;
@@ -69,6 +69,9 @@ type
     GridPanelLayout1: TGridPanelLayout;
     btnProjectSave: TButton;
     btnProjectCancel: TButton;
+    mnuProject: TMenuItem;
+    mnuDelphiExport: TMenuItem;
+    ExportSaveDialog: TSaveDialog;
     procedure FormCreate(Sender: TObject);
     procedure mnuQuitClick(Sender: TObject);
     procedure mnuAboutClick(Sender: TObject);
@@ -84,6 +87,7 @@ type
     procedure edtProjectNameChange(Sender: TObject);
     procedure btnProjectCancelClick(Sender: TObject);
     procedure btnProjectSaveClick(Sender: TObject);
+    procedure mnuDelphiExportClick(Sender: TObject);
   private
     FOpenedProject: TProject;
     FCurrentScreen: TSMGScreen;
@@ -280,6 +284,29 @@ begin
   end;
 end;
 
+procedure TForm1.mnuDelphiExportClick(Sender: TObject);
+begin
+  ExportSaveDialog.DefaultExt := 'pas';
+  ExportSaveDialog.Filter := 'Pascal file|*.pas';
+
+  if ExportSaveDialog.InitialDir.IsEmpty then
+    ExportSaveDialog.InitialDir := tpath.GetDirectoryName
+      (OpenProjectDialog.FileName);
+  // TODO : restore previous "exportsavedialog" from settings or the project settings
+
+  ExportSaveDialog.FileName := tpath.Combine(ExportSaveDialog.InitialDir,
+    OpenedProject.DelphiUnitName + '.' + ExportSaveDialog.DefaultExt);
+
+  if ExportSaveDialog.Execute and (length(trim(ExportSaveDialog.FileName)) > 0)
+    and (tpath.GetExtension(ExportSaveDialog.FileName) = '.' +
+    ExportSaveDialog.DefaultExt) then
+  begin
+    tfile.WriteAllText(ExportSaveDialog.FileName, OpenedProject.AsDelphi,
+      tencoding.UTF8);
+    ShowMessage('Project exported.');
+  end;
+end;
+
 procedure TForm1.mnuNewFileClick(Sender: TObject);
 begin
   mnuCloseClick(Sender);
@@ -293,16 +320,17 @@ procedure TForm1.mnuOpenFileClick(Sender: TObject);
 begin
   mnuCloseClick(Sender);
 
-  if OpenDialog1.InitialDir.IsEmpty then
-    OpenDialog1.InitialDir := tpath.getdocumentspath;
+  if OpenProjectDialog.InitialDir.IsEmpty then
+    OpenProjectDialog.InitialDir := tpath.getdocumentspath;
   // TODO : restore previous "initialdir" from settings
 
-  if OpenDialog1.Execute and (length(trim(OpenDialog1.FileName)) > 0) and
-    (tpath.GetExtension(OpenDialog1.FileName) = '.' + OpenDialog1.DefaultExt)
-    and tfile.Exists(OpenDialog1.FileName) then
+  if OpenProjectDialog.Execute and (length(trim(OpenProjectDialog.FileName)) >
+    0) and (tpath.GetExtension(OpenProjectDialog.FileName) = '.' +
+    OpenProjectDialog.DefaultExt) and tfile.Exists(OpenProjectDialog.FileName)
+  then
   begin
     OpenedProject := TProject.Create;
-    OpenedProject.LoadFromFile(OpenDialog1.FileName);
+    OpenedProject.LoadFromFile(OpenProjectDialog.FileName);
     CurrentScreen := TSMGScreen.Project;
   end;
 end;
@@ -329,15 +357,15 @@ begin
     exit;
   end;
 
-  if SaveDialog1.InitialDir.IsEmpty then
-    SaveDialog1.InitialDir := tpath.getdocumentspath;
+  if SaveProjectDialog.InitialDir.IsEmpty then
+    SaveProjectDialog.InitialDir := tpath.getdocumentspath;
   // TODO : restore previous "savedialog" from settings
 
-  if SaveDialog1.Execute and (length(trim(SaveDialog1.FileName)) > 0) and
-    (tpath.GetExtension(SaveDialog1.FileName) = '.' + SaveDialog1.DefaultExt)
-  then
+  if SaveProjectDialog.Execute and (length(trim(SaveProjectDialog.FileName)) >
+    0) and (tpath.GetExtension(SaveProjectDialog.FileName) = '.' +
+    SaveProjectDialog.DefaultExt) then
   begin
-    OpenedProject.SaveToFile(SaveDialog1.FileName);
+    OpenedProject.SaveToFile(SaveProjectDialog.FileName);
     RefreshFormCaption;
   end;
 end;
@@ -428,6 +456,8 @@ procedure TForm1.UpdateButtonsAndMenus;
 begin
   mnuSave.Enabled := assigned(OpenedProject);
   mnuClose.Enabled := assigned(OpenedProject);
+  mnuProject.Enabled := assigned(OpenedProject);
+  mnuDelphiExport.Enabled := assigned(OpenedProject);
 end;
 
 initialization

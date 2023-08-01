@@ -4,6 +4,7 @@ object Form1: TForm1
   Caption = 'Form1'
   ClientHeight = 480
   ClientWidth = 640
+  Position = ScreenCenter
   FormFactor.Width = 320
   FormFactor.Height = 480
   FormFactor.Devices = [Desktop]
@@ -12,7 +13,7 @@ object Form1: TForm1
   OnDestroy = FormDestroy
   DesignerMasterStyle = 0
   object MainMenu1: TMainMenu
-    Left = 384
+    Left = 192
     Top = 48
     object mnuMacOS: TMenuItem
       Text = 'mnuMacOS'
@@ -48,6 +49,14 @@ object Form1: TForm1
         OnClick = mnuQuitClick
       end
     end
+    object mnuProject: TMenuItem
+      Text = '&Project'
+      object mnuDelphiExport: TMenuItem
+        Locked = True
+        Text = 'Export as &Delphi unit'
+        OnClick = mnuDelphiExportClick
+      end
+    end
     object mnuTools: TMenuItem
       Text = '&Tools'
       object mnuOptions: TMenuItem
@@ -75,8 +84,8 @@ object Form1: TForm1
     URL = 'https://socketmessaging.developpeur-pascal.fr/'
     onURLClick = OlfAboutDialog1URLClick
     Langue = EN
-    Left = 520
-    Top = 48
+    Left = 184
+    Top = 136
   end
   object lHomeScreen: TLayout
     Align = Contents
@@ -153,7 +162,7 @@ object Form1: TForm1
       Size.Width = 330.000000000000000000
       Size.Height = 480.000000000000000000
       Size.PlatformDefault = False
-      TabIndex = 0
+      TabIndex = 1
       TabOrder = 2
       TabPosition = PlatformDefault
       Sizes = (
@@ -167,7 +176,7 @@ object Form1: TForm1
         CustomIcon = <
           item
           end>
-        IsSelected = True
+        IsSelected = False
         Size.Width = 84.000000000000000000
         Size.Height = 26.000000000000000000
         Size.PlatformDefault = False
@@ -191,12 +200,12 @@ object Form1: TForm1
             Margins.Right = 10.000000000000000000
             Margins.Bottom = 5.000000000000000000
             Position.X = 10.000000000000000000
-            Position.Y = 79.000000000000000000
+            Position.Y = 148.000000000000000000
             Size.Width = 310.000000000000000000
             Size.Height = 17.000000000000000000
             Size.PlatformDefault = False
             Text = 'Project description'
-            TabOrder = 2
+            TabOrder = 4
           end
           object edtProjectName: TEdit
             Touch.InteractiveGestures = [LongTap, DoubleTap]
@@ -235,19 +244,19 @@ object Form1: TForm1
             Margins.Right = 10.000000000000000000
             Margins.Bottom = 5.000000000000000000
             Position.X = 10.000000000000000000
-            Position.Y = 226.000000000000000000
+            Position.Y = 79.000000000000000000
             Size.Width = 310.000000000000000000
             Size.Height = 17.000000000000000000
             Size.PlatformDefault = False
             Text = 'Delphi unit name'
-            TabOrder = 4
+            TabOrder = 2
           end
           object edtProjectDelphiUnitName: TEdit
             Touch.InteractiveGestures = [LongTap, DoubleTap]
             Align = Top
-            TabOrder = 5
+            TabOrder = 3
             Position.X = 10.000000000000000000
-            Position.Y = 253.000000000000000000
+            Position.Y = 106.000000000000000000
             Margins.Left = 10.000000000000000000
             Margins.Top = 5.000000000000000000
             Margins.Right = 10.000000000000000000
@@ -265,11 +274,11 @@ object Form1: TForm1
             Margins.Right = 10.000000000000000000
             Margins.Bottom = 10.000000000000000000
             Position.X = 10.000000000000000000
-            Position.Y = 106.000000000000000000
+            Position.Y = 175.000000000000000000
             Size.Width = 310.000000000000000000
             Size.Height = 100.000000000000000000
             Size.PlatformDefault = False
-            TabOrder = 3
+            TabOrder = 5
             Viewport.Width = 306.000000000000000000
             Viewport.Height = 96.000000000000000000
           end
@@ -335,7 +344,7 @@ object Form1: TForm1
         CustomIcon = <
           item
           end>
-        IsSelected = False
+        IsSelected = True
         Size.Width = 94.000000000000000000
         Size.Height = 26.000000000000000000
         Size.PlatformDefault = False
@@ -379,20 +388,28 @@ object Form1: TForm1
       end
     end
   end
-  object OpenDialog1: TOpenDialog
+  object OpenProjectDialog: TOpenDialog
     DefaultExt = 'smgdat'
     Filter = 'Socket Messages Generator Files|*.smgdat'
     Options = [ofPathMustExist, ofFileMustExist, ofEnableSizing]
     Title = 'Open a Socket Messaging Generator project'
-    Left = 480
-    Top = 144
+    Left = 168
+    Top = 240
   end
-  object SaveDialog1: TSaveDialog
+  object SaveProjectDialog: TSaveDialog
     DefaultExt = 'smgdat'
     Filter = 'Socket Messages Generator Files|*.smgdat'
     Options = [ofOverwritePrompt, ofHideReadOnly, ofPathMustExist, ofNoReadOnlyReturn, ofEnableSizing, ofDontAddToRecent]
     Title = 'Save this project as'
-    Left = 568
-    Top = 144
+    Left = 192
+    Top = 320
+  end
+  object ExportSaveDialog: TSaveDialog
+    DefaultExt = 'pas'
+    Filter = 'Pascal file|*.pas'
+    Options = [ofOverwritePrompt, ofHideReadOnly, ofPathMustExist, ofNoReadOnlyReturn, ofEnableSizing, ofDontAddToRecent]
+    Title = 'Export to file'
+    Left = 40
+    Top = 304
   end
 end
