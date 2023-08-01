@@ -59,6 +59,7 @@ type
     procedure SortByOrder;
     constructor Create(AParent: TMessage); virtual;
     function GetMaxOrder: integer;
+    function Add(Const Value: TMessageField): integer;
   end;
 
   TMessage = class
@@ -348,6 +349,13 @@ end;
 
 { TMessageFieldsList }
 
+function TMessageFieldsList.Add(const Value: TMessageField): integer;
+begin
+  if (Value.Order < 1) then
+    Value.Order := GetMaxOrder + 1;
+  Result := inherited Add(Value);
+end;
+
 constructor TMessageFieldsList.Create(AParent: TMessage);
 begin
   inherited Create(true);
@@ -360,7 +368,7 @@ var
 begin
   Result := TJSONArray.Create;
   for i := 0 to Count - 1 do
-    Result.add(items[i].AsJSON);
+    Result.Add(items[i].AsJSON);
 end;
 
 function TMessageFieldsList.GetMaxOrder: integer;
@@ -387,7 +395,7 @@ begin
       begin
         field := TMessageField.Create(self);
         field.AsJSON := jsv as TJSONObject;
-        add(field);
+        Add(field);
       end;
   SortByOrder;
 end;
@@ -572,7 +580,7 @@ var
 begin
   Result := TJSONArray.Create;
   for i := 0 to Count - 1 do
-    Result.add(items[i].AsJSON);
+    Result.Add(items[i].AsJSON);
 end;
 
 function TMessagesList.GetDelphiImplementation: string;
@@ -760,7 +768,7 @@ begin
       begin
         msg := TMessage.Create(self);
         msg.AsJSON := jsv as TJSONObject;
-        add(msg);
+        Add(msg);
       end;
   SortByMessageID;
 end;
