@@ -9,49 +9,48 @@ uses
   System.Classes;
 
 type
-  TOlfMessageID = byte; // 256 messages (0..255)
+  TOlfSMMessageID = byte; // 256 messages (0..255)
 
-  TOlfMessageSize = word; // 65535 bytes for a message (0..65535)
+  TOlfSMMessageSize = word; // 65535 bytes for a message (0..65535)
 
-  TOlfSocketMessagingServerConnectedClient = class;
+  TOlfSMSrvConnectedClient = class;
 
-  TOlfSocketMessagingException = class(exception)
+  TOlfSMException = class(exception)
   end;
 
-  TOlfSocketMessage = class
+  TOlfSMMessage = class
   private
-    FMessageID: TOlfMessageID;
-    procedure SetMessageID(const Value: TOlfMessageID);
+    FMessageID: TOlfSMMessageID;
+
+    procedure SetMessageID(const Value: TOlfSMMessageID);
   public
-    property MessageID: TOlfMessageID read FMessageID write SetMessageID;
+    property MessageID: TOlfSMMessageID read FMessageID write SetMessageID;
     procedure LoadFromStream(Stream: TStream); virtual;
     procedure SaveToStream(Stream: TStream); virtual;
-    function GetNewInstance: TOlfSocketMessage; virtual;
+    function GetNewInstance: TOlfSMMessage; virtual;
     constructor Create; virtual;
   end;
 
-  TOlfSocketMessagesDict = TObjectDictionary<TOlfMessageID, TOlfSocketMessage>;
+  TOlfSMMessagesDict = TObjectDictionary<TOlfSMMessageID, TOlfSMMessage>;
 
-  TOlfReceivedMessageEvent = procedure(Const ASender
-    : TOlfSocketMessagingServerConnectedClient;
-    Const AMessage: TOlfSocketMessage) of object;
+  TOlfReceivedMessageEvent = procedure(Const ASender: TOlfSMSrvConnectedClient;
+    Const AMessage: TOlfSMMessage) of object;
   TOlfMessageSubscribers = TList<TOlfReceivedMessageEvent>;
-  TOlfSubscribers = TObjectDictionary<TOlfMessageID, TOlfMessageSubscribers>;
+  TOlfSubscribers = TObjectDictionary<TOlfSMMessageID, TOlfMessageSubscribers>;
 
-  IOlfSocketMessagesRegister = interface
+  IOlfSMMessagesRegister = interface
     ['{6728BA4A-44AD-415D-9436-1626920DF655}']
-    procedure RegisterMessageToReceive(AMessage: TOlfSocketMessage);
+    procedure RegisterMessageToReceive(AMessage: TOlfSMMessage);
   end;
 
-  TOlfSocketMessagingServer = class(TInterfacedObject,
-    IOlfSocketMessagesRegister)
+  TOlfSMServer = class(TInterfacedObject, IOlfSMMessagesRegister)
   private
     FThread: TThread;
     FSocket: TSocket;
     FPort: word;
     FIP: string;
     FThreadNameForDebugging: string;
-    FMessagesDict: TOlfSocketMessagesDict;
+    FMessagesDict: TOlfSMMessagesDict;
     // TODO : manage the messages list as an other class and use it here and in the client
     FSubscribers: TOlfSubscribers;
     // TODO : manage the subscribers list as an other class and use it here and in the client
@@ -66,7 +65,7 @@ type
   protected
     property Socket: TSocket read GetSocket write SetSocket;
     procedure ServerLoop; virtual;
-    function LockMessagesDict: TOlfSocketMessagesDict;
+    function LockMessagesDict: TOlfSMMessagesDict;
     procedure UnlockMessagesDict;
     function LockSubscribers: TOlfSubscribers;
     procedure UnlockSubscribers;
@@ -80,18 +79,18 @@ type
     procedure Listen; overload; virtual;
     procedure Listen(AIP: string; APort: word); overload; virtual;
     destructor Destroy; override;
-    procedure RegisterMessageToReceive(AMessage: TOlfSocketMessage);
-    procedure SubscribeToMessage(AMessageID: TOlfMessageID;
+    procedure RegisterMessageToReceive(AMessage: TOlfSMMessage);
+    procedure SubscribeToMessage(AMessageID: TOlfSMMessageID;
       aReceivedMessageEvent: TOlfReceivedMessageEvent);
-    procedure UnsubscribeToMessage(AMessageID: TOlfMessageID;
+    procedure UnsubscribeToMessage(AMessageID: TOlfSMMessageID;
       aReceivedMessageEvent: TOlfReceivedMessageEvent);
   end;
 
-  TOlfSocketMessagingServerConnectedClient = class(TInterfacedObject)
+  TOlfSMSrvConnectedClient = class(TInterfacedObject)
   private
     FThread: TThread;
     FSocket: TSocket;
-    FSocketServer: TOlfSocketMessagingServer;
+    FSocketServer: TOlfSMServer;
     FThreadNameForDebugging: string;
     procedure SetSocket(const Value: TSocket);
     function GetSocket: TSocket;
@@ -101,38 +100,35 @@ type
     property Socket: TSocket read GetSocket write SetSocket;
     procedure ClientLoop; virtual;
     procedure StartClientLoop; virtual;
-    function GetNewMessageInstance(AMessageID: TOlfMessageID)
-      : TOlfSocketMessage; virtual;
-    procedure DispatchMessage(AMessage: TOlfSocketMessage); virtual;
+    function GetNewMessageInstance(AMessageID: TOlfSMMessageID)
+      : TOlfSMMessage; virtual;
+    procedure DispatchMessage(AMessage: TOlfSMMessage); virtual;
   public
     property ThreadNameForDebugging: string read GetThreadNameForDebugging
       write SetThreadNameForDebugging;
-    constructor Create(AServer: TOlfSocketMessagingServer;
-      AClientSocket: TSocket); overload; virtual;
+    constructor Create(AServer: TOlfSMServer; AClientSocket: TSocket);
+      overload; virtual;
     constructor Create; overload; virtual;
     destructor Destroy; override;
     procedure Connect; virtual;
-    procedure SendMessage(Const AMessage: TOlfSocketMessage);
+    procedure SendMessage(Const AMessage: TOlfSMMessage);
   end;
 
-  TOlfSocketMessagingClient = class(TOlfSocketMessagingServerConnectedClient,
-    IOlfSocketMessagesRegister)
+  TOlfSMClient = class(TOlfSMSrvConnectedClient, IOlfSMMessagesRegister)
   private
     FServerPort: word;
     FServerIP: string;
-    FMessagesDict: TOlfSocketMessagesDict;
+    FMessagesDict: TOlfSMMessagesDict;
     FSubscribers: TOlfSubscribers;
     procedure SetServerIP(const Value: string);
     procedure SetServerPort(const Value: word);
-    constructor Create(AServer: TOlfSocketMessagingServer;
-      AClientSocket: TSocket); override;
+    constructor Create(AServer: TOlfSMServer; AClientSocket: TSocket); override;
     function GeServerIP: string;
     function GeServerPort: word;
   protected
-    function GetNewMessageInstance(AMessageID: byte)
-      : TOlfSocketMessage; override;
-    procedure DispatchMessage(AMessage: TOlfSocketMessage); override;
-    function LockMessagesDict: TOlfSocketMessagesDict;
+    function GetNewMessageInstance(AMessageID: byte): TOlfSMMessage; override;
+    procedure DispatchMessage(AMessage: TOlfSMMessage); override;
+    function LockMessagesDict: TOlfSMMessagesDict;
     procedure UnlockMessagesDict;
     function LockSubscribers: TOlfSubscribers;
     procedure UnlockSubscribers;
@@ -144,39 +140,83 @@ type
     constructor Create(AServerIP: string; AServerPort: word); overload; virtual;
     constructor Create; overload; override;
     destructor Destroy; override;
-    procedure RegisterMessageToReceive(AMessage: TOlfSocketMessage);
-    procedure SubscribeToMessage(AMessageID: TOlfMessageID;
+    procedure RegisterMessageToReceive(AMessage: TOlfSMMessage);
+    procedure SubscribeToMessage(AMessageID: TOlfSMMessageID;
       aReceivedMessageEvent: TOlfReceivedMessageEvent);
-    procedure UnsubscribeToMessage(AMessageID: TOlfMessageID;
+    procedure UnsubscribeToMessage(AMessageID: TOlfSMMessageID;
       aReceivedMessageEvent: TOlfReceivedMessageEvent);
   end;
+
+  // **************************************************
+  // * For compatibility with existing code
+  // * Don't use this types in a new project.
+  // **************************************************
+
+  /// <summary>
+  /// DEPRECATED : use TOlfSMMessageID
+  /// </summary>
+  TOlfMessageID = TOlfSMMessageID;
+  /// <summary>
+  /// DEPRECATED : use TOlfSMMessageSize
+  /// </summary>
+  TOlfMessageSize = TOlfSMMessageSize;
+  /// <summary>
+  /// DEPRECATED : use TOlfSMSrvConnectedClient
+  /// </summary>
+  TOlfSocketMessagingServerConnectedClient = TOlfSMSrvConnectedClient;
+  /// <summary>
+  /// DEPRECATED : use TOlfSMException
+  /// </summary>
+  TOlfSocketMessagingException = TOlfSMException;
+  /// <summary>
+  /// DEPRECATED : use TOlfSMServer
+  /// </summary>
+  TOlfSocketMessagingServer = TOlfSMServer;
+  /// <summary>
+  /// DEPRECATED : use TOlfSMClient
+  /// </summary>
+  TOlfSocketMessagingClient = TOlfSMClient;
+  /// <summary>
+  /// DEPRECATED : use TOlfSMMessage
+  /// </summary>
+  TOlfSocketMessage = TOlfSMMessage;
+  /// <summary>
+  /// DEPRECATED : use TOlfSMMessagesDict
+  /// </summary>
+  TOlfSocketMessagesDict = TOlfSMMessagesDict;
+  /// <summary>
+  /// DEPRECATED : use IOlfSMMessagesRegister
+  /// </summary>
+  IOlfSocketMessagesRegister = IOlfSMMessagesRegister;
+
+  // **************************************************
 
 implementation
 
 uses
   System.Threading;
 
-{ TOlfSocketMessagingServer }
+{ TOlfSMServer }
 
-constructor TOlfSocketMessagingServer.Create;
+constructor TOlfSMServer.Create;
 begin
   inherited;
   FIP := '';
   FPort := 0;
   FSocket := nil;
   FThread := nil;
-  FMessagesDict := TOlfSocketMessagesDict.Create([doOwnsValues]);
+  FMessagesDict := TOlfSMMessagesDict.Create([doOwnsValues]);
   FSubscribers := TOlfSubscribers.Create([doOwnsValues]);
 end;
 
-constructor TOlfSocketMessagingServer.Create(AIP: string; APort: word);
+constructor TOlfSMServer.Create(AIP: string; APort: word);
 begin
   Create;
   IP := AIP;
   Port := APort;
 end;
 
-destructor TOlfSocketMessagingServer.Destroy;
+destructor TOlfSMServer.Destroy;
 begin
   if assigned(FThread) then
     FThread.Terminate;
@@ -186,7 +226,7 @@ begin
   inherited;
 end;
 
-function TOlfSocketMessagingServer.GetIP: string;
+function TOlfSMServer.GetIP: string;
 begin
   tmonitor.Enter(self);
   try
@@ -196,7 +236,7 @@ begin
   end;
 end;
 
-function TOlfSocketMessagingServer.GetPort: word;
+function TOlfSMServer.GetPort: word;
 begin
   tmonitor.Enter(self);
   try
@@ -206,7 +246,7 @@ begin
   end;
 end;
 
-function TOlfSocketMessagingServer.GetSocket: TSocket;
+function TOlfSMServer.GetSocket: TSocket;
 begin
   tmonitor.Enter(self);
   try
@@ -216,7 +256,7 @@ begin
   end;
 end;
 
-function TOlfSocketMessagingServer.GetThreadNameForDebugging: string;
+function TOlfSMServer.GetThreadNameForDebugging: string;
 begin
   tmonitor.Enter(self);
   try
@@ -229,29 +269,28 @@ begin
   end;
 end;
 
-procedure TOlfSocketMessagingServer.Listen(AIP: string; APort: word);
+procedure TOlfSMServer.Listen(AIP: string; APort: word);
 begin
   IP := AIP;
   Port := APort;
   Listen;
 end;
 
-function TOlfSocketMessagingServer.LockMessagesDict: TOlfSocketMessagesDict;
+function TOlfSMServer.LockMessagesDict: TOlfSMMessagesDict;
 begin
   tmonitor.Enter(FMessagesDict);
   Result := FMessagesDict;
 end;
 
-function TOlfSocketMessagingServer.LockSubscribers: TOlfSubscribers;
+function TOlfSMServer.LockSubscribers: TOlfSubscribers;
 begin
   tmonitor.Enter(FSubscribers);
   Result := FSubscribers;
 end;
 
-procedure TOlfSocketMessagingServer.RegisterMessageToReceive
-  (AMessage: TOlfSocketMessage);
+procedure TOlfSMServer.RegisterMessageToReceive(AMessage: TOlfSMMessage);
 var
-  dict: TOlfSocketMessagesDict;
+  dict: TOlfSMMessagesDict;
 begin
   dict := LockMessagesDict;
   try
@@ -261,7 +300,7 @@ begin
   end;
 end;
 
-procedure TOlfSocketMessagingServer.Listen;
+procedure TOlfSMServer.Listen;
 begin
   if assigned(FThread) then
     FThread.Terminate;
@@ -278,7 +317,7 @@ begin
   FThread.Start;
 end;
 
-procedure TOlfSocketMessagingServer.ServerLoop;
+procedure TOlfSMServer.ServerLoop;
 var
   NewClientSocket: TSocket;
 begin
@@ -294,20 +333,19 @@ begin
             try
               NewClientSocket := Socket.accept(100); // wait 0.1 second max
               if assigned(NewClientSocket) then
-                TOlfSocketMessagingServerConnectedClient.Create(self,
-                  NewClientSocket).StartClientLoop;
+                TOlfSMSrvConnectedClient.Create(self, NewClientSocket)
+                  .StartClientLoop;
             except
               on e: exception do
                 exception.RaiseOuterException
-                  (TOlfSocketMessagingException.Create('Server except: ' +
-                  e.Message));
+                  (TOlfSMException.Create('Server except: ' + e.Message));
             end;
           end
         else
-          raise TOlfSocketMessagingException.Create('Server not listening.');
+          raise TOlfSMException.Create('Server not listening.');
       end
       else
-        raise TOlfSocketMessagingException.Create('Server not connected.');
+        raise TOlfSMException.Create('Server not connected.');
     finally
       Socket.Close;
     end;
@@ -316,7 +354,7 @@ begin
   end;
 end;
 
-procedure TOlfSocketMessagingServer.SetIP(const Value: string);
+procedure TOlfSMServer.SetIP(const Value: string);
 begin
   tmonitor.Enter(self);
   try
@@ -326,7 +364,7 @@ begin
   end;
 end;
 
-procedure TOlfSocketMessagingServer.SetPort(const Value: word);
+procedure TOlfSMServer.SetPort(const Value: word);
 begin
   tmonitor.Enter(self);
   try
@@ -336,7 +374,7 @@ begin
   end;
 end;
 
-procedure TOlfSocketMessagingServer.SetSocket(const Value: TSocket);
+procedure TOlfSMServer.SetSocket(const Value: TSocket);
 begin
   tmonitor.Enter(self);
   try
@@ -346,8 +384,7 @@ begin
   end;
 end;
 
-procedure TOlfSocketMessagingServer.SetThreadNameForDebugging
-  (const Value: string);
+procedure TOlfSMServer.SetThreadNameForDebugging(const Value: string);
 begin
   tmonitor.Enter(self);
   try
@@ -357,8 +394,8 @@ begin
   end;
 end;
 
-procedure TOlfSocketMessagingServer.SubscribeToMessage
-  (AMessageID: TOlfMessageID; aReceivedMessageEvent: TOlfReceivedMessageEvent);
+procedure TOlfSMServer.SubscribeToMessage(AMessageID: TOlfSMMessageID;
+aReceivedMessageEvent: TOlfReceivedMessageEvent);
 var
   sub: TOlfSubscribers;
   msgSub: TOlfMessageSubscribers;
@@ -396,40 +433,40 @@ begin
   end;
 end;
 
-procedure TOlfSocketMessagingServer.UnlockMessagesDict;
+procedure TOlfSMServer.UnlockMessagesDict;
 begin
   tmonitor.Exit(FMessagesDict);
 end;
 
-procedure TOlfSocketMessagingServer.UnlockSubscribers;
+procedure TOlfSMServer.UnlockSubscribers;
 begin
   tmonitor.Exit(FSubscribers);
 end;
 
-procedure TOlfSocketMessagingServer.UnsubscribeToMessage
-  (AMessageID: TOlfMessageID; aReceivedMessageEvent: TOlfReceivedMessageEvent);
+procedure TOlfSMServer.UnsubscribeToMessage(AMessageID: TOlfSMMessageID;
+aReceivedMessageEvent: TOlfReceivedMessageEvent);
 begin
   // TODO : unsubscribe the listener
 end;
 
-{ TOlfSocketMessagingServerConnectedClient }
+{ TOlfSMSrvConnectedClient }
 
-constructor TOlfSocketMessagingServerConnectedClient.Create
-  (AServer: TOlfSocketMessagingServer; AClientSocket: TSocket);
+constructor TOlfSMSrvConnectedClient.Create(AServer: TOlfSMServer;
+AClientSocket: TSocket);
 begin
   Create;
   FSocketServer := AServer;
   Socket := AClientSocket;
 end;
 
-procedure TOlfSocketMessagingServerConnectedClient.ClientLoop;
+procedure TOlfSMSrvConnectedClient.ClientLoop;
 var
   Buffer: TBytes;
   RecCount, i: integer;
   ms: TMemoryStream;
-  MessageSize: TOlfMessageSize;
-  MessageID: TOlfMessageID;
-  ReceivedMessage: TOlfSocketMessage;
+  MessageSize: TOlfSMMessageSize;
+  MessageID: TOlfSMMessageID;
+  ReceivedMessage: TOlfSMMessage;
 begin
   MessageSize := 0;
   ms := TMemoryStream.Create;
@@ -466,7 +503,7 @@ begin
                 ReceivedMessage.Free;
               end
             else
-              raise TOlfSocketMessagingException.Create('No message with ID ' +
+              raise TOlfSMException.Create('No message with ID ' +
                 MessageID.ToString);
             ms.Clear;
             MessageSize := 0;
@@ -480,12 +517,12 @@ begin
   end;
 end;
 
-procedure TOlfSocketMessagingServerConnectedClient.Connect;
+procedure TOlfSMSrvConnectedClient.Connect;
 begin
   // Do nothing here
 end;
 
-constructor TOlfSocketMessagingServerConnectedClient.Create;
+constructor TOlfSMSrvConnectedClient.Create;
 begin
   inherited;
   FThread := nil;
@@ -493,7 +530,7 @@ begin
   FSocketServer := nil;
 end;
 
-destructor TOlfSocketMessagingServerConnectedClient.Destroy;
+destructor TOlfSMSrvConnectedClient.Destroy;
 begin
   if assigned(FThread) then
     FThread.Terminate;
@@ -501,8 +538,7 @@ begin
   inherited;
 end;
 
-procedure TOlfSocketMessagingServerConnectedClient.DispatchMessage
-  (AMessage: TOlfSocketMessage);
+procedure TOlfSMSrvConnectedClient.DispatchMessage(AMessage: TOlfSMMessage);
 var
   Subscribers: TOlfSubscribers;
   MessageSubscribers: TOlfMessageSubscribers;
@@ -523,11 +559,11 @@ begin
   end;
 end;
 
-function TOlfSocketMessagingServerConnectedClient.GetNewMessageInstance
-  (AMessageID: TOlfMessageID): TOlfSocketMessage;
+function TOlfSMSrvConnectedClient.GetNewMessageInstance
+  (AMessageID: TOlfSMMessageID): TOlfSMMessage;
 var
-  dict: TOlfSocketMessagesDict;
-  msg: TOlfSocketMessage;
+  dict: TOlfSMMessagesDict;
+  msg: TOlfSMMessage;
 begin
   if not assigned(FSocketServer) then
     Exit(nil);
@@ -543,7 +579,7 @@ begin
   end;
 end;
 
-function TOlfSocketMessagingServerConnectedClient.GetSocket: TSocket;
+function TOlfSMSrvConnectedClient.GetSocket: TSocket;
 begin
   tmonitor.Enter(self);
   try
@@ -553,8 +589,7 @@ begin
   end;
 end;
 
-function TOlfSocketMessagingServerConnectedClient.
-  GetThreadNameForDebugging: string;
+function TOlfSMSrvConnectedClient.GetThreadNameForDebugging: string;
 begin
   tmonitor.Enter(self);
   try
@@ -567,11 +602,10 @@ begin
   end;
 end;
 
-procedure TOlfSocketMessagingServerConnectedClient.SendMessage
-  (Const AMessage: TOlfSocketMessage);
+procedure TOlfSMSrvConnectedClient.SendMessage(Const AMessage: TOlfSMMessage);
 var
   ms: TMemoryStream;
-  MessageSize: TOlfMessageSize;
+  MessageSize: TOlfSMMessageSize;
   ss: TSocketStream;
 begin
   if not assigned(AMessage) then
@@ -600,8 +634,7 @@ begin
   end;
 end;
 
-procedure TOlfSocketMessagingServerConnectedClient.SetSocket
-  (const Value: TSocket);
+procedure TOlfSMSrvConnectedClient.SetSocket(const Value: TSocket);
 begin
   tmonitor.Enter(self);
   try
@@ -611,7 +644,7 @@ begin
   end;
 end;
 
-procedure TOlfSocketMessagingServerConnectedClient.SetThreadNameForDebugging
+procedure TOlfSMSrvConnectedClient.SetThreadNameForDebugging
   (const Value: string);
 begin
   tmonitor.Enter(self);
@@ -622,7 +655,7 @@ begin
   end;
 end;
 
-procedure TOlfSocketMessagingServerConnectedClient.StartClientLoop;
+procedure TOlfSMSrvConnectedClient.StartClientLoop;
 begin
   if assigned(FThread) then
   begin
@@ -643,12 +676,12 @@ begin
     FThread.Start;
   end
   else
-    raise TOlfSocketMessagingException.Create('Can''t connect to the server.');
+    raise TOlfSMException.Create('Can''t connect to the server.');
 end;
 
-{ TOlfSocketMessagingClient }
+{ TOlfSMClient }
 
-procedure TOlfSocketMessagingClient.Connect;
+procedure TOlfSMClient.Connect;
 begin
   if assigned(Socket) then
     Socket.Free;
@@ -660,35 +693,33 @@ begin
     StartClientLoop;
   end
   else
-    raise TOlfSocketMessagingException.Create('Can''t create a socket.');
+    raise TOlfSMException.Create('Can''t create a socket.');
 end;
 
-procedure TOlfSocketMessagingClient.Connect(AServerIP: string;
-AServerPort: word);
+procedure TOlfSMClient.Connect(AServerIP: string; AServerPort: word);
 begin
   ServerIP := AServerIP;
   ServerPort := AServerPort;
   Connect;
 end;
 
-constructor TOlfSocketMessagingClient.Create;
+constructor TOlfSMClient.Create;
 begin
   inherited;
   FServerIP := '';
   FServerPort := 0;
-  FMessagesDict := TOlfSocketMessagesDict.Create([doOwnsValues]);
+  FMessagesDict := TOlfSMMessagesDict.Create([doOwnsValues]);
   FSubscribers := TOlfSubscribers.Create([doOwnsValues]);
 end;
 
-destructor TOlfSocketMessagingClient.Destroy;
+destructor TOlfSMClient.Destroy;
 begin
   FMessagesDict.Free;
   FSubscribers.Free;
   inherited;
 end;
 
-procedure TOlfSocketMessagingClient.DispatchMessage
-  (AMessage: TOlfSocketMessage);
+procedure TOlfSMClient.DispatchMessage(AMessage: TOlfSMMessage);
 var
   Subscribers: TOlfSubscribers;
   MessageSubscribers: TOlfMessageSubscribers;
@@ -706,7 +737,7 @@ begin
   end;
 end;
 
-function TOlfSocketMessagingClient.GeServerIP: string;
+function TOlfSMClient.GeServerIP: string;
 begin
   tmonitor.Enter(self);
   try
@@ -716,7 +747,7 @@ begin
   end;
 end;
 
-function TOlfSocketMessagingClient.GeServerPort: word;
+function TOlfSMClient.GeServerPort: word;
 begin
   tmonitor.Enter(self);
   try
@@ -726,11 +757,10 @@ begin
   end;
 end;
 
-function TOlfSocketMessagingClient.GetNewMessageInstance(AMessageID: byte)
-  : TOlfSocketMessage;
+function TOlfSMClient.GetNewMessageInstance(AMessageID: byte): TOlfSMMessage;
 var
-  dict: TOlfSocketMessagesDict;
-  msg: TOlfSocketMessage;
+  dict: TOlfSMMessagesDict;
+  msg: TOlfSMMessage;
 begin
   dict := LockMessagesDict;
   try
@@ -743,22 +773,21 @@ begin
   end;
 end;
 
-function TOlfSocketMessagingClient.LockMessagesDict: TOlfSocketMessagesDict;
+function TOlfSMClient.LockMessagesDict: TOlfSMMessagesDict;
 begin
   tmonitor.Enter(FMessagesDict);
   Result := FMessagesDict;
 end;
 
-function TOlfSocketMessagingClient.LockSubscribers: TOlfSubscribers;
+function TOlfSMClient.LockSubscribers: TOlfSubscribers;
 begin
   tmonitor.Enter(FSubscribers);
   Result := FSubscribers;
 end;
 
-procedure TOlfSocketMessagingClient.RegisterMessageToReceive
-  (AMessage: TOlfSocketMessage);
+procedure TOlfSMClient.RegisterMessageToReceive(AMessage: TOlfSMMessage);
 var
-  dict: TOlfSocketMessagesDict;
+  dict: TOlfSMMessagesDict;
 begin
   dict := LockMessagesDict;
   try
@@ -768,21 +797,19 @@ begin
   end;
 end;
 
-constructor TOlfSocketMessagingClient.Create(AServerIP: string;
-AServerPort: word);
+constructor TOlfSMClient.Create(AServerIP: string; AServerPort: word);
 begin
   Create;
   ServerIP := FServerIP;
   ServerPort := FServerPort;
 end;
 
-constructor TOlfSocketMessagingClient.Create(AServer: TOlfSocketMessagingServer;
-AClientSocket: TSocket);
+constructor TOlfSMClient.Create(AServer: TOlfSMServer; AClientSocket: TSocket);
 begin
-  raise TOlfSocketMessagingException.Create('Can''t use this constructor !');
+  raise TOlfSMException.Create('Can''t use this constructor !');
 end;
 
-procedure TOlfSocketMessagingClient.SetServerIP(const Value: string);
+procedure TOlfSMClient.SetServerIP(const Value: string);
 begin
   tmonitor.Enter(self);
   try
@@ -792,7 +819,7 @@ begin
   end;
 end;
 
-procedure TOlfSocketMessagingClient.SetServerPort(const Value: word);
+procedure TOlfSMClient.SetServerPort(const Value: word);
 begin
   tmonitor.Enter(self);
   try
@@ -802,8 +829,8 @@ begin
   end;
 end;
 
-procedure TOlfSocketMessagingClient.SubscribeToMessage
-  (AMessageID: TOlfMessageID; aReceivedMessageEvent: TOlfReceivedMessageEvent);
+procedure TOlfSMClient.SubscribeToMessage(AMessageID: TOlfSMMessageID;
+aReceivedMessageEvent: TOlfReceivedMessageEvent);
 var
   sub: TOlfSubscribers;
   msgSub: TOlfMessageSubscribers;
@@ -841,44 +868,44 @@ begin
   end;
 end;
 
-procedure TOlfSocketMessagingClient.UnlockMessagesDict;
+procedure TOlfSMClient.UnlockMessagesDict;
 begin
   tmonitor.Exit(FMessagesDict);
 end;
 
-procedure TOlfSocketMessagingClient.UnlockSubscribers;
+procedure TOlfSMClient.UnlockSubscribers;
 begin
   tmonitor.Exit(FSubscribers);
 end;
 
-procedure TOlfSocketMessagingClient.UnsubscribeToMessage
-  (AMessageID: TOlfMessageID; aReceivedMessageEvent: TOlfReceivedMessageEvent);
+procedure TOlfSMClient.UnsubscribeToMessage(AMessageID: TOlfSMMessageID;
+aReceivedMessageEvent: TOlfReceivedMessageEvent);
 begin
   // TODO : unsubscribe the listener
 end;
 
-{ TOlfSocketMessage }
+{ TOlfSMMessage }
 
-constructor TOlfSocketMessage.Create;
+constructor TOlfSMMessage.Create;
 begin
   FMessageID := 0;
 end;
 
-function TOlfSocketMessage.GetNewInstance: TOlfSocketMessage;
+function TOlfSMMessage.GetNewInstance: TOlfSMMessage;
 begin
-  Result := TOlfSocketMessage.Create;
+  Result := TOlfSMMessage.Create;
 end;
 
-procedure TOlfSocketMessage.LoadFromStream(Stream: TStream);
+procedure TOlfSMMessage.LoadFromStream(Stream: TStream);
 begin
   if not assigned(Stream) then
     Exit;
 
   if (Stream.Read(FMessageID, sizeof(FMessageID)) <> sizeof(FMessageID)) then
-    raise TOlfSocketMessagingException.Create('');
+    raise TOlfSMException.Create('');
 end;
 
-procedure TOlfSocketMessage.SaveToStream(Stream: TStream);
+procedure TOlfSMMessage.SaveToStream(Stream: TStream);
 begin
   if not assigned(Stream) then
     Exit;
@@ -886,7 +913,7 @@ begin
   Stream.Write(FMessageID, sizeof(FMessageID));
 end;
 
-procedure TOlfSocketMessage.SetMessageID(const Value: TOlfMessageID);
+procedure TOlfSMMessage.SetMessageID(const Value: TOlfSMMessageID);
 begin
   FMessageID := Value;
 end;
