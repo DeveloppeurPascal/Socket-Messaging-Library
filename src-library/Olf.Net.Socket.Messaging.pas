@@ -806,8 +806,8 @@ end;
 constructor TOlfSMClient.Create(AServerIP: string; AServerPort: word);
 begin
   Create;
-  ServerIP := FServerIP;
-  ServerPort := FServerPort;
+  ServerIP := AServerIP;
+  ServerPort := AServerPort;
 end;
 
 constructor TOlfSMClient.Create(AServer: TOlfSMServer; AClientSocket: TSocket);
