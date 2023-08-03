@@ -192,6 +192,7 @@ begin
   for i := 0 to Length(Texte) - 1 do
   begin
     c := Texte.Chars[i];
+    nc := '';
     if (not PremierCaractere) and
       c.IsInArray(['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']) then
       nc := c
@@ -209,7 +210,7 @@ begin
       nc := 'EUR'
     else if c.IsInArray(['$']) then
       nc := 'USD'
-    else if c.IsInArray(['_', '-', ' ']) then
+    else if c.IsInArray(['_', '-', ' ', '''']) then
       nc := '_'
     else if c.IsInArray(['à', 'â', 'ä', 'å']) then
       nc := 'a'
