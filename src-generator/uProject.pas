@@ -483,9 +483,9 @@ end;
 function TMessage.DefaultDelphiClassName(AName: string): string;
 begin
   if AName.IsEmpty then
-    Result := 'T' + ToDelphiConst(name)
+    Result := ToDelphiConst(name)
   else
-    Result := 'T' + ToDelphiConst(AName);
+    Result := ToDelphiConst(AName);
   if not Result.tolower.EndsWith('message') then
     Result := Result + 'Message';
 end;
@@ -496,6 +496,8 @@ begin
     Result := DefaultDelphiClassName
   else
     Result := FDelphiClassName;
+  if not Result.tolower.StartsWith('t') then
+    Result := 'T' + Result;
 end;
 
 procedure TMessage.SetAsJSON(const Value: TJSONObject);
