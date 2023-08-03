@@ -78,6 +78,8 @@ type
     constructor Create; overload; virtual;
     procedure Listen; overload; virtual;
     procedure Listen(AIP: string; APort: word); overload; virtual;
+    function isListening: boolean;
+    function isConnected: boolean;
     destructor Destroy; override;
     procedure RegisterMessageToReceive(AMessage: TOlfSMMessage);
     procedure SubscribeToMessage(AMessageID: TOlfSMMessageID;
@@ -270,6 +272,16 @@ begin
   end;
 end;
 
+function TOlfSMServer.isConnected: boolean;
+begin
+  Result := assigned(FSocket) and (TSocketState.connected in FSocket.State);
+end;
+
+function TOlfSMServer.isListening: boolean;
+begin
+  Result := assigned(FSocket) and (TSocketState.Listening in FSocket.State);
+end;
+
 procedure TOlfSMServer.Listen(AIP: string; APort: word);
 begin
   IP := AIP;
@@ -326,9 +338,9 @@ begin
   try
     Socket.Listen(IP, '', Port);
     try
-      if (TSocketState.connected in Socket.State) then
+      if (isConnected) then
       begin
-        if (TSocketState.listening in Socket.State) then
+        if (isListening) then
           while not TThread.CheckTerminated do
           begin
             try
@@ -620,7 +632,7 @@ begin
   if not assigned(FSocket) then
     Exit;
 
-  if not(TSocketState.connected in FSocket.State) then
+  if not isConnected then
     Exit;
 
   ms := TMemoryStream.Create;
@@ -671,7 +683,7 @@ begin
     Connect;
   end;
 
-  if (TSocketState.connected in Socket.State) then
+  if isConnected then
   begin
     FThread := TThread.CreateAnonymousThread(
       procedure
