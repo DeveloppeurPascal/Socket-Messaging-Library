@@ -157,7 +157,7 @@ object Form1: TForm1
       Size.Width = 370.000000000000000000
       Size.Height = 785.000000000000000000
       Size.PlatformDefault = False
-      TabIndex = 0
+      TabIndex = 2
       TabOrder = 1
       TabPosition = PlatformDefault
       Sizes = (
@@ -171,7 +171,7 @@ object Form1: TForm1
         CustomIcon = <
           item
           end>
-        IsSelected = True
+        IsSelected = False
         Size.Width = 84.000000000000000000
         Size.Height = 26.000000000000000000
         Size.PlatformDefault = False
@@ -572,7 +572,7 @@ object Form1: TForm1
         CustomIcon = <
           item
           end>
-        IsSelected = False
+        IsSelected = True
         Size.Width = 73.000000000000000000
         Size.Height = 26.000000000000000000
         Size.PlatformDefault = False
@@ -644,7 +644,7 @@ object Form1: TForm1
             Size.Width = 350.000000000000000000
             Size.Height = 17.000000000000000000
             Size.PlatformDefault = False
-            Text = 'Default value'
+            Text = 'Default value (used in the message constructor)'
             TabOrder = 7
           end
           object edtFieldDefaultValue: TEdit
@@ -660,6 +660,7 @@ object Form1: TForm1
             Size.Width = 350.000000000000000000
             Size.Height = 22.000000000000000000
             Size.PlatformDefault = False
+            TextPrompt = 'number, string, a fonction or nothing'
           end
           object lblFieldDelphiFieldType: TLabel
             Align = Top
