@@ -157,7 +157,7 @@ object Form1: TForm1
       Size.Width = 370.000000000000000000
       Size.Height = 785.000000000000000000
       Size.PlatformDefault = False
-      TabIndex = 1
+      TabIndex = 0
       TabOrder = 1
       TabPosition = PlatformDefault
       Sizes = (
@@ -171,7 +171,7 @@ object Form1: TForm1
         CustomIcon = <
           item
           end>
-        IsSelected = False
+        IsSelected = True
         Size.Width = 84.000000000000000000
         Size.Height = 26.000000000000000000
         Size.PlatformDefault = False
@@ -281,7 +281,7 @@ object Form1: TForm1
             Align = Top
             Position.Y = 285.000000000000000000
             Size.Width = 370.000000000000000000
-            Size.Height = 68.000000000000000000
+            Size.Height = 272.000000000000000000
             Size.PlatformDefault = False
             TabOrder = 6
             ColumnCollection = <
@@ -301,10 +301,37 @@ object Form1: TForm1
                 Column = 1
                 Control = btnProjectCancel
                 Row = 0
+              end
+              item
+                Column = 0
+                ColumnSpan = 2
+                Control = btnProjectSave
+                Row = 1
+              end
+              item
+                Column = 0
+                ColumnSpan = 2
+                Control = btnExportDelphiUnit
+                Row = 2
+              end
+              item
+                Column = 0
+                ColumnSpan = 2
+                Control = btnProjectClose
+                Row = 3
               end>
             RowCollection = <
               item
-                Value = 100.000000000000000000
+                Value = 25.000000000000000000
+              end
+              item
+                Value = 25.000000000000000000
+              end
+              item
+                Value = 25.000000000000000000
+              end
+              item
+                Value = 25.000000000000000000
               end>
             object btnProjectOk: TButton
               Align = Client
@@ -332,6 +359,45 @@ object Form1: TForm1
               Text = 'Cancel'
               OnClick = btnProjectCancelClick
             end
+            object btnProjectSave: TButton
+              Align = Client
+              Margins.Left = 10.000000000000000000
+              Margins.Top = 10.000000000000000000
+              Margins.Right = 10.000000000000000000
+              Margins.Bottom = 10.000000000000000000
+              Size.Width = 350.000000000000000000
+              Size.Height = 48.000000000000000000
+              Size.PlatformDefault = False
+              TabOrder = 2
+              Text = 'Save the project'
+              OnClick = mnuSaveClick
+            end
+            object btnExportDelphiUnit: TButton
+              Align = Client
+              Margins.Left = 10.000000000000000000
+              Margins.Top = 10.000000000000000000
+              Margins.Right = 10.000000000000000000
+              Margins.Bottom = 10.000000000000000000
+              Size.Width = 350.000000000000000000
+              Size.Height = 48.000000000000000000
+              Size.PlatformDefault = False
+              TabOrder = 3
+              Text = 'Export Delphi unit'
+              OnClick = mnuDelphiExportClick
+            end
+            object btnProjectClose: TButton
+              Align = Client
+              Margins.Left = 10.000000000000000000
+              Margins.Top = 10.000000000000000000
+              Margins.Right = 10.000000000000000000
+              Margins.Bottom = 10.000000000000000000
+              Size.Width = 350.000000000000000000
+              Size.Height = 48.000000000000000000
+              Size.PlatformDefault = False
+              TabOrder = 4
+              Text = 'Close the project'
+              OnClick = mnuCloseClick
+            end
           end
         end
       end
@@ -339,7 +405,7 @@ object Form1: TForm1
         CustomIcon = <
           item
           end>
-        IsSelected = True
+        IsSelected = False
         Size.Width = 94.000000000000000000
         Size.Height = 26.000000000000000000
         Size.PlatformDefault = False

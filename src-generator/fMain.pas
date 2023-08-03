@@ -103,6 +103,9 @@ type
     btnFieldOk: TButton;
     btnFieldCancel: TButton;
     btnFieldDelete: TButton;
+    btnProjectSave: TButton;
+    btnExportDelphiUnit: TButton;
+    btnProjectClose: TButton;
     procedure FormCreate(Sender: TObject);
     procedure mnuQuitClick(Sender: TObject);
     procedure mnuAboutClick(Sender: TObject);
