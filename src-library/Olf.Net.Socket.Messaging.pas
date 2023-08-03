@@ -112,6 +112,7 @@ type
     destructor Destroy; override;
     procedure Connect; virtual;
     procedure SendMessage(Const AMessage: TOlfSMMessage);
+    function isConnected: boolean;
   end;
 
   TOlfSMClient = class(TOlfSMSrvConnectedClient, IOlfSMMessagesRegister)
@@ -600,6 +601,11 @@ begin
   finally
     tmonitor.Exit(self);
   end;
+end;
+
+function TOlfSMSrvConnectedClient.isConnected: boolean;
+begin
+  Result := assigned(FSocket) and (TSocketState.connected in FSocket.State);
 end;
 
 procedure TOlfSMSrvConnectedClient.SendMessage(Const AMessage: TOlfSMMessage);
