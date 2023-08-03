@@ -178,65 +178,74 @@ uses
   System.Generics.Defaults;
 
 function ToDelphiConst(Texte: string; AllowDot: boolean): string;
-// TODO : move this function in DeveloppeurPascal/Librairies
 var
   c: char;
+  nc: string;
   i: integer;
   PremierCaractere: boolean;
+  UpperCase: boolean;
 begin
   Result := '';
   Texte := Texte.Trim;
   PremierCaractere := true;
+  UpperCase := true;
   for i := 0 to Length(Texte) - 1 do
   begin
     c := Texte.Chars[i];
-    if c.IsInArray(['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']) then
-    begin
-      if PremierCaractere then
-        Result := Result + '_' + c
-      else
-        Result := Result + c;
-    end
+    if (not PremierCaractere) and
+      c.IsInArray(['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']) then
+      nc := c
     else if c.tolower.IsInArray(['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i',
       'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x',
       'y', 'z']) then
-      Result := Result + c
+      nc := c
     else if c.IsInArray(['@']) then
-      Result := Result + '_'
+      nc := '_'
     else if c.IsInArray(['#']) then
-      Result := Result + '_'
+      nc := '_'
     else if c.IsInArray(['£']) then
-      Result := Result + '_'
+      nc := '_'
     else if c.IsInArray(['€']) then
-      Result := Result + 'EUR'
+      nc := 'EUR'
     else if c.IsInArray(['$']) then
-      Result := Result + 'USD'
+      nc := 'USD'
     else if c.IsInArray(['_', '-', ' ']) then
-      Result := Result + '_'
+      nc := '_'
     else if c.IsInArray(['à', 'â', 'ä', 'å']) then
-      Result := Result + 'a'
+      nc := 'a'
     else if c.IsInArray(['é', 'è', 'ë', 'ê']) then
-      Result := Result + 'e'
+      nc := 'e'
     else if c.IsInArray(['ï', 'î']) then
-      Result := Result + 'i'
+      nc := 'i'
     else if c.IsInArray(['ô', 'ö', 'ø']) then
-      Result := Result + 'o'
+      nc := 'o'
     else if c.IsInArray(['ü', 'û', 'ù']) then
-      Result := Result + 'u'
+      nc := 'u'
     else if c.IsInArray(['Š']) then
-      Result := Result + 'S'
+      nc := 'S'
     else if c.IsInArray(['ž']) then
-      Result := Result + 'z'
+      nc := 'z'
     else if c.IsInArray(['æ']) then
-      Result := Result + 'ae'
+      nc := 'ae'
     else if c.IsInArray(['ç', 'č']) then
-      Result := Result + 'c'
+      nc := 'c'
     else if AllowDot and c.IsInArray(['.']) then
-      Result := Result + '.';
-    PremierCaractere := false;
+      nc := '.';
+    if not nc.IsEmpty then
+      if nc.StartsWith('_') then
+        UpperCase := true
+      else if UpperCase then
+      begin
+        Result := Result + nc.ToUpper;
+        UpperCase := false;
+        PremierCaractere := false;
+      end
+      else
+      begin
+        Result := Result + nc;
+        PremierCaractere := false;
+      end;
   end;
-  while Result.IndexOf('__') > -1 do
-    Result := ReplaceText(Result, '__', '_');
 end;
 
 function WrapTextWithPrefix(Const Prefix, Texte: string;
@@ -483,9 +492,9 @@ end;
 function TMessage.DefaultDelphiClassName(AName: string): string;
 begin
   if AName.IsEmpty then
-    Result := ToDelphiConst(name)
+    Result := 'T' + ToDelphiConst(name)
   else
-    Result := ToDelphiConst(AName);
+    Result := 'T' + ToDelphiConst(AName);
   if not Result.tolower.EndsWith('message') then
     Result := Result + 'Message';
 end;
