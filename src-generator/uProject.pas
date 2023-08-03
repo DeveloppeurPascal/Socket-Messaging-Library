@@ -638,8 +638,10 @@ begin
     for j := 0 to msg.Fields.Count - 1 do
     begin
       fld := msg.Fields[j];
-      Result := Result + '  F' + fld.DelphiFieldName + ' := ' + fld.DefaultValue
-        + ';' + sLineBreak;
+      if (fld.DefaultValue.IsEmpty) then
+      else
+        Result := Result + '  F' + fld.DelphiFieldName + ' := ' +
+          fld.DefaultValue + ';' + sLineBreak;
     end;
     Result := Result + 'end;' + sLineBreak;
     Result := Result + sLineBreak;
