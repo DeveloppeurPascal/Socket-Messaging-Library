@@ -128,6 +128,11 @@ type
     FonLostConnection: TOlfSMClientEvent;
     FonDecodeReceivedMessage: TOlfSMEncodeDecodeMessageEvent;
     FonEncodeMessageToSend: TOlfSMEncodeDecodeMessageEvent;
+    FTagBool: boolean;
+    FTagFloat: single;
+    FTagObject: TObject;
+    FTagString: string;
+    FTag: nativeint;
     procedure SetSocket(const Value: TSocket);
     function GetSocket: TSocket;
     function GetThreadNameForDebugging: string;
@@ -139,6 +144,11 @@ type
       : TOlfSMEncodeDecodeMessageEvent);
     procedure SetonEncodeMessageToSend(const Value
       : TOlfSMEncodeDecodeMessageEvent);
+    procedure SetTag(const Value: nativeint);
+    procedure SetTagBool(const Value: boolean);
+    procedure SetTagFloat(const Value: single);
+    procedure SetTagObject(const Value: TObject);
+    procedure SetTagString(const Value: string);
   protected
     property Socket: TSocket read GetSocket write SetSocket;
     procedure ClientLoop; virtual;
@@ -159,6 +169,11 @@ type
       read FonEncodeMessageToSend write SetonEncodeMessageToSend;
     property onDecodeReceivedMessage: TOlfSMEncodeDecodeMessageEvent
       read FonDecodeReceivedMessage write SetonDecodeReceivedMessage;
+    property Tag: nativeint read FTag write SetTag;
+    property TagBool: boolean read FTagBool write SetTagBool;
+    property TagString: string read FTagString write SetTagString;
+    property TagFloat: single read FTagFloat write SetTagFloat;
+    property TagObject: TObject read FTagObject write SetTagObject;
     constructor Create(AServer: TOlfSMServer; AClientSocket: TSocket);
       overload; virtual;
     constructor Create; overload; virtual;
@@ -902,6 +917,31 @@ begin
   finally
     tmonitor.Exit(self);
   end;
+end;
+
+procedure TOlfSMSrvConnectedClient.SetTag(const Value: nativeint);
+begin
+  FTag := Value;
+end;
+
+procedure TOlfSMSrvConnectedClient.SetTagBool(const Value: boolean);
+begin
+  FTagBool := Value;
+end;
+
+procedure TOlfSMSrvConnectedClient.SetTagFloat(const Value: single);
+begin
+  FTagFloat := Value;
+end;
+
+procedure TOlfSMSrvConnectedClient.SetTagObject(const Value: TObject);
+begin
+  FTagObject := Value;
+end;
+
+procedure TOlfSMSrvConnectedClient.SetTagString(const Value: string);
+begin
+  FTagString := Value;
 end;
 
 procedure TOlfSMSrvConnectedClient.SetThreadNameForDebugging
