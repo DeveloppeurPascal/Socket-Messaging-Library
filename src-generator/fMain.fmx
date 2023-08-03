@@ -157,7 +157,7 @@ object Form1: TForm1
       Size.Width = 370.000000000000000000
       Size.Height = 785.000000000000000000
       Size.PlatformDefault = False
-      TabIndex = 2
+      TabIndex = 1
       TabOrder = 1
       TabPosition = PlatformDefault
       Sizes = (
@@ -339,7 +339,7 @@ object Form1: TForm1
         CustomIcon = <
           item
           end>
-        IsSelected = False
+        IsSelected = True
         Size.Width = 94.000000000000000000
         Size.Height = 26.000000000000000000
         Size.PlatformDefault = False
@@ -536,7 +536,7 @@ object Form1: TForm1
             Size.Height = 19.000000000000000000
             Size.PlatformDefault = False
             TabOrder = 7
-            Text = 'Register on the server'
+            Text = 'Received by the server'
           end
           object cbMessageRegisterOnClient: TCheckBox
             Align = Top
@@ -550,7 +550,7 @@ object Form1: TForm1
             Size.Height = 19.000000000000000000
             Size.PlatformDefault = False
             TabOrder = 8
-            Text = 'Register on the client'
+            Text = 'Received by the client'
           end
           object lblMessageID: TLabel
             Align = MostTop
@@ -572,7 +572,7 @@ object Form1: TForm1
         CustomIcon = <
           item
           end>
-        IsSelected = True
+        IsSelected = False
         Size.Width = 73.000000000000000000
         Size.Height = 26.000000000000000000
         Size.PlatformDefault = False
