@@ -486,6 +486,8 @@ begin
     Result := 'T' + ToDelphiConst(name)
   else
     Result := 'T' + ToDelphiConst(AName);
+  if not Result.tolower.EndsWith('message') then
+    Result := Result + 'Message';
 end;
 
 function TMessage.GetDelphiClassName: string;
