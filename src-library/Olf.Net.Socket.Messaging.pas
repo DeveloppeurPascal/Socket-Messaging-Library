@@ -15,6 +15,7 @@ type
 
   TOlfSMServer = class;
   TOlfSMSrvConnectedClient = class;
+  TOlfSMSrvConnectedClientsList = class;
   TOlfSMClient = class;
 
   TOlfSMException = class(exception)
@@ -58,11 +59,12 @@ type
     FMessagesDict: TOlfSMMessagesDict;
     // TODO : manage the messages list as an other class and use it here and in the client
     FSubscribers: TOlfSubscribers;
+    // TODO : manage the subscribers list as an other class and use it here and in the client
     FonServerConnected: TOlfSMServerEvent;
     FonServerDisconnected: TOlfSMServerEvent;
     FonDecodeReceivedMessage: TOlfSMEncodeDecodeMessageEvent;
     FonEncodeMessageToSend: TOlfSMEncodeDecodeMessageEvent;
-    // TODO : manage the subscribers list as an other class and use it here and in the client
+    FConnectedClients: TOlfSMSrvConnectedClientsList;
     procedure SetIP(const Value: string);
     procedure SetPort(const Value: word);
     procedure SetSocket(const Value: TSocket);
@@ -84,6 +86,7 @@ type
     procedure UnlockMessagesDict;
     function LockSubscribers: TOlfSubscribers;
     procedure UnlockSubscribers;
+    procedure DoRemoveConnectedClient(AClient: TOlfSMSrvConnectedClient);
   public
     property IP: string read GetIP write SetIP;
     property Port: word read GetPort write SetPort;
@@ -111,7 +114,7 @@ type
       aReceivedMessageEvent: TOlfReceivedMessageEvent);
   end;
 
-  TOlfSMClientEvent = procedure(AServer: TOlfSMSrvConnectedClient) of object;
+  TOlfSMClientEvent = procedure(AClient: TOlfSMSrvConnectedClient) of object;
 
   TOlfSMSrvConnectedClient = class(TInterfacedObject)
   private
@@ -162,6 +165,9 @@ type
     procedure Connect; virtual;
     procedure SendMessage(Const AMessage: TOlfSMMessage);
     function isConnected: boolean;
+  end;
+
+  TOlfSMSrvConnectedClientsList = class(TThreadList<TOlfSMSrvConnectedClient>)
   end;
 
   TOlfSMClient = class(TOlfSMSrvConnectedClient, IOlfSMMessagesRegister)
@@ -257,6 +263,7 @@ begin
   FThread := nil;
   FMessagesDict := TOlfSMMessagesDict.Create([doOwnsValues]);
   FSubscribers := TOlfSubscribers.Create([doOwnsValues]);
+  FConnectedClients := TOlfSMSrvConnectedClientsList.Create;
 end;
 
 constructor TOlfSMServer.Create(AIP: string; APort: word);
@@ -271,9 +278,16 @@ begin
   if assigned(FThread) then
     FThread.Terminate;
   // FSocket.Free; // done by the thread
+  FConnectedClients.Free;
   FMessagesDict.Free;
   FSubscribers.Free;
   inherited;
+end;
+
+procedure TOlfSMServer.DoRemoveConnectedClient
+  (AClient: TOlfSMSrvConnectedClient);
+begin
+  FConnectedClients.Remove(AClient);
 end;
 
 function TOlfSMServer.GetIP: string;
@@ -380,6 +394,7 @@ end;
 procedure TOlfSMServer.ServerLoop;
 var
   NewClientSocket: TSocket;
+  SrvClient: TOlfSMSrvConnectedClient;
 begin
   Socket := TSocket.Create(tsockettype.tcp, tencoding.UTF8);
   try
@@ -401,8 +416,14 @@ begin
             try
               NewClientSocket := Socket.accept(100); // wait 0.1 second max
               if assigned(NewClientSocket) then
-                TOlfSMSrvConnectedClient.Create(self, NewClientSocket)
-                  .StartClientLoop;
+              begin
+                SrvClient := TOlfSMSrvConnectedClient.Create(self,
+                  NewClientSocket);
+                FConnectedClients.Add(SrvClient);
+                SrvClient.onLostConnection := DoRemoveConnectedClient;
+                SrvClient.onDisconnected := SrvClient.onLostConnection;
+                SrvClient.StartClientLoop;
+              end
             except
               on e: exception do
                 exception.RaiseOuterException
