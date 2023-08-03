@@ -106,6 +106,7 @@ type
     btnProjectSave: TButton;
     btnExportDelphiUnit: TButton;
     btnProjectClose: TButton;
+    Label1: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure mnuQuitClick(Sender: TObject);
     procedure mnuAboutClick(Sender: TObject);
