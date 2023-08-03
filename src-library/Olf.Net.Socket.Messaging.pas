@@ -46,6 +46,7 @@ type
   end;
 
   TOlfSMServerEvent = procedure(AServer: TOlfSMServer) of object;
+  TOlfSMEncodeDecodeMessageEvent = function(AFrom: TStream): TStream of object;
 
   TOlfSMServer = class(TInterfacedObject, IOlfSMMessagesRegister)
   private
@@ -59,6 +60,8 @@ type
     FSubscribers: TOlfSubscribers;
     FonServerConnected: TOlfSMServerEvent;
     FonServerDisconnected: TOlfSMServerEvent;
+    FonDecodeReceivedMessage: TOlfSMEncodeDecodeMessageEvent;
+    FonEncodeMessageToSend: TOlfSMEncodeDecodeMessageEvent;
     // TODO : manage the subscribers list as an other class and use it here and in the client
     procedure SetIP(const Value: string);
     procedure SetPort(const Value: word);
@@ -70,6 +73,10 @@ type
     function GetThreadNameForDebugging: string;
     procedure SetonServerConnected(const Value: TOlfSMServerEvent);
     procedure SetonServerDisconnected(const Value: TOlfSMServerEvent);
+    procedure SetonDecodeReceivedMessage(const Value
+      : TOlfSMEncodeDecodeMessageEvent);
+    procedure SetonEncodeMessageToSend(const Value
+      : TOlfSMEncodeDecodeMessageEvent);
   protected
     property Socket: TSocket read GetSocket write SetSocket;
     procedure ServerLoop; virtual;
@@ -86,6 +93,10 @@ type
       write SetonServerConnected;
     property onServerDisconnected: TOlfSMServerEvent read FonServerDisconnected
       write SetonServerDisconnected;
+    property onEncodeMessageToSend: TOlfSMEncodeDecodeMessageEvent
+      read FonEncodeMessageToSend write SetonEncodeMessageToSend;
+    property onDecodeReceivedMessage: TOlfSMEncodeDecodeMessageEvent
+      read FonDecodeReceivedMessage write SetonDecodeReceivedMessage;
     constructor Create(AIP: string; APort: word); overload; virtual;
     constructor Create; overload; virtual;
     procedure Listen; overload; virtual;
@@ -111,6 +122,8 @@ type
     FonConnected: TOlfSMClientEvent;
     FonDisconnected: TOlfSMClientEvent;
     FonLostConnection: TOlfSMClientEvent;
+    FonDecodeReceivedMessage: TOlfSMEncodeDecodeMessageEvent;
+    FonEncodeMessageToSend: TOlfSMEncodeDecodeMessageEvent;
     procedure SetSocket(const Value: TSocket);
     function GetSocket: TSocket;
     function GetThreadNameForDebugging: string;
@@ -118,6 +131,10 @@ type
     procedure SetonConnected(const Value: TOlfSMClientEvent);
     procedure SetonDisconnected(const Value: TOlfSMClientEvent);
     procedure SetonLostConnection(const Value: TOlfSMClientEvent);
+    procedure SetonDecodeReceivedMessage(const Value
+      : TOlfSMEncodeDecodeMessageEvent);
+    procedure SetonEncodeMessageToSend(const Value
+      : TOlfSMEncodeDecodeMessageEvent);
   protected
     property Socket: TSocket read GetSocket write SetSocket;
     procedure ClientLoop; virtual;
@@ -134,6 +151,10 @@ type
       write SetonLostConnection;
     property onDisconnected: TOlfSMClientEvent read FonDisconnected
       write SetonDisconnected;
+    property onEncodeMessageToSend: TOlfSMEncodeDecodeMessageEvent
+      read FonEncodeMessageToSend write SetonEncodeMessageToSend;
+    property onDecodeReceivedMessage: TOlfSMEncodeDecodeMessageEvent
+      read FonDecodeReceivedMessage write SetonDecodeReceivedMessage;
     constructor Create(AServer: TOlfSMServer; AClientSocket: TSocket);
       overload; virtual;
     constructor Create; overload; virtual;
@@ -419,6 +440,18 @@ begin
   end;
 end;
 
+procedure TOlfSMServer.SetonDecodeReceivedMessage
+  (const Value: TOlfSMEncodeDecodeMessageEvent);
+begin
+  FonDecodeReceivedMessage := Value;
+end;
+
+procedure TOlfSMServer.SetonEncodeMessageToSend(const Value
+  : TOlfSMEncodeDecodeMessageEvent);
+begin
+  FonEncodeMessageToSend := Value;
+end;
+
 procedure TOlfSMServer.SetonServerConnected(const Value: TOlfSMServerEvent);
 begin
   FonServerConnected := Value;
@@ -529,6 +562,7 @@ var
   Buffer: TBytes;
   RecCount, i: integer;
   ms: TMemoryStream;
+  msDecoded: TStream;
   MessageSize: TOlfSMMessageSize;
   MessageID: TOlfSMMessageID;
   ReceivedMessage: TOlfSMMessage;
@@ -567,13 +601,25 @@ begin
               else if ms.Size = MessageSize then
               begin
                 // message received
-                ms.Position := 0;
-                ms.Read(MessageID, sizeof(MessageID));
+                if assigned(FSocketServer) and
+                  assigned(FSocketServer.onDecodeReceivedMessage) then
+                  onDecodeReceivedMessage :=
+                    FSocketServer.onDecodeReceivedMessage;
+                if assigned(onDecodeReceivedMessage) then
+                begin
+                  msDecoded := onDecodeReceivedMessage(ms);
+                  if not assigned(msDecoded) then
+                    msDecoded := ms;
+                end
+                else
+                  msDecoded := ms;
+                msDecoded.Position := 0;
+                msDecoded.Read(MessageID, sizeof(MessageID));
                 ReceivedMessage := GetNewMessageInstance(MessageID);
                 if assigned(ReceivedMessage) then
                   try
-                    ms.Position := 0;
-                    ReceivedMessage.LoadFromStream(ms);
+                    msDecoded.Position := 0;
+                    ReceivedMessage.LoadFromStream(msDecoded);
                     DispatchReceivedMessage(ReceivedMessage);
                   finally
                     ReceivedMessage.Free;
@@ -581,6 +627,8 @@ begin
                 else
                   raise TOlfSMException.Create('No message with ID ' +
                     MessageID.ToString);
+                if (msDecoded <> ms) then
+                  msDecoded.Free;
                 ms.Clear;
                 MessageSize := 0;
               end;
@@ -705,6 +753,7 @@ end;
 procedure TOlfSMSrvConnectedClient.SendMessage(Const AMessage: TOlfSMMessage);
 var
   ms: TMemoryStream;
+  msEncoded: TStream;
   MessageSize: TOlfSMMessageSize;
   ss: TSocketStream;
 begin
@@ -720,16 +769,29 @@ begin
   ms := TMemoryStream.Create;
   try
     AMessage.SaveToStream(ms);
+    if assigned(FSocketServer) and assigned(FSocketServer.onEncodeMessageToSend)
+    then
+      onEncodeMessageToSend := FSocketServer.onEncodeMessageToSend;
+    if assigned(onEncodeMessageToSend) then
+    begin
+      msEncoded := onEncodeMessageToSend(ms);
+      if not assigned(msEncoded) then
+        msEncoded := ms;
+    end
+    else
+      msEncoded := ms;
     ss := TSocketStream.Create(FSocket, false);
     try
-      if (ms.Size > high(TOlfSMMessageSize)) then
+      if (msEncoded.Size > high(TOlfSMMessageSize)) then
         raise exception.Create('Message too big (' + ms.Size.ToString + ').');
-      MessageSize := ms.Size;
+      MessageSize := msEncoded.Size;
       FSocket.Send(MessageSize, sizeof(MessageSize));
-      ms.Position := 0;
-      ss.CopyFrom(ms);
+      msEncoded.Position := 0;
+      ss.CopyFrom(msEncoded);
     finally
       ss.Free;
+      if msEncoded <> ms then
+        msEncoded.Free;
     end;
   finally
     ms.Free;
@@ -742,10 +804,22 @@ begin
   FonConnected := Value;
 end;
 
+procedure TOlfSMSrvConnectedClient.SetonDecodeReceivedMessage
+  (const Value: TOlfSMEncodeDecodeMessageEvent);
+begin
+  FonDecodeReceivedMessage := Value;
+end;
+
 procedure TOlfSMSrvConnectedClient.SetonDisconnected
   (const Value: TOlfSMClientEvent);
 begin
   FonDisconnected := Value;
+end;
+
+procedure TOlfSMSrvConnectedClient.SetonEncodeMessageToSend
+  (const Value: TOlfSMEncodeDecodeMessageEvent);
+begin
+  FonEncodeMessageToSend := Value;
 end;
 
 procedure TOlfSMSrvConnectedClient.SetonLostConnection
