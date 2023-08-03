@@ -104,7 +104,7 @@ type
     procedure StartClientLoop; virtual;
     function GetNewMessageInstance(AMessageID: TOlfSMMessageID)
       : TOlfSMMessage; virtual;
-    procedure DispatchMessage(AMessage: TOlfSMMessage); virtual;
+    procedure DispatchReceivedMessage(AMessage: TOlfSMMessage); virtual;
   public
     property ThreadNameForDebugging: string read GetThreadNameForDebugging
       write SetThreadNameForDebugging;
@@ -130,7 +130,7 @@ type
     function GeServerPort: word;
   protected
     function GetNewMessageInstance(AMessageID: byte): TOlfSMMessage; override;
-    procedure DispatchMessage(AMessage: TOlfSMMessage); override;
+    procedure DispatchReceivedMessage(AMessage: TOlfSMMessage); override;
     function LockMessagesDict: TOlfSMMessagesDict;
     procedure UnlockMessagesDict;
     function LockSubscribers: TOlfSubscribers;
@@ -511,7 +511,7 @@ begin
               try
                 ms.Position := 0;
                 ReceivedMessage.LoadFromStream(ms);
-                DispatchMessage(ReceivedMessage);
+                DispatchReceivedMessage(ReceivedMessage);
               finally
                 ReceivedMessage.Free;
               end
@@ -551,7 +551,7 @@ begin
   inherited;
 end;
 
-procedure TOlfSMSrvConnectedClient.DispatchMessage(AMessage: TOlfSMMessage);
+procedure TOlfSMSrvConnectedClient.DispatchReceivedMessage(AMessage: TOlfSMMessage);
 var
   Subscribers: TOlfSubscribers;
   MessageSubscribers: TOlfMessageSubscribers;
@@ -739,7 +739,7 @@ begin
   inherited;
 end;
 
-procedure TOlfSMClient.DispatchMessage(AMessage: TOlfSMMessage);
+procedure TOlfSMClient.DispatchReceivedMessage(AMessage: TOlfSMMessage);
 var
   Subscribers: TOlfSubscribers;
   MessageSubscribers: TOlfMessageSubscribers;
