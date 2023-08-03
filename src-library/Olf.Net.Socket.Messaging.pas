@@ -628,6 +628,8 @@ begin
     AMessage.SaveToStream(ms);
     ss := TSocketStream.Create(FSocket, false);
     try
+      if (ms.Size > high(TOlfSMMessageSize)) then
+        raise exception.Create('Message too big (' + ms.Size.ToString + ').');
       MessageSize := ms.Size;
       FSocket.Send(MessageSize, sizeof(MessageSize));
       ms.Position := 0;
