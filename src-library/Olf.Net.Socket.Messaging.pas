@@ -13,7 +13,9 @@ type
 
   TOlfSMMessageSize = word; // 65535 bytes for a message (0..65535)
 
+  TOlfSMServer = class;
   TOlfSMSrvConnectedClient = class;
+  TOlfSMClient = class;
 
   TOlfSMException = class(exception)
   end;
@@ -43,6 +45,8 @@ type
     procedure RegisterMessageToReceive(AMessage: TOlfSMMessage);
   end;
 
+  TOlfSMServerEvent = procedure(AServer: TOlfSMServer) of object;
+
   TOlfSMServer = class(TInterfacedObject, IOlfSMMessagesRegister)
   private
     FThread: TThread;
@@ -53,6 +57,8 @@ type
     FMessagesDict: TOlfSMMessagesDict;
     // TODO : manage the messages list as an other class and use it here and in the client
     FSubscribers: TOlfSubscribers;
+    FonServerConnected: TOlfSMServerEvent;
+    FonServerDisconnected: TOlfSMServerEvent;
     // TODO : manage the subscribers list as an other class and use it here and in the client
     procedure SetIP(const Value: string);
     procedure SetPort(const Value: word);
@@ -62,6 +68,8 @@ type
     function GetSocket: TSocket;
     procedure SetThreadNameForDebugging(const Value: string);
     function GetThreadNameForDebugging: string;
+    procedure SetonServerConnected(const Value: TOlfSMServerEvent);
+    procedure SetonServerDisconnected(const Value: TOlfSMServerEvent);
   protected
     property Socket: TSocket read GetSocket write SetSocket;
     procedure ServerLoop; virtual;
@@ -74,6 +82,10 @@ type
     property Port: word read GetPort write SetPort;
     property ThreadNameForDebugging: string read GetThreadNameForDebugging
       write SetThreadNameForDebugging;
+    property onServerConnected: TOlfSMServerEvent read FonServerConnected
+      write SetonServerConnected;
+    property onServerDisconnected: TOlfSMServerEvent read FonServerDisconnected
+      write SetonServerDisconnected;
     constructor Create(AIP: string; APort: word); overload; virtual;
     constructor Create; overload; virtual;
     procedure Listen; overload; virtual;
@@ -87,6 +99,8 @@ type
     procedure UnsubscribeToMessage(AMessageID: TOlfSMMessageID;
       aReceivedMessageEvent: TOlfReceivedMessageEvent);
   end;
+
+  TOlfSMClientEvent = procedure(AServer: TOlfSMSrvConnectedClient) of object;
 
   TOlfSMSrvConnectedClient = class(TInterfacedObject)
   private
@@ -341,6 +355,14 @@ begin
       if (isConnected) then
       begin
         if (isListening) then
+        begin
+          if assigned(onServerConnected) then
+            TThread.Synchronize(nil,
+              procedure
+              begin
+                if assigned(onServerConnected) then
+                  onServerConnected(self);
+              end);
           while not TThread.CheckTerminated do
           begin
             try
@@ -354,8 +376,16 @@ begin
                   (TOlfSMException.Create('Server except: ' + e.Message));
             end;
           end
+        end
         else
           raise TOlfSMException.Create('Server not listening.');
+        if assigned(onServerDisconnected) then
+          TThread.Synchronize(nil,
+            procedure
+            begin
+              if assigned(onServerDisconnected) then
+                onServerDisconnected(self);
+            end);
       end
       else
         raise TOlfSMException.Create('Server not connected.');
@@ -375,6 +405,16 @@ begin
   finally
     tmonitor.Exit(self);
   end;
+end;
+
+procedure TOlfSMServer.SetonServerConnected(const Value: TOlfSMServerEvent);
+begin
+  FonServerConnected := Value;
+end;
+
+procedure TOlfSMServer.SetonServerDisconnected(const Value: TOlfSMServerEvent);
+begin
+  FonServerDisconnected := Value;
 end;
 
 procedure TOlfSMServer.SetPort(const Value: word);
@@ -551,7 +591,8 @@ begin
   inherited;
 end;
 
-procedure TOlfSMSrvConnectedClient.DispatchReceivedMessage(AMessage: TOlfSMMessage);
+procedure TOlfSMSrvConnectedClient.DispatchReceivedMessage
+  (AMessage: TOlfSMMessage);
 var
   Subscribers: TOlfSubscribers;
   MessageSubscribers: TOlfMessageSubscribers;
