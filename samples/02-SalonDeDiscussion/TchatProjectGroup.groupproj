@@ -1,0 +1,48 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{629090A1-7F98-4C30-8986-354CE1FBE4F1}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="client\TchatClient.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="server\TchatServer.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="TchatClient">
+        <MSBuild Projects="client\TchatClient.dproj"/>
+    </Target>
+    <Target Name="TchatClient:Clean">
+        <MSBuild Projects="client\TchatClient.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="TchatClient:Make">
+        <MSBuild Projects="client\TchatClient.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="TchatServer">
+        <MSBuild Projects="server\TchatServer.dproj"/>
+    </Target>
+    <Target Name="TchatServer:Clean">
+        <MSBuild Projects="server\TchatServer.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="TchatServer:Make">
+        <MSBuild Projects="server\TchatServer.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="TchatClient;TchatServer"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="TchatClient:Clean;TchatServer:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="TchatClient:Make;TchatServer:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>
