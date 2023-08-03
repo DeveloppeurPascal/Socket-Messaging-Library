@@ -25,9 +25,12 @@ type
     edtPort: TEdit;
     btnStartServer: TButton;
     Memo1: TMemo;
+    Edit1: TEdit;
+    SendTextToAllClients: TButton;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure btnStartServerClick(Sender: TObject);
+    procedure SendTextToAllClientsClick(Sender: TObject);
   private
     { Déclarations privées }
     ServeurThread: TOlfSocketMessagingServer;
@@ -105,6 +108,19 @@ begin
   msg := AMessage as tmessage2;
   Memo1.Lines.Add(msg.x.tostring + ' / ' + msg.y.tostring + ' / ' +
     msg.z.tostring);
+end;
+
+procedure TfrmServer.SendTextToAllClientsClick(Sender: TObject);
+var
+  msg: TMessage1;
+begin
+  msg := TMessage1.Create;
+  try
+    msg.Texte := Edit1.Text;
+    ServeurThread.SendMessageToAll(msg);
+  finally
+    msg.Free;
+  end;
 end;
 
 initialization

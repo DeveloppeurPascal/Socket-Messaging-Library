@@ -74,10 +74,39 @@ object frmServer: TfrmServer
     Margins.Right = 10.000000000000000000
     Margins.Bottom = 10.000000000000000000
     Size.Width = 620.000000000000000000
-    Size.Height = 331.000000000000000000
+    Size.Height = 257.000000000000000000
     Size.PlatformDefault = False
-    TabOrder = 1
+    TabOrder = 3
     Viewport.Width = 616.000000000000000000
-    Viewport.Height = 327.000000000000000000
+    Viewport.Height = 253.000000000000000000
+  end
+  object Edit1: TEdit
+    Touch.InteractiveGestures = [LongTap, DoubleTap]
+    Align = Top
+    TabOrder = 1
+    Position.X = 10.000000000000000000
+    Position.Y = 139.000000000000000000
+    Margins.Left = 10.000000000000000000
+    Margins.Top = 10.000000000000000000
+    Margins.Right = 10.000000000000000000
+    Margins.Bottom = 5.000000000000000000
+    Size.Width = 620.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+  end
+  object SendTextToAllClients: TButton
+    Align = Top
+    Margins.Left = 10.000000000000000000
+    Margins.Top = 5.000000000000000000
+    Margins.Right = 10.000000000000000000
+    Margins.Bottom = 10.000000000000000000
+    Position.X = 10.000000000000000000
+    Position.Y = 171.000000000000000000
+    Size.Width = 620.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 2
+    Text = 'Send to all clients'
+    OnClick = SendTextToAllClientsClick
   end
 end

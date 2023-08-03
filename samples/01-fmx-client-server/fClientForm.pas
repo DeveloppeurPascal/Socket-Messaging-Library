@@ -37,6 +37,9 @@ type
   private
     { Déclarations privées }
     ClientThread: TOlfSocketMessagingClient;
+    procedure onReceivedMessage1(Const ASender
+      : TOlfSocketMessagingServerConnectedClient;
+      Const AMessage: TOlfSocketMessage);
     procedure onReceivedMessage2(Const ASender
       : TOlfSocketMessagingServerConnectedClient;
       Const AMessage: TOlfSocketMessage);
@@ -64,12 +67,23 @@ procedure TfrmClient.FormCreate(Sender: TObject);
 begin
   ClientThread := TOlfSocketMessagingClient.Create;
   RegisterMessages(ClientThread);
+  ClientThread.SubscribeToMessage(1, onReceivedMessage1);
   ClientThread.SubscribeToMessage(2, onReceivedMessage2);
 end;
 
 procedure TfrmClient.FormDestroy(Sender: TObject);
 begin
   ClientThread.Free;
+end;
+
+procedure TfrmClient.onReceivedMessage1(const ASender
+  : TOlfSocketMessagingServerConnectedClient;
+  const AMessage: TOlfSocketMessage);
+begin
+  if not(AMessage is TMessage1) then
+    raise exception.Create('Wrong received message !');
+
+  Memo1.Lines.Add((AMessage as TMessage1).Texte);
 end;
 
 procedure TfrmClient.onReceivedMessage2(const ASender
@@ -90,9 +104,9 @@ end;
 
 procedure TfrmClient.SendTextToServerClick(Sender: TObject);
 var
-  msg: tmessage1;
+  msg: TMessage1;
 begin
-  msg := tmessage1.Create;
+  msg := TMessage1.Create;
   try
     msg.Texte := Edit1.Text;
     ClientThread.SendMessage(msg);
