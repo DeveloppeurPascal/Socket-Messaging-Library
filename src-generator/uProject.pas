@@ -730,8 +730,8 @@ begin
         sLineBreak;
       Result := Result + '  /// </remarks>' + sLineBreak;
     end;
-    Result := Result + '  ' + msg.DelphiClassName +
-      ' = class(TOlfSMMessage)' + sLineBreak;
+    Result := Result + '  ' + msg.DelphiClassName + ' = class(TOlfSMMessage)' +
+      sLineBreak;
     Result := Result + '  private' + sLineBreak;
     for j := 0 to msg.Fields.Count - 1 do
     begin
@@ -772,8 +772,8 @@ begin
       '    procedure LoadFromStream(Stream: TStream); override;' + sLineBreak;
     Result := Result + '    procedure SaveToStream(Stream: TStream); override;'
       + sLineBreak;
-    Result := Result +
-      '    function GetNewInstance: TOlfSMMessage; override;' + sLineBreak;
+    Result := Result + '    function GetNewInstance: TOlfSMMessage; override;' +
+      sLineBreak;
     Result := Result + '  end;' + sLineBreak;
     Result := Result + sLineBreak;
   end;
@@ -939,12 +939,28 @@ begin
     + sLineBreak;
   Result := Result + '// ****************************************' + sLineBreak;
   Result := Result + sLineBreak;
+  Result := Result + '// To compile this unit you need Olf.Net.Socket.Messaging.pas from'
+    + sLineBreak;
+  Result := Result +
+    '// https://github.com/DeveloppeurPascal/Socket-Messaging-Library' +
+    sLineBreak;
+  Result := Result + '//' + sLineBreak;
+  Result := Result + '// Direct link to the file :' + sLineBreak;
+  Result := Result +
+    '// https://raw.githubusercontent.com/DeveloppeurPascal/Socket-Messaging-Library/main/src-library/Olf.Net.Socket.Messaging.pas'
+    + sLineBreak;
+  Result := Result + sLineBreak;
   if NeedOlfRTLStreamsUnit then
   begin
     Result := Result +
       '// To compile this unit you need Olf.RTL.Streams.pas from' + sLineBreak;
     Result := Result + '// https://github.com/DeveloppeurPascal/librairies' +
       sLineBreak;
+    Result := Result + '//' + sLineBreak;
+    Result := Result + '// Direct link to the file :' + sLineBreak;
+    Result := Result +
+      '// https://raw.githubusercontent.com/DeveloppeurPascal/librairies/master/Olf.RTL.Streams.pas'
+      + sLineBreak;
     Result := Result + sLineBreak;
   end;
   Result := Result + 'interface' + sLineBreak;
@@ -959,9 +975,11 @@ begin
     Result := Result + Messages.GetDelphiInterface;
   end;
   Result := Result +
-    'procedure RegisterMessagesReceivedByTheServer(Const Server: TOlfSMServer);' + sLineBreak;
+    'procedure RegisterMessagesReceivedByTheServer(Const Server: TOlfSMServer);'
+    + sLineBreak;
   Result := Result +
-    'procedure RegisterMessagesReceivedByTheClient(Const Client: TOlfSMClient);' + sLineBreak;
+    'procedure RegisterMessagesReceivedByTheClient(Const Client: TOlfSMClient);'
+    + sLineBreak;
   Result := Result + sLineBreak;
   Result := Result + 'implementation' + sLineBreak;
   Result := Result + sLineBreak;
@@ -971,7 +989,8 @@ begin
   Result := Result + '  System.SysUtils;' + sLineBreak;
   Result := Result + sLineBreak;
   Result := Result +
-    'procedure RegisterMessagesReceivedByTheServer(Const Server: TOlfSMServer);' + sLineBreak;
+    'procedure RegisterMessagesReceivedByTheServer(Const Server: TOlfSMServer);'
+    + sLineBreak;
   Result := Result + 'begin' + sLineBreak;
   for i := 0 to Messages.Count - 1 do
     if Messages[i].RegisterMessageInTheServer then
@@ -980,7 +999,8 @@ begin
   Result := Result + 'end;' + sLineBreak;
   Result := Result + sLineBreak;
   Result := Result +
-    'procedure RegisterMessagesReceivedByTheClient(Const Client: TOlfSMClient);' + sLineBreak;
+    'procedure RegisterMessagesReceivedByTheClient(Const Client: TOlfSMClient);'
+    + sLineBreak;
   Result := Result + 'begin' + sLineBreak;
   for i := 0 to Messages.Count - 1 do
     if Messages[i].RegisterMessageInTheClient then
