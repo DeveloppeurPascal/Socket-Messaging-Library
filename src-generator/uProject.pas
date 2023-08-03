@@ -643,7 +643,7 @@ begin
     Result := Result + sLineBreak;
 
     Result := Result + 'function ' + msg.DelphiClassName +
-      '.GetNewInstance: TOlfSocketMessage;' + sLineBreak;
+      '.GetNewInstance: TOlfSMMessage;' + sLineBreak;
     Result := Result + 'begin' + sLineBreak;
     Result := Result + '  result := ' + msg.DelphiClassName + '.Create;' +
       sLineBreak;
@@ -731,7 +731,7 @@ begin
       Result := Result + '  /// </remarks>' + sLineBreak;
     end;
     Result := Result + '  ' + msg.DelphiClassName +
-      ' = class(TOlfSocketMessage)' + sLineBreak;
+      ' = class(TOlfSMMessage)' + sLineBreak;
     Result := Result + '  private' + sLineBreak;
     for j := 0 to msg.Fields.Count - 1 do
     begin
@@ -773,7 +773,7 @@ begin
     Result := Result + '    procedure SaveToStream(Stream: TStream); override;'
       + sLineBreak;
     Result := Result +
-      '    function GetNewInstance: TOlfSocketMessage; override;' + sLineBreak;
+      '    function GetNewInstance: TOlfSMMessage; override;' + sLineBreak;
     Result := Result + '  end;' + sLineBreak;
     Result := Result + sLineBreak;
   end;
@@ -959,11 +959,9 @@ begin
     Result := Result + Messages.GetDelphiInterface;
   end;
   Result := Result +
-    'procedure RegisterMessagesReceivedByTheServer(Const Server' + sLineBreak;
-  Result := Result + '  : TOlfSocketMessagingServer);' + sLineBreak;
+    'procedure RegisterMessagesReceivedByTheServer(Const Server: TOlfSMServer);' + sLineBreak;
   Result := Result +
-    'procedure RegisterMessagesReceivedByTheClient(Const Client' + sLineBreak;
-  Result := Result + '  : TOlfSocketMessagingClient);' + sLineBreak;
+    'procedure RegisterMessagesReceivedByTheClient(Const Client: TOlfSMClient);' + sLineBreak;
   Result := Result + sLineBreak;
   Result := Result + 'implementation' + sLineBreak;
   Result := Result + sLineBreak;
@@ -973,8 +971,7 @@ begin
   Result := Result + '  System.SysUtils;' + sLineBreak;
   Result := Result + sLineBreak;
   Result := Result +
-    'procedure RegisterMessagesReceivedByTheServer(Const Server' + sLineBreak;
-  Result := Result + '  : TOlfSocketMessagingServer);' + sLineBreak;
+    'procedure RegisterMessagesReceivedByTheServer(Const Server: TOlfSMServer);' + sLineBreak;
   Result := Result + 'begin' + sLineBreak;
   for i := 0 to Messages.Count - 1 do
     if Messages[i].RegisterMessageInTheServer then
@@ -983,8 +980,7 @@ begin
   Result := Result + 'end;' + sLineBreak;
   Result := Result + sLineBreak;
   Result := Result +
-    'procedure RegisterMessagesReceivedByTheClient(Const Client' + sLineBreak;
-  Result := Result + '  : TOlfSocketMessagingClient);' + sLineBreak;
+    'procedure RegisterMessagesReceivedByTheClient(Const Client: TOlfSMClient);' + sLineBreak;
   Result := Result + 'begin' + sLineBreak;
   for i := 0 to Messages.Count - 1 do
     if Messages[i].RegisterMessageInTheClient then
