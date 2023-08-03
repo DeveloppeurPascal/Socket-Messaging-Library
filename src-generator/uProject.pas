@@ -158,7 +158,7 @@ type
     function DefaultDelphiUnitName(AName: string = ''): string;
   end;
 
-function ToDelphiConst(Texte: string): string;
+function ToDelphiConst(Texte: string; AllowDot: boolean = false): string;
 function WrapTextWithPrefix(Const Prefix, Texte: string;
   Const Suffix: string = ''; Const MaxCol: integer = 80): string;
 
@@ -177,7 +177,7 @@ uses
   System.Character,
   System.Generics.Defaults;
 
-function ToDelphiConst(Texte: string): string;
+function ToDelphiConst(Texte: string; AllowDot: boolean): string;
 // TODO : move this function in DeveloppeurPascal/Librairies
 var
   c: char;
@@ -230,7 +230,9 @@ begin
     else if c.IsInArray(['æ']) then
       Result := Result + 'ae'
     else if c.IsInArray(['ç', 'č']) then
-      Result := Result + 'c';
+      Result := Result + 'c'
+    else if AllowDot and c.IsInArray(['.']) then
+      Result := Result + '.';
     PremierCaractere := false;
   end;
   while Result.IndexOf('__') > -1 do
@@ -884,9 +886,9 @@ end;
 function TProject.DefaultDelphiUnitName(AName: string): string;
 begin
   if AName.IsEmpty then
-    Result := ToDelphiConst(name)
+    Result := ToDelphiConst(name, true)
   else
-    Result := ToDelphiConst(AName);
+    Result := ToDelphiConst(AName, true);
 end;
 
 function TProject.GetDelphiUnitName: string;
@@ -939,8 +941,9 @@ begin
     + sLineBreak;
   Result := Result + '// ****************************************' + sLineBreak;
   Result := Result + sLineBreak;
-  Result := Result + '// To compile this unit you need Olf.Net.Socket.Messaging.pas from'
-    + sLineBreak;
+  Result := Result +
+    '// To compile this unit you need Olf.Net.Socket.Messaging.pas from' +
+    sLineBreak;
   Result := Result +
     '// https://github.com/DeveloppeurPascal/Socket-Messaging-Library' +
     sLineBreak;

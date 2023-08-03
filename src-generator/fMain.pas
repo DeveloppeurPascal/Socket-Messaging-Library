@@ -337,7 +337,7 @@ begin
     CurrentProject.DelphiUnitName := ''
   else
     CurrentProject.DelphiUnitName :=
-      ToDelphiConst(edtProjectDelphiUnitName.Text);
+      ToDelphiConst(edtProjectDelphiUnitName.Text, true);
 
   RefreshFormCaption;
 end;
@@ -505,7 +505,7 @@ begin
     end;
   end;
 
-  tvproject.ExpandAll;
+  tvProject.ExpandAll;
 
   tvProject.Selected := ProjectItem;
 
