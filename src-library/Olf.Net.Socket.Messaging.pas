@@ -112,6 +112,7 @@ type
       aReceivedMessageEvent: TOlfReceivedMessageEvent);
     procedure UnsubscribeToMessage(AMessageID: TOlfSMMessageID;
       aReceivedMessageEvent: TOlfReceivedMessageEvent);
+    procedure SendMessageToAll(Const AMessage: TOlfSMMessage);
   end;
 
   TOlfSMClientEvent = procedure(AClient: TOlfSMSrvConnectedClient) of object;
@@ -391,6 +392,36 @@ begin
   FThread.Start;
 end;
 
+procedure TOlfSMServer.SendMessageToAll(const AMessage: TOlfSMMessage);
+var
+  SrvClient: TOlfSMSrvConnectedClient;
+  nb: integer;
+  lst: TList<TOlfSMSrvConnectedClient>;
+begin
+  lst := FConnectedClients.locklist;
+  try
+    nb := lst.count;
+  finally
+    FConnectedClients.UnlockList;
+  end;
+  tparallel.For(0, nb - 1,
+    procedure(Index: integer)
+    var
+      lst: TList<TOlfSMSrvConnectedClient>;
+    begin
+      lst := FConnectedClients.locklist;
+      try
+        try
+          lst[index].SendMessage(AMessage);
+        except
+
+        end;
+      finally
+        FConnectedClients.UnlockList;
+      end;
+    end);
+end;
+
 procedure TOlfSMServer.ServerLoop;
 var
   NewClientSocket: TSocket;
@@ -532,7 +563,7 @@ begin
       sub.Add(AMessageID, msgSub);
       msgSub.Add(aReceivedMessageEvent);
     end
-    else if (msgSub.Count < 1) then
+    else if (msgSub.count < 1) then
       msgSub.Add(aReceivedMessageEvent)
     else
     begin
@@ -713,7 +744,7 @@ begin
   Subscribers := FSocketServer.LockSubscribers;
   try
     if Subscribers.TryGetValue(AMessage.MessageID, MessageSubscribers) then
-      tparallel.for(0, MessageSubscribers.Count - 1,
+      tparallel.For(0, MessageSubscribers.count - 1,
         procedure(Index: integer)
         begin
           MessageSubscribers[index](self, AMessage);
@@ -942,7 +973,7 @@ begin
   Subscribers := LockSubscribers;
   try
     if Subscribers.TryGetValue(AMessage.MessageID, MessageSubscribers) then
-      tparallel.for(0, MessageSubscribers.Count - 1,
+      tparallel.For(0, MessageSubscribers.count - 1,
         procedure(Index: integer)
         begin
           MessageSubscribers[index](self, AMessage);
@@ -1063,7 +1094,7 @@ begin
       sub.Add(AMessageID, msgSub);
       msgSub.Add(aReceivedMessageEvent);
     end
-    else if (msgSub.Count < 1) then
+    else if (msgSub.count < 1) then
       msgSub.Add(aReceivedMessageEvent)
     else
     begin
