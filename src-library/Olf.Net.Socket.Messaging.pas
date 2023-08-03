@@ -108,10 +108,16 @@ type
     FSocket: TSocket;
     FSocketServer: TOlfSMServer;
     FThreadNameForDebugging: string;
+    FonConnected: TOlfSMClientEvent;
+    FonDisconnected: TOlfSMClientEvent;
+    FonLostConnection: TOlfSMClientEvent;
     procedure SetSocket(const Value: TSocket);
     function GetSocket: TSocket;
     function GetThreadNameForDebugging: string;
     procedure SetThreadNameForDebugging(const Value: string);
+    procedure SetonConnected(const Value: TOlfSMClientEvent);
+    procedure SetonDisconnected(const Value: TOlfSMClientEvent);
+    procedure SetonLostConnection(const Value: TOlfSMClientEvent);
   protected
     property Socket: TSocket read GetSocket write SetSocket;
     procedure ClientLoop; virtual;
@@ -122,6 +128,12 @@ type
   public
     property ThreadNameForDebugging: string read GetThreadNameForDebugging
       write SetThreadNameForDebugging;
+    property onConnected: TOlfSMClientEvent read FonConnected
+      write SetonConnected;
+    property onLostConnection: TOlfSMClientEvent read FonLostConnection
+      write SetonLostConnection;
+    property onDisconnected: TOlfSMClientEvent read FonDisconnected
+      write SetonDisconnected;
     constructor Create(AServer: TOlfSMServer; AClientSocket: TSocket);
       overload; virtual;
     constructor Create; overload; virtual;
@@ -521,52 +533,81 @@ var
   MessageID: TOlfSMMessageID;
   ReceivedMessage: TOlfSMMessage;
 begin
-  MessageSize := 0;
-  ms := TMemoryStream.Create;
-  try
-    while not TThread.CheckTerminated do
-    begin
-      RecCount := FSocket.Receive(Buffer);
-      if (RecCount > 0) then
-        for i := 0 to RecCount - 1 do
+  if isConnected then
+  begin
+    if assigned(onConnected) then
+      TThread.Synchronize(nil,
+        procedure
         begin
-          ms.Write(Buffer[i], sizeof(Buffer[i]));
-          if (MessageSize = 0) then
-          begin
-            // size of next message received
-            if ms.Size = sizeof(MessageSize) then
+          if assigned(onConnected) then
+            onConnected(self);
+        end);
+
+    MessageSize := 0;
+    ms := TMemoryStream.Create;
+    try
+      try
+        while not TThread.CheckTerminated do
+        begin
+          RecCount := FSocket.Receive(Buffer);
+          if (RecCount > 0) then
+            for i := 0 to RecCount - 1 do
             begin
-              ms.Position := 0;
-              ms.Read(MessageSize, sizeof(MessageSize));
-              ms.Clear;
-            end;
-          end
-          else if ms.Size = MessageSize then
-          begin
-            // message received
-            ms.Position := 0;
-            ms.Read(MessageID, sizeof(MessageID));
-            ReceivedMessage := GetNewMessageInstance(MessageID);
-            if assigned(ReceivedMessage) then
-              try
-                ms.Position := 0;
-                ReceivedMessage.LoadFromStream(ms);
-                DispatchReceivedMessage(ReceivedMessage);
-              finally
-                ReceivedMessage.Free;
+              ms.Write(Buffer[i], sizeof(Buffer[i]));
+              if (MessageSize = 0) then
+              begin
+                // size of next message received
+                if ms.Size = sizeof(MessageSize) then
+                begin
+                  ms.Position := 0;
+                  ms.Read(MessageSize, sizeof(MessageSize));
+                  ms.Clear;
+                end;
               end
-            else
-              raise TOlfSMException.Create('No message with ID ' +
-                MessageID.ToString);
-            ms.Clear;
-            MessageSize := 0;
-          end;
-        end
-      else
-        sleep(100);
+              else if ms.Size = MessageSize then
+              begin
+                // message received
+                ms.Position := 0;
+                ms.Read(MessageID, sizeof(MessageID));
+                ReceivedMessage := GetNewMessageInstance(MessageID);
+                if assigned(ReceivedMessage) then
+                  try
+                    ms.Position := 0;
+                    ReceivedMessage.LoadFromStream(ms);
+                    DispatchReceivedMessage(ReceivedMessage);
+                  finally
+                    ReceivedMessage.Free;
+                  end
+                else
+                  raise TOlfSMException.Create('No message with ID ' +
+                    MessageID.ToString);
+                ms.Clear;
+                MessageSize := 0;
+              end;
+            end
+          else
+            sleep(100);
+        end;
+      finally
+        ms.Free;
+      end;
+    except
+      if assigned(onLostConnection) then
+        TThread.Synchronize(nil,
+          procedure
+          begin
+            if assigned(onLostConnection) then
+              onLostConnection(self);
+          end);
+      raise;
     end;
-  finally
-    ms.Free;
+    if assigned(onDisconnected) then
+      TThread.Synchronize(nil,
+        procedure
+        begin
+          if assigned(onDisconnected) then
+            onDisconnected(self);
+        end);
   end;
 end;
 
@@ -693,6 +734,24 @@ begin
   finally
     ms.Free;
   end;
+end;
+
+procedure TOlfSMSrvConnectedClient.SetonConnected
+  (const Value: TOlfSMClientEvent);
+begin
+  FonConnected := Value;
+end;
+
+procedure TOlfSMSrvConnectedClient.SetonDisconnected
+  (const Value: TOlfSMClientEvent);
+begin
+  FonDisconnected := Value;
+end;
+
+procedure TOlfSMSrvConnectedClient.SetonLostConnection
+  (const Value: TOlfSMClientEvent);
+begin
+  FonLostConnection := Value;
 end;
 
 procedure TOlfSMSrvConnectedClient.SetSocket(const Value: TSocket);
