@@ -1,7 +1,5 @@
 unit fClientForm;
 
-// TODO : send private message
-
 interface
 
 uses
@@ -39,13 +37,16 @@ type
   TForm1 = class(TForm)
     btnPseudoChange: TButton;
     edtMessage: TEdit;
-    btnSendMessage: TButton;
-    edtPseudo: TEdit;
+    btnSendInPublic: TButton;
+    edtFromPseudo: TEdit;
     Memo1: TMemo;
+    edtToPseudo: TEdit;
+    btnSendInPrivate: TButton;
     procedure FormCreate(Sender: TObject);
     procedure btnPseudoChangeClick(Sender: TObject);
-    procedure btnSendMessageClick(Sender: TObject);
+    procedure btnSendInPublicClick(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
+    procedure btnSendInPrivateClick(Sender: TObject);
   private
     { Déclarations privées }
     FClient: TClient;
@@ -71,14 +72,31 @@ begin
 
   msg := TIdentificationDUnUtilisateurMessage.Create;
   try
-    msg.Pseudo := edtPseudo.Text;
+    msg.Pseudo := edtFromPseudo.Text;
     FClient.SendMessage(msg);
   finally
     msg.Free;
   end;
 end;
 
-procedure TForm1.btnSendMessageClick(Sender: TObject);
+procedure TForm1.btnSendInPrivateClick(Sender: TObject);
+var
+  msg: TEnvoiDUnMessageAQuelquUnMessage;
+begin
+  if not FClient.isConnected then
+    FClient.Connect;
+
+  msg := TEnvoiDUnMessageAQuelquUnMessage.Create;
+  try
+    msg.Destinataire := edtToPseudo.Text;
+    msg.Texte := edtMessage.Text;
+    FClient.SendMessage(msg);
+  finally
+    msg.Free;
+  end;
+end;
+
+procedure TForm1.btnSendInPublicClick(Sender: TObject);
 var
   msg: TEnvoiDUnMessageATousMessage;
 begin
@@ -87,7 +105,7 @@ begin
 
   msg := TEnvoiDUnMessageATousMessage.Create;
   try
-    msg.Emetteur := edtPseudo.Text;
+    msg.Emetteur := edtFromPseudo.Text;
     msg.Texte := edtMessage.Text;
     FClient.SendMessage(msg);
   finally

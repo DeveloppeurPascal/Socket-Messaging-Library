@@ -10,10 +10,10 @@ object Form1: TForm1
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   DesignerMasterStyle = 0
-  object edtPseudo: TEdit
+  object edtFromPseudo: TEdit
     Touch.InteractiveGestures = [LongTap, DoubleTap]
     Align = Top
-    TabOrder = 0
+    TabOrder = 1
     Position.X = 10.000000000000000000
     Position.Y = 10.000000000000000000
     Margins.Left = 10.000000000000000000
@@ -36,27 +36,27 @@ object Form1: TForm1
   object edtMessage: TEdit
     Touch.InteractiveGestures = [LongTap, DoubleTap]
     Align = Top
-    TabOrder = 1
+    TabOrder = 2
     Position.X = 10.000000000000000000
     Position.Y = 52.000000000000000000
     Margins.Left = 10.000000000000000000
     Margins.Top = 10.000000000000000000
-    Margins.Right = 100.000000000000000000
+    Margins.Right = 120.000000000000000000
     Margins.Bottom = 10.000000000000000000
-    Size.Width = 530.000000000000000000
+    Size.Width = 510.000000000000000000
     Size.Height = 22.000000000000000000
     Size.PlatformDefault = False
     TextPrompt = 'Your message'
-    object btnSendMessage: TButton
+    object btnSendInPublic: TButton
       Align = Right
-      Margins.Right = -90.000000000000000000
-      Position.X = 540.000000000000000000
-      Size.Width = 80.000000000000000000
+      Margins.Right = -110.000000000000000000
+      Position.X = 520.000000000000000000
+      Size.Width = 100.000000000000000000
       Size.Height = 22.000000000000000000
       Size.PlatformDefault = False
       TabOrder = 0
-      Text = 'Send'
-      OnClick = btnSendMessageClick
+      Text = 'Send in public'
+      OnClick = btnSendInPublicClick
     end
   end
   object Memo1: TMemo
@@ -69,10 +69,36 @@ object Form1: TForm1
     Margins.Right = 10.000000000000000000
     Margins.Bottom = 10.000000000000000000
     Size.Width = 620.000000000000000000
-    Size.Height = 376.000000000000000000
+    Size.Height = 334.000000000000000000
     Size.PlatformDefault = False
-    TabOrder = 2
-    Viewport.Width = 620.000000000000000000
-    Viewport.Height = 376.000000000000000000
+    TabOrder = 3
+    Viewport.Width = 616.000000000000000000
+    Viewport.Height = 330.000000000000000000
+  end
+  object edtToPseudo: TEdit
+    Touch.InteractiveGestures = [LongTap, DoubleTap]
+    Align = Top
+    TabOrder = 0
+    Position.X = 10.000000000000000000
+    Position.Y = 94.000000000000000000
+    Margins.Left = 10.000000000000000000
+    Margins.Top = 10.000000000000000000
+    Margins.Right = 120.000000000000000000
+    Margins.Bottom = 10.000000000000000000
+    Size.Width = 510.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+    TextPrompt = 'Name or pseudo of your contact (private messages)'
+    object btnSendInPrivate: TButton
+      Align = Right
+      Margins.Right = -110.000000000000000000
+      Position.X = 520.000000000000000000
+      Size.Width = 100.000000000000000000
+      Size.Height = 22.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 0
+      Text = 'Send in private'
+      OnClick = btnSendInPrivateClick
+    end
   end
 end

@@ -103,6 +103,7 @@ procedure TServer.onPrivateMessage(const ASender: TOlfSMSrvConnectedClient;
 const AMessage: TOlfSMMessage);
 var
   msg: TEnvoiDUnMessageAQuelquUnMessage;
+  msg2: TTransmissionDUnMessageRecuMessage;
   cli: TOlfSMSrvConnectedClient;
 begin
   if not(AMessage is TEnvoiDUnMessageAQuelquUnMessage) then
@@ -111,7 +112,20 @@ begin
 
   AddLog('From : ' + ASender.TagString + slinebreak + 'To: ' + msg.Destinataire
     + slinebreak + msg.Texte);
-  // TODO : find the target and send it the message
+
+  msg2 := TTransmissionDUnMessageRecuMessage.Create;
+  try
+    msg2.Emetteur := ASender.TagString;
+    msg2.Texte := msg.Texte;
+    ForEachConnectedClient(
+      procedure(Const Client: TOlfSMSrvConnectedClient)
+      begin
+        if Client.TagString = msg.Destinataire then
+          Client.SendMessage(msg2);
+      end);
+  finally
+    msg2.Free;
+  end;
 end;
 
 procedure TServer.onPublicMessage(const ASender: TOlfSMSrvConnectedClient;
