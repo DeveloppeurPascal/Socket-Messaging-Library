@@ -34,6 +34,7 @@ type
   protected
     procedure ValueChanged;
   public
+    property ParentList: TMessageFieldsList read FParent;
     property Order: integer read FOrder write SetOrder;
     property Name: string read FName write SetName;
     property Description: string read FDescription write SetDescription;
@@ -60,6 +61,7 @@ type
     constructor Create(AParent: TMessage); virtual;
     function GetMaxOrder: integer;
     function Add(Const Value: TMessageField): integer;
+    function Remove(const Value: TMessageField): integer;
   end;
 
   TMessage = class
@@ -85,6 +87,7 @@ type
   protected
     procedure ValueChanged;
   public
+    property ParentList: TMessagesList read FParent;
     property MessageID: TOlfMessageId read FMessageID write SetMessageID;
     property Name: string read FName write SetName;
     property Description: string read FDescription write SetDescription;
@@ -117,6 +120,7 @@ type
     constructor Create(AParent: TProject);
     function GetMaxMessageID: TOlfMessageId;
     function Add(Const Value: TMessage): integer;
+    function Remove(Const Value: TMessage): integer;
   end;
 
   TProject = class
@@ -391,6 +395,7 @@ begin
   if (Value.Order < 1) then
     Value.Order := GetMaxOrder + 1;
   Result := inherited Add(Value);
+  ValueChanged;
 end;
 
 constructor TMessageFieldsList.Create(AParent: TMessage);
@@ -416,6 +421,12 @@ begin
   for fld in self do
     if Result < fld.Order then
       Result := fld.Order;
+end;
+
+function TMessageFieldsList.Remove(const Value: TMessageField): integer;
+begin
+  Result := inherited Remove(Value);
+  ValueChanged;
 end;
 
 procedure TMessageFieldsList.SetAsJSON(const Value: TJSONArray);
@@ -614,6 +625,7 @@ begin
   if (Value.MessageID < 1) then
     Value.MessageID := GetMaxMessageID + 1;
   Result := inherited Add(Value);
+  ValueChanged;
 end;
 
 constructor TMessagesList.Create(AParent: TProject);
@@ -738,8 +750,8 @@ begin
     if not msg.name.IsEmpty then
     begin
       Result := Result + '  /// <summary>' + sLineBreak;
-      Result := Result + WrapTextWithPrefix('  /// Message ID ', msg.MessageID.ToString +
-        ': ' + msg.name) + sLineBreak;
+      Result := Result + WrapTextWithPrefix('  /// Message ID ',
+        msg.MessageID.ToString + ': ' + msg.name) + sLineBreak;
       Result := Result + '  /// </summary>' + sLineBreak;
     end;
     if not msg.Description.IsEmpty then
@@ -806,6 +818,12 @@ begin
   for msg in self do
     if Result < msg.MessageID then
       Result := msg.MessageID;
+end;
+
+function TMessagesList.Remove(const Value: TMessage): integer;
+begin
+  Result := inherited Remove(Value);
+  ValueChanged;
 end;
 
 procedure TMessagesList.SetAsJSON(const Value: TJSONArray);
