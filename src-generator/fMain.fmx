@@ -157,7 +157,7 @@ object Form1: TForm1
       Size.Width = 370.000000000000000000
       Size.Height = 785.000000000000000000
       Size.PlatformDefault = False
-      TabIndex = 2
+      TabIndex = 1
       TabOrder = 1
       TabPosition = PlatformDefault
       Sizes = (
@@ -405,7 +405,7 @@ object Form1: TForm1
         CustomIcon = <
           item
           end>
-        IsSelected = False
+        IsSelected = True
         Size.Width = 94.000000000000000000
         Size.Height = 26.000000000000000000
         Size.PlatformDefault = False
@@ -577,7 +577,6 @@ object Form1: TForm1
             end
             object btnMessageDelete: TButton
               Align = Client
-              Enabled = False
               Margins.Left = 10.000000000000000000
               Margins.Top = 10.000000000000000000
               Margins.Right = 10.000000000000000000
@@ -638,7 +637,7 @@ object Form1: TForm1
         CustomIcon = <
           item
           end>
-        IsSelected = True
+        IsSelected = False
         Size.Width = 73.000000000000000000
         Size.Height = 26.000000000000000000
         Size.PlatformDefault = False
@@ -891,7 +890,6 @@ object Form1: TForm1
             end
             object btnFieldDelete: TButton
               Align = Client
-              Enabled = False
               Margins.Left = 10.000000000000000000
               Margins.Top = 10.000000000000000000
               Margins.Right = 10.000000000000000000

@@ -179,8 +179,24 @@ begin
 end;
 
 procedure TForm1.btnFieldDeleteClick(Sender: TObject);
+var
+  FieldItem: TTreeViewItem;
 begin
-  // TODO : à compléter
+  if not assigned(CurrentProject) then
+    exit;
+
+  if not assigned(tvProject.Selected) then
+    exit;
+
+  if not(tvProject.Selected.tag = 2) then
+    exit;
+
+  FieldItem := tvProject.Selected;
+  tvProject.Selected := tvProject.Selected.ParentItem;
+  FieldItem.Free;
+
+  FCurrentField.ParentList.Remove(FCurrentField);
+  FCurrentField := nil;
 end;
 
 procedure TForm1.btnFieldOkClick(Sender: TObject);
@@ -192,7 +208,7 @@ begin
     raise Exception.Create('Your field needs a name !');
   end;
   CurrentField.Name := edtFieldName.Text;
-  (tvProject.tagobject as ttreeviewitem).Text := CurrentField.Name;
+  (tvProject.tagobject as TTreeViewItem).Text := CurrentField.Name;
 
   CurrentField.DelphiFieldType := edtFieldDelphiFieldType.Text;
 
@@ -215,8 +231,24 @@ begin
 end;
 
 procedure TForm1.btnMessageDeleteClick(Sender: TObject);
+var
+  MessageItem: TTreeViewItem;
 begin
-  // TODO : à compléter
+  if not assigned(CurrentProject) then
+    exit;
+
+  if not assigned(tvProject.Selected) then
+    exit;
+
+  if not(tvProject.Selected.tag = 1) then
+    exit;
+
+  MessageItem := tvProject.Selected;
+  tvProject.Selected := tvProject.Selected.ParentItem;
+  MessageItem.Free;
+
+  FCurrentMessage.ParentList.Remove(FCurrentMessage);
+  FCurrentMessage := nil;
 end;
 
 procedure TForm1.btnMessageOkClick(Sender: TObject);
@@ -228,7 +260,7 @@ begin
     raise Exception.Create('Your message needs a name !');
   end;
   CurrentMessage.Name := edtMessageName.Text;
-  (tvProject.tagobject as ttreeviewitem).Text := CurrentMessage.Name;
+  (tvProject.tagobject as TTreeViewItem).Text := CurrentMessage.Name;
 
   CurrentMessage.Description := edtMessageDescription.Text;
 
@@ -251,7 +283,7 @@ procedure TForm1.btnNewFieldClick(Sender: TObject);
 var
   msg: TMessage;
   fld: TMessageField;
-  MessageItem, FieldItem: ttreeviewitem;
+  MessageItem, FieldItem: TTreeViewItem;
 begin
   if not assigned(CurrentProject) then
     exit;
@@ -286,7 +318,7 @@ begin
   fld.DelphiFieldType := 'integer';
   fld.DefaultValue := '0';
 
-  FieldItem := ttreeviewitem.Create(tvProject);
+  FieldItem := TTreeViewItem.Create(tvProject);
   FieldItem.Parent := MessageItem;
   // théoriquement le projet, sinon chercher celui qui a un Tag=0
   FieldItem.Text := fld.Name;
@@ -299,7 +331,7 @@ end;
 procedure TForm1.btnNewMessageClick(Sender: TObject);
 var
   msg: TMessage;
-  MessageItem: ttreeviewitem;
+  MessageItem: TTreeViewItem;
 begin
   if not assigned(CurrentProject) then
     exit;
@@ -308,7 +340,7 @@ begin
   CurrentProject.Messages.Add(msg);
   msg.Name := 'Message ' + msg.messageid.ToString;
 
-  MessageItem := ttreeviewitem.Create(tvProject);
+  MessageItem := TTreeViewItem.Create(tvProject);
   MessageItem.Parent := tvProject.Items[0];
   // théoriquement le projet, sinon chercher celui qui a un Tag=0
   MessageItem.Text := msg.Name;
@@ -332,7 +364,7 @@ begin
     raise Exception.Create('Your project needs a name !');
   end;
   CurrentProject.Name := edtProjectName.Text;
-  (tvProject.tagobject as ttreeviewitem).Text := CurrentProject.Name;
+  (tvProject.tagobject as TTreeViewItem).Text := CurrentProject.Name;
 
   CurrentProject.Description := edtProjectDescription.Text;
 
@@ -384,7 +416,7 @@ begin
   mnuOptions.Parent := mnuMacOS;
   mnuQuit.Visible := false;
 {$ENDIF}
-  mnuOptions.free;
+  mnuOptions.Free;
   // TODO : show the "tools/options" menu when an option dialog box will be available
   mnuMacOS.Visible := (mnuMacOS.ItemsCount > 0);
   mnuTools.Visible := (mnuTools.ItemsCount > 0);
@@ -396,7 +428,7 @@ end;
 procedure TForm1.FormDestroy(Sender: TObject);
 begin
   if assigned(CurrentProject) then
-    freeandnil(CurrentProject);
+    FreeAndNil(CurrentProject);
 end;
 
 procedure TForm1.InitEditFieldTab;
@@ -481,12 +513,12 @@ procedure TForm1.InitProjectScreen;
 var
   msg: TMessage;
   fld: TMessageField;
-  ProjectItem, MessageItem, FieldItem: ttreeviewitem;
+  ProjectItem, MessageItem, FieldItem: TTreeViewItem;
 begin
   tvProject.Clear;
   tvProject.tagobject := nil;
 
-  ProjectItem := ttreeviewitem.Create(tvProject);
+  ProjectItem := TTreeViewItem.Create(tvProject);
   ProjectItem.Parent := tvProject;
   ProjectItem.Text := CurrentProject.Name;
   ProjectItem.tagobject := CurrentProject;
@@ -494,14 +526,14 @@ begin
 
   for msg in CurrentProject.Messages do
   begin
-    MessageItem := ttreeviewitem.Create(tvProject);
+    MessageItem := TTreeViewItem.Create(tvProject);
     MessageItem.Parent := ProjectItem;
     MessageItem.Text := msg.Name;
     MessageItem.tagobject := msg;
     MessageItem.tag := 1;
     for fld in msg.Fields do
     begin
-      FieldItem := ttreeviewitem.Create(tvProject);
+      FieldItem := TTreeViewItem.Create(tvProject);
       FieldItem.Parent := MessageItem;
       FieldItem.Text := fld.Name;
       FieldItem.tagobject := fld;
@@ -535,12 +567,12 @@ begin
       begin
         if AModalResult = mryes then
           mnuSaveClick(Sender);
-        freeandnil(CurrentProject);
+        FreeAndNil(CurrentProject);
         CurrentScreen := TSMGScreen.Home;
       end)
   else
   begin
-    freeandnil(CurrentProject);
+    FreeAndNil(CurrentProject);
     CurrentScreen := TSMGScreen.Home;
   end;
 end;
