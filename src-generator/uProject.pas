@@ -124,7 +124,10 @@ type
   end;
 
   TProject = class
-  private
+  private const
+    CVersionLevel = 1;
+
+  var
     FFileName: string;
     FMessages: TMessagesList;
     FHasChanged: boolean;
@@ -1054,6 +1057,7 @@ end;
 function TProject.GetAsJSON: TJSONObject;
 begin
   Result := TJSONObject.Create;
+  Result.AddPair('version', CVersionLevel);
   Result.AddPair('name', FName);
   Result.AddPair('description', FDescription);
   Result.AddPair('delphiunitname', FDelphiUnitName);
@@ -1146,11 +1150,19 @@ end;
 procedure TProject.SetAsJSON(const Value: TJSONObject);
 var
   jsa: TJSONArray;
+  VersionLevel: integer;
 begin
   if not assigned(Value) then
     exit;
 
+  if not Value.TryGetValue<integer>('version', VersionLevel) then
+    VersionLevel := CVersionLevel;
+  if VersionLevel > CVersionLevel then
+    raise exception.Create
+      ('Can''t read this project. The program is too old. Update me !');
+
   ValueChanged;
+
   if not Value.TryGetValue<string>('name', FName) then
     FName := '';
   if not Value.TryGetValue<string>('description', FDescription) then
