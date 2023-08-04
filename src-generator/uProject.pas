@@ -1115,19 +1115,6 @@ begin
     '// https://raw.githubusercontent.com/DeveloppeurPascal/Socket-Messaging-Library/main/src-library/Olf.Net.Socket.Messaging.pas'
     + sLineBreak;
   Result := Result + sLineBreak;
-  if NeedOlfRTLStreamsUnit then
-  begin
-    Result := Result +
-      '// To compile this unit you need Olf.RTL.Streams.pas from' + sLineBreak;
-    Result := Result + '// https://github.com/DeveloppeurPascal/librairies' +
-      sLineBreak;
-    Result := Result + '//' + sLineBreak;
-    Result := Result + '// Direct link to the file :' + sLineBreak;
-    Result := Result +
-      '// https://raw.githubusercontent.com/DeveloppeurPascal/librairies/master/Olf.RTL.Streams.pas'
-      + sLineBreak;
-    Result := Result + sLineBreak;
-  end;
   Result := Result + 'interface' + sLineBreak;
   Result := Result + sLineBreak;
   Result := Result + 'uses' + sLineBreak;
@@ -1151,17 +1138,103 @@ begin
   Result := Result + 'implementation' + sLineBreak;
   Result := Result + sLineBreak;
   Result := Result + 'uses' + sLineBreak;
-  if NeedOlfRTLStreamsUnit then
-    Result := Result + '  Olf.RTL.Streams,' + sLineBreak;
   Result := Result + '  System.SysUtils;' + sLineBreak;
   Result := Result + sLineBreak;
+  if NeedOlfRTLStreamsUnit then
+  begin
+    // From unit Olf.RTL.Streams.pas in repository :
+    // https://github.com/DeveloppeurPascal/librairies
+    Result := Result +
+      'procedure SaveStringToStream(AString: string; AStream: TStream;' +
+      sLineBreak;
+    Result := Result + '  AEncoding: TEncoding); overload;' + sLineBreak;
+    Result := Result + '// From unit Olf.RTL.Streams.pas in repository :' +
+      sLineBreak;
+    Result := Result + '// https://github.com/DeveloppeurPascal/librairies' +
+      sLineBreak;
+    Result := Result + 'var' + sLineBreak;
+    Result := Result + '  StrLen: int64; // typeof(System.Classes.TStream.size)'
+      + sLineBreak;
+    Result := Result + '  StrStream: TStringStream;' + sLineBreak;
+    Result := Result + 'begin' + sLineBreak;
+    Result := Result +
+      '  StrStream := TStringStream.Create(AString, AEncoding);' + sLineBreak;
+    Result := Result + '  try' + sLineBreak;
+    Result := Result + '    StrLen := StrStream.Size;' + sLineBreak;
+    Result := Result + '    AStream.write(StrLen, sizeof(StrLen));' +
+      sLineBreak;
+    Result := Result + '    if (StrLen > 0) then' + sLineBreak;
+    Result := Result + '    begin' + sLineBreak;
+    Result := Result + '      StrStream.Position := 0;' + sLineBreak;
+    Result := Result + '      AStream.CopyFrom(StrStream);' + sLineBreak;
+    Result := Result + '    end;' + sLineBreak;
+    Result := Result + '  finally' + sLineBreak;
+    Result := Result + '    StrStream.Free;' + sLineBreak;
+    Result := Result + '  end;' + sLineBreak;
+    Result := Result + 'end;' + sLineBreak;
+    Result := Result + sLineBreak;
+    Result := Result +
+      'procedure SaveStringToStream(AString: string; AStream: TStream); overload;'
+      + sLineBreak;
+    Result := Result + '// From unit Olf.RTL.Streams.pas in repository :' +
+      sLineBreak;
+    Result := Result + '// https://github.com/DeveloppeurPascal/librairies' +
+      sLineBreak;
+    Result := Result + 'begin' + sLineBreak;
+    Result := Result + '  SaveStringToStream(AString, AStream, TEncoding.UTF8);'
+      + sLineBreak;
+    Result := Result + 'end;' + sLineBreak;
+    Result := Result + '' + sLineBreak;
+    Result := Result +
+      'function LoadStringFromStream(AStream: TStream; AEncoding: TEncoding)' +
+      sLineBreak;
+    Result := Result + '  : string; overload;' + sLineBreak;
+    Result := Result + '// From unit Olf.RTL.Streams.pas in repository :' +
+      sLineBreak;
+    Result := Result + '// https://github.com/DeveloppeurPascal/librairies' +
+      sLineBreak;
+    Result := Result + 'var' + sLineBreak;
+    Result := Result + '  StrLen: int64; // typeof(System.Classes.TStream.size)'
+      + sLineBreak;
+    Result := Result + '  StrStream: TStringStream;' + sLineBreak;
+    Result := Result + 'begin' + sLineBreak;
+    Result := Result + '  AStream.Read(StrLen, sizeof(StrLen));' + sLineBreak;
+    Result := Result + '  if (StrLen > 0) then' + sLineBreak;
+    Result := Result + '  begin' + sLineBreak;
+    Result := Result + '    StrStream := TStringStream.Create('''', AEncoding);'
+      + sLineBreak;
+    Result := Result + '    try' + sLineBreak;
+    Result := Result + '      StrStream.CopyFrom(AStream, StrLen);' +
+      sLineBreak;
+    Result := Result + '      result := StrStream.DataString;' + sLineBreak;
+    Result := Result + '    finally' + sLineBreak;
+    Result := Result + '      StrStream.Free;' + sLineBreak;
+    Result := Result + '    end;' + sLineBreak;
+    Result := Result + '  end' + sLineBreak;
+    Result := Result + '  else' + sLineBreak;
+    Result := Result + '    result := '''';' + sLineBreak;
+    Result := Result + 'end;' + sLineBreak;
+    Result := Result + sLineBreak;
+    Result := Result +
+      'function LoadStringFromStream(AStream: TStream): string; overload;' +
+      sLineBreak;
+    Result := Result + '// From unit Olf.RTL.Streams.pas in repository :' +
+      sLineBreak;
+    Result := Result + '// https://github.com/DeveloppeurPascal/librairies' +
+      sLineBreak;
+    Result := Result + 'begin' + sLineBreak;
+    Result := Result +
+      '  result := LoadStringFromStream(AStream, TEncoding.UTF8);' + sLineBreak;
+    Result := Result + 'end;' + sLineBreak;
+    Result := Result + sLineBreak;
+  end;
   Result := Result +
     'procedure RegisterMessagesReceivedByTheServer(Const Server: TOlfSMServer);'
     + sLineBreak;
   Result := Result + 'begin' + sLineBreak;
   for i := 0 to Messages.Count - 1 do
     if Messages[i].RegisterMessageInTheServer then
-      Result := Result + '  Server.RegisterMessageToReceive(' + Messages[i]
+      Result := Result + '  Server.RegisterMessageToReceive(T' + Messages[i]
         .DelphiClassName + '.Create);' + sLineBreak;
   Result := Result + 'end;' + sLineBreak;
   Result := Result + sLineBreak;
@@ -1171,7 +1244,7 @@ begin
   Result := Result + 'begin' + sLineBreak;
   for i := 0 to Messages.Count - 1 do
     if Messages[i].RegisterMessageInTheClient then
-      Result := Result + '  Client.RegisterMessageToReceive(' + Messages[i]
+      Result := Result + '  Client.RegisterMessageToReceive(T' + Messages[i]
         .DelphiClassName + '.Create);' + sLineBreak;
   Result := Result + 'end;' + sLineBreak;
   Result := Result + sLineBreak;
