@@ -117,7 +117,8 @@ type
       aReceivedMessageEvent: TOlfReceivedMessageEvent);
     procedure UnsubscribeToMessage(AMessageID: TOlfSMMessageID;
       aReceivedMessageEvent: TOlfReceivedMessageEvent);
-    procedure SendMessageToAll(Const AMessage: TOlfSMMessage);
+    procedure SendMessageToAll(Const AMessage: TOlfSMMessage;
+      Const ExceptToClient: TOlfSMSrvConnectedClient = nil);
     procedure ForEachConnectedClient(DoSomethingProc
       : TOlfSMDoSomethingOnConnectedClientProc;
       AllowParallelFor: boolean = true); overload;
@@ -489,33 +490,14 @@ begin
   FThread.Start;
 end;
 
-procedure TOlfSMServer.SendMessageToAll(const AMessage: TOlfSMMessage);
-var
-  SrvClient: TOlfSMSrvConnectedClient;
-  nb: integer;
-  lst: TList<TOlfSMSrvConnectedClient>;
+procedure TOlfSMServer.SendMessageToAll(const AMessage: TOlfSMMessage;
+Const ExceptToClient: TOlfSMSrvConnectedClient);
 begin
-  lst := FConnectedClients.LockList;
-  try
-    nb := lst.Count;
-  finally
-    FConnectedClients.UnlockList;
-  end;
-  tparallel.For(0, nb - 1,
-    procedure(Index: integer)
-    var
-      lst: TList<TOlfSMSrvConnectedClient>;
+  ForEachConnectedClient(
+    procedure(Const Client: TOlfSMSrvConnectedClient)
     begin
-      lst := FConnectedClients.LockList;
-      try
-        try
-          lst[index].SendMessage(AMessage);
-        except
-
-        end;
-      finally
-        FConnectedClients.UnlockList;
-      end;
+      if not(assigned(ExceptToClient) and (ExceptToClient = Client)) then
+        Client.SendMessage(AMessage);
     end);
 end;
 
