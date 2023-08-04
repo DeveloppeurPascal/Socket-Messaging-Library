@@ -49,9 +49,9 @@ type
   TOlfSMServerEvent = procedure(AServer: TOlfSMServer) of object;
   TOlfSMEncodeDecodeMessageEvent = function(AFrom: TStream): TStream of object;
 
-  TOlfSMDoSomethingOnConnectedClientProc = reference to procedure
-    (Const AConnectedClient: TOlfSMSrvConnectedClient);
-  TOlfSMDoSomethingOnConnectedClientEvent = procedure(Const AConnectedClient
+  TOlfSMConnectedClientProc = reference to procedure(Const AConnectedClient
+    : TOlfSMSrvConnectedClient);
+  TOlfSMConnectedClientEvent = procedure(Const AConnectedClient
     : TOlfSMSrvConnectedClient) of object;
 
   TOlfSMServer = class(TInterfacedObject, IOlfSMMessagesRegister)
@@ -70,6 +70,9 @@ type
     FonDecodeReceivedMessage: TOlfSMEncodeDecodeMessageEvent;
     FonEncodeMessageToSend: TOlfSMEncodeDecodeMessageEvent;
     FConnectedClients: TOlfSMSrvConnectedClientsList;
+    FonClientConnected: TOlfSMConnectedClientEvent;
+    FonClientDisconnected: TOlfSMConnectedClientEvent;
+    FonClientLostConnection: TOlfSMConnectedClientEvent;
     procedure SetIP(const Value: string);
     procedure SetPort(const Value: word);
     procedure SetSocket(const Value: TSocket);
@@ -84,6 +87,10 @@ type
       : TOlfSMEncodeDecodeMessageEvent);
     procedure SetonEncodeMessageToSend(const Value
       : TOlfSMEncodeDecodeMessageEvent);
+    procedure SetonClientConnected(const Value: TOlfSMConnectedClientEvent);
+    procedure SetonClientDisconnected(const Value: TOlfSMConnectedClientEvent);
+    procedure SetonClientLostConnection(const Value
+      : TOlfSMConnectedClientEvent);
   protected
     property Socket: TSocket read GetSocket write SetSocket;
     procedure ServerLoop; virtual;
@@ -91,7 +98,9 @@ type
     procedure UnlockMessagesDict;
     function LockSubscribers: TOlfSubscribers;
     procedure UnlockSubscribers;
-    procedure DoRemoveConnectedClient(AClient: TOlfSMSrvConnectedClient);
+    procedure DoClientConnected(Const AClient: TOlfSMSrvConnectedClient);
+    procedure DoClientLostConnexion(Const AClient: TOlfSMSrvConnectedClient);
+    procedure DoClientDisconnected(Const AClient: TOlfSMSrvConnectedClient);
   public
     property IP: string read GetIP write SetIP;
     property Port: word read GetPort write SetPort;
@@ -105,6 +114,12 @@ type
       read FonEncodeMessageToSend write SetonEncodeMessageToSend;
     property onDecodeReceivedMessage: TOlfSMEncodeDecodeMessageEvent
       read FonDecodeReceivedMessage write SetonDecodeReceivedMessage;
+    property onClientConnected: TOlfSMConnectedClientEvent
+      read FonClientConnected write SetonClientConnected;
+    property onClientLostConnection: TOlfSMConnectedClientEvent
+      read FonClientLostConnection write SetonClientLostConnection;
+    property onClientDisconnected: TOlfSMConnectedClientEvent
+      read FonClientDisconnected write SetonClientDisconnected;
     constructor Create(AIP: string; APort: word); overload; virtual;
     constructor Create; overload; virtual;
     procedure Listen; overload; virtual;
@@ -119,15 +134,11 @@ type
       aReceivedMessageEvent: TOlfReceivedMessageEvent);
     procedure SendMessageToAll(Const AMessage: TOlfSMMessage;
       Const ExceptToClient: TOlfSMSrvConnectedClient = nil);
-    procedure ForEachConnectedClient(DoSomethingProc
-      : TOlfSMDoSomethingOnConnectedClientProc;
+    procedure ForEachConnectedClient(DoSomethingProc: TOlfSMConnectedClientProc;
       AllowParallelFor: boolean = true); overload;
     procedure ForEachConnectedClient(DoSomethingEvent
-      : TOlfSMDoSomethingOnConnectedClientEvent;
-      AllowParallelFor: boolean = true); overload;
+      : TOlfSMConnectedClientEvent; AllowParallelFor: boolean = true); overload;
   end;
-
-  TOlfSMClientEvent = procedure(AClient: TOlfSMSrvConnectedClient) of object;
 
   TOlfSMSrvConnectedClient = class(TInterfacedObject)
   private
@@ -135,9 +146,9 @@ type
     FSocket: TSocket;
     FSocketServer: TOlfSMServer;
     FThreadNameForDebugging: string;
-    FonConnected: TOlfSMClientEvent;
-    FonDisconnected: TOlfSMClientEvent;
-    FonLostConnection: TOlfSMClientEvent;
+    FonConnected: TOlfSMConnectedClientEvent;
+    FonDisconnected: TOlfSMConnectedClientEvent;
+    FonLostConnection: TOlfSMConnectedClientEvent;
     FonDecodeReceivedMessage: TOlfSMEncodeDecodeMessageEvent;
     FonEncodeMessageToSend: TOlfSMEncodeDecodeMessageEvent;
     FTagBool: boolean;
@@ -149,9 +160,9 @@ type
     function GetSocket: TSocket;
     function GetThreadNameForDebugging: string;
     procedure SetThreadNameForDebugging(const Value: string);
-    procedure SetonConnected(const Value: TOlfSMClientEvent);
-    procedure SetonDisconnected(const Value: TOlfSMClientEvent);
-    procedure SetonLostConnection(const Value: TOlfSMClientEvent);
+    procedure SetonConnected(const Value: TOlfSMConnectedClientEvent);
+    procedure SetonDisconnected(const Value: TOlfSMConnectedClientEvent);
+    procedure SetonLostConnection(const Value: TOlfSMConnectedClientEvent);
     procedure SetonDecodeReceivedMessage(const Value
       : TOlfSMEncodeDecodeMessageEvent);
     procedure SetonEncodeMessageToSend(const Value
@@ -171,11 +182,11 @@ type
   public
     property ThreadNameForDebugging: string read GetThreadNameForDebugging
       write SetThreadNameForDebugging;
-    property onConnected: TOlfSMClientEvent read FonConnected
+    property onConnected: TOlfSMConnectedClientEvent read FonConnected
       write SetonConnected;
-    property onLostConnection: TOlfSMClientEvent read FonLostConnection
+    property onLostConnection: TOlfSMConnectedClientEvent read FonLostConnection
       write SetonLostConnection;
-    property onDisconnected: TOlfSMClientEvent read FonDisconnected
+    property onDisconnected: TOlfSMConnectedClientEvent read FonDisconnected
       write SetonDisconnected;
     property onEncodeMessageToSend: TOlfSMEncodeDecodeMessageEvent
       read FonEncodeMessageToSend write SetonEncodeMessageToSend;
@@ -326,14 +337,31 @@ begin
   inherited;
 end;
 
-procedure TOlfSMServer.DoRemoveConnectedClient
-  (AClient: TOlfSMSrvConnectedClient);
+procedure TOlfSMServer.DoClientConnected(const AClient
+  : TOlfSMSrvConnectedClient);
+begin
+  if assigned(onClientConnected) then
+    onClientConnected(AClient);
+end;
+
+procedure TOlfSMServer.DoClientDisconnected(const AClient
+  : TOlfSMSrvConnectedClient);
 begin
   FConnectedClients.Remove(AClient);
+  if assigned(onClientLostConnection) then
+    onClientLostConnection(AClient);
+end;
+
+procedure TOlfSMServer.DoClientLostConnexion(const AClient
+  : TOlfSMSrvConnectedClient);
+begin
+  FConnectedClients.Remove(AClient);
+  if assigned(onClientDisconnected) then
+    onClientDisconnected(AClient);
 end;
 
 procedure TOlfSMServer.ForEachConnectedClient(DoSomethingEvent
-  : TOlfSMDoSomethingOnConnectedClientEvent; AllowParallelFor: boolean);
+  : TOlfSMConnectedClientEvent; AllowParallelFor: boolean);
 begin
   if not assigned(DoSomethingEvent) then
     exit;
@@ -346,7 +374,7 @@ begin
 end;
 
 procedure TOlfSMServer.ForEachConnectedClient(DoSomethingProc
-  : TOlfSMDoSomethingOnConnectedClientProc; AllowParallelFor: boolean);
+  : TOlfSMConnectedClientProc; AllowParallelFor: boolean);
 var
   List: TList<TOlfSMSrvConnectedClient>;
   i: integer;
@@ -530,8 +558,9 @@ begin
                 SrvClient := TOlfSMSrvConnectedClient.Create(self,
                   NewClientSocket);
                 FConnectedClients.Add(SrvClient);
-                SrvClient.onLostConnection := DoRemoveConnectedClient;
-                SrvClient.onDisconnected := SrvClient.onLostConnection;
+                SrvClient.onConnected := DoClientConnected;
+                SrvClient.onLostConnection := DoClientLostConnexion;
+                SrvClient.onDisconnected := DoClientDisconnected;
                 SrvClient.StartClientLoop;
               end
             except
@@ -569,6 +598,24 @@ begin
   finally
     tmonitor.exit(self);
   end;
+end;
+
+procedure TOlfSMServer.SetonClientConnected(const Value
+  : TOlfSMConnectedClientEvent);
+begin
+  FonClientConnected := Value;
+end;
+
+procedure TOlfSMServer.SetonClientDisconnected(const Value
+  : TOlfSMConnectedClientEvent);
+begin
+  FonClientDisconnected := Value;
+end;
+
+procedure TOlfSMServer.SetonClientLostConnection(const Value
+  : TOlfSMConnectedClientEvent);
+begin
+  FonClientLostConnection := Value;
 end;
 
 procedure TOlfSMServer.SetonDecodeReceivedMessage
@@ -930,7 +977,7 @@ begin
 end;
 
 procedure TOlfSMSrvConnectedClient.SetonConnected
-  (const Value: TOlfSMClientEvent);
+  (const Value: TOlfSMConnectedClientEvent);
 begin
   FonConnected := Value;
 end;
@@ -942,7 +989,7 @@ begin
 end;
 
 procedure TOlfSMSrvConnectedClient.SetonDisconnected
-  (const Value: TOlfSMClientEvent);
+  (const Value: TOlfSMConnectedClientEvent);
 begin
   FonDisconnected := Value;
 end;
@@ -954,7 +1001,7 @@ begin
 end;
 
 procedure TOlfSMSrvConnectedClient.SetonLostConnection
-  (const Value: TOlfSMClientEvent);
+  (const Value: TOlfSMConnectedClientEvent);
 begin
   FonLostConnection := Value;
 end;
