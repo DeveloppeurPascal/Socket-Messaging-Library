@@ -7,6 +7,11 @@ uses
   System.Generics.Collections,
   Olf.Net.Socket.Messaging;
 
+const
+  CVersionLevel = 1;
+  CDefaultDelphiMessageClassNamePrefix = '';
+  CDefaultDelphiMessageClassNameSuffix = 'Message';
+
 type
   TMessageFieldsList = class;
   TMessage = class;
@@ -124,10 +129,6 @@ type
   end;
 
   TProject = class
-  private const
-    CVersionLevel = 1;
-
-  var
     FFileName: string;
     FMessages: TMessagesList;
     FHasChanged: boolean;
@@ -137,6 +138,10 @@ type
     FDelphiClientClassName: string;
     FDelphiServerClassName: string;
     FDelphiUnitsUsed: string;
+    FDelphiMessageClassNamePrefix: string;
+    FDelphiMessageClassNameSuffix: string;
+    procedure SetDelphiMessageClassNamePrefix(const Value: string);
+    procedure SetDelphiMessageClassNameSuffix(const Value: string);
     function GetDelphiClientClassName: string;
     function GetDelphiServerClassName: string;
     procedure SetDelphiUnitsUsed(const Value: string);
@@ -172,6 +177,10 @@ type
       write SetDelphiClientClassName;
     property DelphiUnitsUsed: string read FDelphiUnitsUsed
       write SetDelphiUnitsUsed;
+    property DelphiMessageClassNamePrefix: string
+      read FDelphiMessageClassNamePrefix write SetDelphiMessageClassNamePrefix;
+    property DelphiMessageClassNameSuffix: string
+      read FDelphiMessageClassNameSuffix write SetDelphiMessageClassNameSuffix;
     procedure SaveToFile(AFileName: string = ''; AForceWrite: boolean = true);
     procedure LoadFromFile(AFileName: string);
     constructor Create; virtual;
@@ -179,6 +188,7 @@ type
     function DefaultDelphiUnitName(AName: string = ''): string;
     function DefaultDelphiServerClassName(AName: string = ''): string;
     function DefaultDelphiClientClassName(AName: string = ''): string;
+    function AddPrefixAndSuffix(const Value: string): string;
   end;
 
 function ToDelphiConst(Texte: string; AllowDot: boolean = false): string;
@@ -523,11 +533,9 @@ end;
 function TMessage.DefaultDelphiClassName(AName: string): string;
 begin
   if AName.IsEmpty then
-    Result := 'T' + ToDelphiConst(name)
+    Result := FParent.FParent.AddPrefixAndSuffix(ToDelphiConst(name))
   else
-    Result := 'T' + ToDelphiConst(AName);
-  if not Result.tolower.EndsWith('message') then
-    Result := Result + 'Message';
+    Result := FParent.FParent.AddPrefixAndSuffix(ToDelphiConst(AName));
 end;
 
 function TMessage.GetDelphiClassName: string;
@@ -535,9 +543,7 @@ begin
   if FDelphiClassName.IsEmpty then
     Result := DefaultDelphiClassName
   else
-    Result := FDelphiClassName;
-  if not Result.tolower.StartsWith('t') then
-    Result := 'T' + Result;
+    Result := FParent.FParent.AddPrefixAndSuffix(FDelphiClassName);
 end;
 
 procedure TMessage.SetAsJSON(const Value: TJSONObject);
@@ -671,10 +677,10 @@ begin
   for i := 0 to Count - 1 do
   begin
     msg := items[i];
-    Result := Result + '{ ' + msg.DelphiClassName + ' }' + sLineBreak;
+    Result := Result + '{ T' + msg.DelphiClassName + ' }' + sLineBreak;
     Result := Result + sLineBreak;
 
-    Result := Result + 'constructor ' + msg.DelphiClassName + '.Create;' +
+    Result := Result + 'constructor T' + msg.DelphiClassName + '.Create;' +
       sLineBreak;
     Result := Result + 'begin' + sLineBreak;
     Result := Result + '  inherited;' + sLineBreak;
@@ -691,15 +697,15 @@ begin
     Result := Result + 'end;' + sLineBreak;
     Result := Result + sLineBreak;
 
-    Result := Result + 'function ' + msg.DelphiClassName +
+    Result := Result + 'function T' + msg.DelphiClassName +
       '.GetNewInstance: TOlfSMMessage;' + sLineBreak;
     Result := Result + 'begin' + sLineBreak;
-    Result := Result + '  result := ' + msg.DelphiClassName + '.Create;' +
+    Result := Result + '  result := T' + msg.DelphiClassName + '.Create;' +
       sLineBreak;
     Result := Result + 'end;' + sLineBreak;
     Result := Result + sLineBreak;
 
-    Result := Result + 'procedure ' + msg.DelphiClassName +
+    Result := Result + 'procedure T' + msg.DelphiClassName +
       '.LoadFromStream(Stream: TStream);' + sLineBreak;
     Result := Result + 'begin' + sLineBreak;
     Result := Result + '  inherited;' + sLineBreak;
@@ -722,7 +728,7 @@ begin
     Result := Result + 'end;' + sLineBreak;
     Result := Result + sLineBreak;
 
-    Result := Result + 'procedure ' + msg.DelphiClassName +
+    Result := Result + 'procedure T' + msg.DelphiClassName +
       '.SaveToStream(Stream: TStream);' + sLineBreak;
     Result := Result + 'begin' + sLineBreak;
     Result := Result + '  inherited;' + sLineBreak;
@@ -744,7 +750,7 @@ begin
     for j := 0 to msg.Fields.Count - 1 do
     begin
       fld := msg.Fields[j];
-      Result := Result + 'procedure ' + msg.DelphiClassName + '.Set' +
+      Result := Result + 'procedure T' + msg.DelphiClassName + '.Set' +
         fld.DelphiFieldName + '(const Value: ' + fld.DelphiFieldType + ');' +
         sLineBreak;
       Result := Result + 'begin' + sLineBreak;
@@ -780,7 +786,7 @@ begin
         sLineBreak;
       Result := Result + '  /// </remarks>' + sLineBreak;
     end;
-    Result := Result + '  ' + msg.DelphiClassName + ' = class(TOlfSMMessage)' +
+    Result := Result + '  T' + msg.DelphiClassName + ' = class(TOlfSMMessage)' +
       sLineBreak;
     Result := Result + '  private' + sLineBreak;
     for j := 0 to msg.Fields.Count - 1 do
@@ -912,6 +918,24 @@ end;
 
 { TProject }
 
+function TProject.AddPrefixAndSuffix(const Value: string): string;
+var
+  Prefix, Suffix: string;
+  LowerResult: string;
+begin
+  Prefix := DelphiMessageClassNamePrefix;
+  Suffix := DelphiMessageClassNameSuffix;
+
+  Result := ToDelphiConst(Value);
+  LowerResult := Result.tolower;
+
+  if not LowerResult.StartsWith(Prefix.tolower) then
+    Result := Prefix + Result;
+
+  if not(Suffix.IsEmpty or LowerResult.EndsWith(Suffix.tolower)) then
+    Result := Result + Suffix;
+end;
+
 constructor TProject.Create;
 begin
   Messages := TMessagesList.Create(self);
@@ -923,6 +947,8 @@ begin
   FDelphiClientClassName := '';
   FDelphiServerClassName := '';
   FDelphiUnitsUsed := '';
+  FDelphiMessageClassNamePrefix := CDefaultDelphiMessageClassNamePrefix;
+  FDelphiMessageClassNameSuffix := CDefaultDelphiMessageClassNameSuffix;
 end;
 
 destructor TProject.Destroy;
@@ -946,9 +972,9 @@ end;
 function TProject.DefaultDelphiClientClassName(AName: string): string;
 begin
   if AName.IsEmpty then
-    Result := 'T' + ToDelphiConst(name)
+    Result := ToDelphiConst(name)
   else
-    Result := 'T' + ToDelphiConst(AName);
+    Result := ToDelphiConst(AName);
   if not Result.tolower.EndsWith('client') then
     Result := Result + 'Client';
 end;
@@ -956,9 +982,9 @@ end;
 function TProject.DefaultDelphiServerClassName(AName: string): string;
 begin
   if AName.IsEmpty then
-    Result := 'T' + ToDelphiConst(name)
+    Result := ToDelphiConst(name)
   else
-    Result := 'T' + ToDelphiConst(AName);
+    Result := ToDelphiConst(AName);
   if not Result.tolower.EndsWith('server') then
     Result := Result + 'Server';
 end;
@@ -977,8 +1003,6 @@ begin
     Result := DefaultDelphiClientClassName
   else
     Result := FDelphiClientClassName;
-  if not Result.tolower.StartsWith('t') then
-    Result := 'T' + Result;
 end;
 
 function TProject.GetDelphiServerClassName: string;
@@ -987,8 +1011,6 @@ begin
     Result := DefaultDelphiServerClassName
   else
     Result := FDelphiServerClassName;
-  if not Result.tolower.StartsWith('t') then
-    Result := 'T' + Result;
 end;
 
 function TProject.GetDelphiUnitName: string;
@@ -1130,6 +1152,8 @@ begin
   Result.AddPair('delphiserverclassname', FDelphiServerClassName);
   Result.AddPair('delphiclientclassname', FDelphiClientClassName);
   Result.AddPair('delphiunits', FDelphiUnitsUsed);
+  Result.AddPair('dxmsgprefix', FDelphiMessageClassNamePrefix);
+  Result.AddPair('dxmsgsuffix', FDelphiMessageClassNameSuffix);
 end;
 
 procedure TProject.LoadFromFile(AFileName: string);
@@ -1183,6 +1207,22 @@ begin
     exit;
   ValueChanged;
   FDelphiClientClassName := Value;
+end;
+
+procedure TProject.SetDelphiMessageClassNamePrefix(const Value: string);
+begin
+  if (FDelphiMessageClassNamePrefix = Value) then
+    exit;
+  ValueChanged;
+  FDelphiMessageClassNamePrefix := ToDelphiConst(Value);
+end;
+
+procedure TProject.SetDelphiMessageClassNameSuffix(const Value: string);
+begin
+  if (FDelphiMessageClassNameSuffix = Value) then
+    exit;
+  ValueChanged;
+  FDelphiMessageClassNameSuffix := ToDelphiConst(Value);
 end;
 
 procedure TProject.SetDelphiServerClassName(const Value: string);
@@ -1287,6 +1327,12 @@ begin
     FDelphiClientClassName := '';
   if not Value.TryGetValue<string>('delphiunits', FDelphiUnitsUsed) then
     FDelphiUnitsUsed := '';
+  if not Value.TryGetValue<string>('dxmsgprefix', FDelphiMessageClassNamePrefix)
+  then
+    FDelphiMessageClassNamePrefix := CDefaultDelphiMessageClassNamePrefix;
+  if not Value.TryGetValue<string>('dxmsgsuffix', FDelphiMessageClassNameSuffix)
+  then
+    FDelphiMessageClassNameSuffix := CDefaultDelphiMessageClassNameSuffix;
 end;
 
 procedure TProject.ValueChanged;

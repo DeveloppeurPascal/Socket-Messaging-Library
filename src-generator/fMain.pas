@@ -113,6 +113,15 @@ type
     edtProjectDelphiServerClassName: TEdit;
     lblProjectDelphiUnitsUsed: TLabel;
     edtProjectDelphiUnitsUsed: TEdit;
+    lblProjectDefaultMessageClassName: TLabel;
+    lProjectDefaultMessageClassName: TLayout;
+    Label2: TLabel;
+    edtProjectDelphiMessageClassPrefix: TEdit;
+    Label3: TLabel;
+    edtProjectDelphiMessageClassSuffix: TEdit;
+    Label4: TLabel;
+    Label5: TLabel;
+    Label6: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure mnuQuitClick(Sender: TObject);
     procedure mnuAboutClick(Sender: TObject);
@@ -380,8 +389,6 @@ begin
   CurrentProject.Name := edtProjectName.Text;
   (tvProject.tagobject as TTreeViewItem).Text := CurrentProject.Name;
 
-  CurrentProject.Description := edtProjectDescription.Text;
-
   edtProjectDelphiUnitName.Text := edtProjectDelphiUnitName.Text.trim;
   if edtProjectDelphiUnitName.Text.IsEmpty then
     CurrentProject.DelphiUnitName := ''
@@ -406,6 +413,14 @@ begin
   else
     CurrentProject.DelphiClientClassName :=
       ToDelphiConst(edtProjectDelphiClientClassName.Text);
+
+  CurrentProject.DelphiMessageClassNamePrefix :=
+    edtProjectDelphiMessageClassPrefix.Text;
+
+  CurrentProject.DelphiMessageClassNameSuffix :=
+    edtProjectDelphiMessageClassSuffix.Text;
+
+  CurrentProject.Description := edtProjectDescription.Text;
 
   RefreshFormCaption;
 end;
@@ -548,6 +563,11 @@ begin
   else
     edtProjectDelphiClientClassName.Text :=
       CurrentProject.DelphiClientClassName;
+
+  edtProjectDelphiMessageClassPrefix.Text :=
+    CurrentProject.DelphiMessageClassNamePrefix;
+  edtProjectDelphiMessageClassSuffix.Text :=
+    CurrentProject.DelphiMessageClassNameSuffix;
 
   edtProjectDescription.Text := CurrentProject.Description;
 
