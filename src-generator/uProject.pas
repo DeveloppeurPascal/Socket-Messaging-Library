@@ -126,6 +126,8 @@ type
   TProject = class
   private const
     CVersionLevel = 1;
+    function GetDelphiClientClassName: string;
+    function GetDelphiServerClassName: string;
 
   var
     FFileName: string;
@@ -134,6 +136,10 @@ type
     FName: string;
     FDescription: string;
     FDelphiUnitName: string;
+    FDelphiClientClassName: string;
+    FDelphiServerClassName: string;
+    procedure SetDelphiClientClassName(const Value: string);
+    procedure SetDelphiServerClassName(const Value: string);
     function GetAsString: string;
     procedure SetAsString(const Value: string);
     procedure SetMessages(const Value: TMessagesList);
@@ -158,11 +164,17 @@ type
     property AsJSON: TJSONObject read GetAsJSON write SetAsJSON;
     property AsDelphi: string read GetAsDelphi;
     property FileName: string read FFileName;
+    property DelphiServerClassName: string read GetDelphiServerClassName
+      write SetDelphiServerClassName;
+    property DelphiClientClassName: string read GetDelphiClientClassName
+      write SetDelphiClientClassName;
     procedure SaveToFile(AFileName: string = ''; AForceWrite: boolean = true);
     procedure LoadFromFile(AFileName: string);
     constructor Create; virtual;
     destructor Destroy; override;
     function DefaultDelphiUnitName(AName: string = ''): string;
+    function DefaultDelphiServerClassName(AName: string = ''): string;
+    function DefaultDelphiClientClassName(AName: string = ''): string;
   end;
 
 function ToDelphiConst(Texte: string; AllowDot: boolean = false): string;
@@ -901,6 +913,11 @@ begin
   Messages := TMessagesList.Create(self);
   FHasChanged := false;
   FFileName := '';
+  FName := '';
+  FDescription := '';
+  FDelphiUnitName := '';
+  FDelphiClientClassName := '';
+  FDelphiServerClassName := '';
 end;
 
 destructor TProject.Destroy;
@@ -921,12 +938,52 @@ begin
   end;
 end;
 
+function TProject.DefaultDelphiClientClassName(AName: string): string;
+begin
+  if AName.IsEmpty then
+    Result := 'T' + ToDelphiConst(name)
+  else
+    Result := 'T' + ToDelphiConst(AName);
+  if not Result.tolower.EndsWith('client') then
+    Result := Result + 'Client';
+end;
+
+function TProject.DefaultDelphiServerClassName(AName: string): string;
+begin
+  if AName.IsEmpty then
+    Result := 'T' + ToDelphiConst(name)
+  else
+    Result := 'T' + ToDelphiConst(AName);
+  if not Result.tolower.EndsWith('server') then
+    Result := Result + 'Server';
+end;
+
 function TProject.DefaultDelphiUnitName(AName: string): string;
 begin
   if AName.IsEmpty then
     Result := ToDelphiConst(name, true)
   else
     Result := ToDelphiConst(AName, true);
+end;
+
+function TProject.GetDelphiClientClassName: string;
+begin
+  if FDelphiClientClassName.IsEmpty then
+    Result := DefaultDelphiClientClassName
+  else
+    Result := FDelphiClientClassName;
+  if not Result.tolower.StartsWith('t') then
+    Result := 'T' + Result;
+end;
+
+function TProject.GetDelphiServerClassName: string;
+begin
+  if FDelphiServerClassName.IsEmpty then
+    Result := DefaultDelphiServerClassName
+  else
+    Result := FDelphiServerClassName;
+  if not Result.tolower.StartsWith('t') then
+    Result := 'T' + Result;
 end;
 
 function TProject.GetDelphiUnitName: string;
@@ -1063,6 +1120,8 @@ begin
   Result.AddPair('delphiunitname', FDelphiUnitName);
   Messages.SortByMessageID;
   Result.AddPair('messages', Messages.AsJSON);
+  Result.AddPair('delphiserverclassname', FDelphiServerClassName);
+  Result.AddPair('delphiclientclassname', FDelphiClientClassName);
 end;
 
 procedure TProject.LoadFromFile(AFileName: string);
@@ -1108,6 +1167,22 @@ begin
     finally
       jso.Free;
     end;
+end;
+
+procedure TProject.SetDelphiClientClassName(const Value: string);
+begin
+  if (FDelphiClientClassName = Value) then
+    exit;
+  ValueChanged;
+  FDelphiClientClassName := Value;
+end;
+
+procedure TProject.SetDelphiServerClassName(const Value: string);
+begin
+  if (FDelphiServerClassName = Value) then
+    exit;
+  ValueChanged;
+  FDelphiServerClassName := Value;
 end;
 
 procedure TProject.SetDelphiUnitName(const Value: string);
@@ -1180,6 +1255,12 @@ begin
   end
   else
     Messages.AsJSON := jsa;
+  if not Value.TryGetValue<string>('delphiserverclassname',
+    FDelphiServerClassName) then
+    FDelphiServerClassName := '';
+  if not Value.TryGetValue<string>('delphiclientclassname',
+    FDelphiClientClassName) then
+    FDelphiClientClassName := '';
 end;
 
 procedure TProject.ValueChanged;
