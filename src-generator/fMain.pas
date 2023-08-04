@@ -111,6 +111,8 @@ type
     edtProjectDelphiClientClassName: TEdit;
     lblProjectDelphiServerClassName: TLabel;
     edtProjectDelphiServerClassName: TEdit;
+    lblProjectDelphiUnitsUsed: TLabel;
+    edtProjectDelphiUnitsUsed: TEdit;
     procedure FormCreate(Sender: TObject);
     procedure mnuQuitClick(Sender: TObject);
     procedure mnuAboutClick(Sender: TObject);
@@ -387,6 +389,8 @@ begin
     CurrentProject.DelphiUnitName :=
       ToDelphiConst(edtProjectDelphiUnitName.Text, true);
 
+  CurrentProject.DelphiUnitsUsed := edtProjectDelphiUnitsUsed.Text;
+
   edtProjectDelphiServerClassName.Text :=
     edtProjectDelphiServerClassName.Text.trim;
   if edtProjectDelphiServerClassName.Text.IsEmpty then
@@ -528,6 +532,8 @@ begin
     edtProjectDelphiUnitName.Text := ''
   else
     edtProjectDelphiUnitName.Text := CurrentProject.DelphiUnitName;
+
+  edtProjectDelphiUnitsUsed.Text := CurrentProject.DelphiUnitsUsed;
 
   if (CurrentProject.DelphiServerClassName = CurrentProject.
     DefaultDelphiServerClassName) then

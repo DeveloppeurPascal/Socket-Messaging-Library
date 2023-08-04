@@ -126,8 +126,6 @@ type
   TProject = class
   private const
     CVersionLevel = 1;
-    function GetDelphiClientClassName: string;
-    function GetDelphiServerClassName: string;
 
   var
     FFileName: string;
@@ -138,6 +136,10 @@ type
     FDelphiUnitName: string;
     FDelphiClientClassName: string;
     FDelphiServerClassName: string;
+    FDelphiUnitsUsed: string;
+    function GetDelphiClientClassName: string;
+    function GetDelphiServerClassName: string;
+    procedure SetDelphiUnitsUsed(const Value: string);
     procedure SetDelphiClientClassName(const Value: string);
     procedure SetDelphiServerClassName(const Value: string);
     function GetAsString: string;
@@ -168,6 +170,8 @@ type
       write SetDelphiServerClassName;
     property DelphiClientClassName: string read GetDelphiClientClassName
       write SetDelphiClientClassName;
+    property DelphiUnitsUsed: string read FDelphiUnitsUsed
+      write SetDelphiUnitsUsed;
     procedure SaveToFile(AFileName: string = ''; AForceWrite: boolean = true);
     procedure LoadFromFile(AFileName: string);
     constructor Create; virtual;
@@ -918,6 +922,7 @@ begin
   FDelphiUnitName := '';
   FDelphiClientClassName := '';
   FDelphiServerClassName := '';
+  FDelphiUnitsUsed := '';
 end;
 
 destructor TProject.Destroy;
@@ -1064,6 +1069,8 @@ begin
   Result := Result + 'interface' + sLineBreak;
   Result := Result + sLineBreak;
   Result := Result + 'uses' + sLineBreak;
+  if not DelphiUnitsUsed.IsEmpty then
+    Result := Result + '  ' + DelphiUnitsUsed + ',' + sLineBreak;
   Result := Result + '  System.Classes,' + sLineBreak;
   Result := Result + '  Olf.Net.Socket.Messaging;' + sLineBreak;
   Result := Result + sLineBreak;
@@ -1122,6 +1129,7 @@ begin
   Result.AddPair('messages', Messages.AsJSON);
   Result.AddPair('delphiserverclassname', FDelphiServerClassName);
   Result.AddPair('delphiclientclassname', FDelphiClientClassName);
+  Result.AddPair('delphiunits', FDelphiUnitsUsed);
 end;
 
 procedure TProject.LoadFromFile(AFileName: string);
@@ -1193,6 +1201,22 @@ begin
   FDelphiUnitName := Value;
 end;
 
+procedure TProject.SetDelphiUnitsUsed(const Value: string);
+begin
+  if (FDelphiUnitsUsed = Value) then
+    exit;
+  ValueChanged;
+
+  FDelphiUnitsUsed := Value.Trim;
+
+  while FDelphiUnitsUsed.StartsWith(',') do
+    FDelphiUnitsUsed := FDelphiUnitsUsed.Substring(1).Trim;
+
+  while FDelphiUnitsUsed.EndsWith(',') do
+    FDelphiUnitsUsed := FDelphiUnitsUsed.Substring(0, FDelphiUnitsUsed.Length
+      - 1).Trim;
+end;
+
 procedure TProject.SetDescription(const Value: string);
 begin
   if (FDescription = Value) then
@@ -1261,6 +1285,8 @@ begin
   if not Value.TryGetValue<string>('delphiclientclassname',
     FDelphiClientClassName) then
     FDelphiClientClassName := '';
+  if not Value.TryGetValue<string>('delphiunits', FDelphiUnitsUsed) then
+    FDelphiUnitsUsed := '';
 end;
 
 procedure TProject.ValueChanged;

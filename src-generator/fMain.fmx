@@ -2,7 +2,7 @@ object Form1: TForm1
   Left = 0
   Top = 0
   Caption = 'Form1'
-  ClientHeight = 805
+  ClientHeight = 833
   ClientWidth = 700
   Position = ScreenCenter
   FormFactor.Width = 320
@@ -135,7 +135,7 @@ object Form1: TForm1
   object lProjectScreen: TLayout
     Align = Contents
     Size.Width = 700.000000000000000000
-    Size.Height = 805.000000000000000000
+    Size.Height = 833.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 3
     object Splitter1: TSplitter
@@ -146,7 +146,7 @@ object Form1: TForm1
       Margins.Right = 5.000000000000000000
       Position.X = 305.000000000000000000
       Size.Width = 10.000000000000000000
-      Size.Height = 805.000000000000000000
+      Size.Height = 833.000000000000000000
       Size.PlatformDefault = False
     end
     object tcProject: TTabControl
@@ -155,18 +155,18 @@ object Form1: TForm1
       Margins.Right = 10.000000000000000000
       Margins.Bottom = 10.000000000000000000
       Size.Width = 370.000000000000000000
-      Size.Height = 785.000000000000000000
+      Size.Height = 813.000000000000000000
       Size.PlatformDefault = False
       TabIndex = 0
       TabOrder = 1
       TabPosition = PlatformDefault
       Sizes = (
         370s
-        759s
+        787s
         370s
-        759s
+        787s
         370s
-        759s)
+        787s)
       object tiProjectEdit: TTabItem
         CustomIcon = <
           item
@@ -183,11 +183,11 @@ object Form1: TForm1
         object VertScrollBox1: TVertScrollBox
           Align = Client
           Size.Width = 370.000000000000000000
-          Size.Height = 759.000000000000000000
+          Size.Height = 787.000000000000000000
           Size.PlatformDefault = False
           TabOrder = 0
           Viewport.Width = 370.000000000000000000
-          Viewport.Height = 759.000000000000000000
+          Viewport.Height = 787.000000000000000000
           object lblProjectDescription: TLabel
             Align = Top
             Margins.Left = 10.000000000000000000
@@ -195,12 +195,12 @@ object Form1: TForm1
             Margins.Right = 10.000000000000000000
             Margins.Bottom = 5.000000000000000000
             Position.X = 10.000000000000000000
-            Position.Y = 286.000000000000000000
+            Position.Y = 355.000000000000000000
             Size.Width = 350.000000000000000000
             Size.Height = 17.000000000000000000
             Size.PlatformDefault = False
             Text = 'Project description'
-            TabOrder = 8
+            TabOrder = 10
           end
           object edtProjectName: TEdit
             Touch.InteractiveGestures = [LongTap, DoubleTap]
@@ -269,21 +269,21 @@ object Form1: TForm1
             Margins.Right = 10.000000000000000000
             Margins.Bottom = 10.000000000000000000
             Position.X = 10.000000000000000000
-            Position.Y = 313.000000000000000000
+            Position.Y = 382.000000000000000000
             Size.Width = 350.000000000000000000
             Size.Height = 100.000000000000000000
             Size.PlatformDefault = False
-            TabOrder = 9
+            TabOrder = 11
             Viewport.Width = 346.000000000000000000
             Viewport.Height = 96.000000000000000000
           end
           object GridPanelLayout1: TGridPanelLayout
             Align = Top
-            Position.Y = 423.000000000000000000
+            Position.Y = 492.000000000000000000
             Size.Width = 370.000000000000000000
             Size.Height = 272.000000000000000000
             Size.PlatformDefault = False
-            TabOrder = 10
+            TabOrder = 12
             ColumnCollection = <
               item
                 Value = 50.000000000000000000
@@ -406,19 +406,19 @@ object Form1: TForm1
             Margins.Right = 10.000000000000000000
             Margins.Bottom = 5.000000000000000000
             Position.X = 10.000000000000000000
-            Position.Y = 217.000000000000000000
+            Position.Y = 286.000000000000000000
             Size.Width = 350.000000000000000000
             Size.Height = 17.000000000000000000
             Size.PlatformDefault = False
             Text = 'Delphi client class name'
-            TabOrder = 6
+            TabOrder = 8
           end
           object edtProjectDelphiClientClassName: TEdit
             Touch.InteractiveGestures = [LongTap, DoubleTap]
             Align = Top
-            TabOrder = 7
+            TabOrder = 9
             Position.X = 10.000000000000000000
-            Position.Y = 244.000000000000000000
+            Position.Y = 313.000000000000000000
             Margins.Left = 10.000000000000000000
             Margins.Top = 5.000000000000000000
             Margins.Right = 10.000000000000000000
@@ -434,14 +434,42 @@ object Form1: TForm1
             Margins.Right = 10.000000000000000000
             Margins.Bottom = 5.000000000000000000
             Position.X = 10.000000000000000000
-            Position.Y = 148.000000000000000000
+            Position.Y = 217.000000000000000000
             Size.Width = 350.000000000000000000
             Size.Height = 17.000000000000000000
             Size.PlatformDefault = False
             Text = 'Delphi server class name'
-            TabOrder = 4
+            TabOrder = 6
           end
           object edtProjectDelphiServerClassName: TEdit
+            Touch.InteractiveGestures = [LongTap, DoubleTap]
+            Align = Top
+            TabOrder = 7
+            Position.X = 10.000000000000000000
+            Position.Y = 244.000000000000000000
+            Margins.Left = 10.000000000000000000
+            Margins.Top = 5.000000000000000000
+            Margins.Right = 10.000000000000000000
+            Margins.Bottom = 10.000000000000000000
+            Size.Width = 350.000000000000000000
+            Size.Height = 22.000000000000000000
+            Size.PlatformDefault = False
+          end
+          object lblProjectDelphiUnitsUsed: TLabel
+            Align = Top
+            Margins.Left = 10.000000000000000000
+            Margins.Top = 10.000000000000000000
+            Margins.Right = 10.000000000000000000
+            Margins.Bottom = 5.000000000000000000
+            Position.X = 10.000000000000000000
+            Position.Y = 148.000000000000000000
+            Size.Width = 350.000000000000000000
+            Size.Height = 17.000000000000000000
+            Size.PlatformDefault = False
+            Text = 'Delphi units needed (types declarations used by fields)'
+            TabOrder = 4
+          end
+          object edtProjectDelphiUnitsUsed: TEdit
             Touch.InteractiveGestures = [LongTap, DoubleTap]
             Align = Top
             TabOrder = 5
@@ -454,6 +482,7 @@ object Form1: TForm1
             Size.Width = 350.000000000000000000
             Size.Height = 22.000000000000000000
             Size.PlatformDefault = False
+            TextPrompt = 'unit1,unit2,unit3, ..., unitX'
           end
         end
       end
@@ -473,11 +502,11 @@ object Form1: TForm1
         object VertScrollBox2: TVertScrollBox
           Align = Client
           Size.Width = 370.000000000000000000
-          Size.Height = 759.000000000000000000
+          Size.Height = 787.000000000000000000
           Size.PlatformDefault = False
           TabOrder = 0
           Viewport.Width = 370.000000000000000000
-          Viewport.Height = 759.000000000000000000
+          Viewport.Height = 787.000000000000000000
           object lblMessageName: TLabel
             Align = Top
             Margins.Left = 10.000000000000000000
@@ -705,11 +734,11 @@ object Form1: TForm1
         object VertScrollBox3: TVertScrollBox
           Align = Client
           Size.Width = 370.000000000000000000
-          Size.Height = 759.000000000000000000
+          Size.Height = 787.000000000000000000
           Size.PlatformDefault = False
           TabOrder = 0
           Viewport.Width = 370.000000000000000000
-          Viewport.Height = 759.000000000000000000
+          Viewport.Height = 787.000000000000000000
           object lblFieldOrder: TLabel
             Align = MostTop
             Margins.Left = 10.000000000000000000
@@ -964,7 +993,7 @@ object Form1: TForm1
     object lProjectLeft: TLayout
       Align = Left
       Size.Width = 300.000000000000000000
-      Size.Height = 805.000000000000000000
+      Size.Height = 833.000000000000000000
       Size.PlatformDefault = False
       TabOrder = 0
       object tvProject: TTreeView
@@ -973,13 +1002,13 @@ object Form1: TForm1
         Margins.Top = 10.000000000000000000
         Margins.Bottom = 10.000000000000000000
         Size.Width = 290.000000000000000000
-        Size.Height = 649.000000000000000000
+        Size.Height = 677.000000000000000000
         Size.PlatformDefault = False
         TabOrder = 0
         AlternatingRowBackground = True
         OnChange = tvProjectChange
         Viewport.Width = 286.000000000000000000
-        Viewport.Height = 645.000000000000000000
+        Viewport.Height = 673.000000000000000000
       end
       object btnNewField: TButton
         Align = Bottom
@@ -987,7 +1016,7 @@ object Form1: TForm1
         Margins.Top = 10.000000000000000000
         Margins.Bottom = 10.000000000000000000
         Position.X = 10.000000000000000000
-        Position.Y = 679.000000000000000000
+        Position.Y = 707.000000000000000000
         Size.Width = 290.000000000000000000
         Size.Height = 48.000000000000000000
         Size.PlatformDefault = False
@@ -1001,7 +1030,7 @@ object Form1: TForm1
         Margins.Top = 10.000000000000000000
         Margins.Bottom = 10.000000000000000000
         Position.X = 10.000000000000000000
-        Position.Y = 747.000000000000000000
+        Position.Y = 775.000000000000000000
         Size.Width = 290.000000000000000000
         Size.Height = 48.000000000000000000
         Size.PlatformDefault = False
