@@ -144,6 +144,7 @@ begin
   try
     msg2.Emetteur := msg.Emetteur;
     msg2.Texte := msg.Texte;
+    // SendMessageToAll(msg2, ASender);
     SendMessageToAll(msg2);
   finally
     msg2.Free;
