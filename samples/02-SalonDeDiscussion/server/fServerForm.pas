@@ -30,6 +30,10 @@ type
     procedure onPrivateMessage(Const ASender: TOlfSMSrvConnectedClient;
       Const AMessage: TOlfSMMessage);
 
+    procedure ClientConnected(Const AClient: TOlfSMSrvConnectedClient);
+    procedure ClientLostConnexion(Const AClient: TOlfSMSrvConnectedClient);
+    procedure ClientDisconnected(Const AClient: TOlfSMSrvConnectedClient);
+
     procedure AddLog(Const Txt: string);
   public
     constructor Create(AIP: string; APort: Word); override;
@@ -70,6 +74,21 @@ begin
     end);
 end;
 
+procedure TServer.ClientConnected(const AClient: TOlfSMSrvConnectedClient);
+begin
+  AddLog('New user');
+end;
+
+procedure TServer.ClientDisconnected(const AClient: TOlfSMSrvConnectedClient);
+begin
+  AddLog('Bye ' + AClient.TagString);
+end;
+
+procedure TServer.ClientLostConnexion(const AClient: TOlfSMSrvConnectedClient);
+begin
+  AddLog('Lost ' + AClient.TagString);
+end;
+
 constructor TServer.Create(AIP: string; APort: Word);
 begin
   inherited;
@@ -78,6 +97,10 @@ begin
   SubscribeToMessage(1, onClientIdentifie);
   SubscribeToMessage(2, onPublicMessage);
   SubscribeToMessage(3, onPrivateMessage);
+
+  onClientConnected := ClientConnected;
+  onClientLostConnection := ClientLostConnexion;
+  onClientDisconnected := ClientDisconnected;
 end;
 
 destructor TServer.Destroy;
