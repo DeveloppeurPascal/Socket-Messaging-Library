@@ -1,0 +1,48 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{86017A82-AB3E-4EF9-8ABC-37FEBB8DC697}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="Server\ClockServer.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Client\ClockClient.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="ClockServer">
+        <MSBuild Projects="Server\ClockServer.dproj"/>
+    </Target>
+    <Target Name="ClockServer:Clean">
+        <MSBuild Projects="Server\ClockServer.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="ClockServer:Make">
+        <MSBuild Projects="Server\ClockServer.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="ClockClient">
+        <MSBuild Projects="Client\ClockClient.dproj"/>
+    </Target>
+    <Target Name="ClockClient:Clean">
+        <MSBuild Projects="Client\ClockClient.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="ClockClient:Make">
+        <MSBuild Projects="Client\ClockClient.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="ClockServer;ClockClient"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="ClockServer:Clean;ClockClient:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="ClockServer:Make;ClockClient:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>
