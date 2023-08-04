@@ -702,7 +702,8 @@ begin
   for i := 0 to Count - 1 do
   begin
     msg := items[i];
-    Result := Result + '{ T' + msg.DelphiClassName + ' }' + sLineBreak;
+    Result := Result + '{$REGION ''T' + msg.DelphiClassName + ''' }' +
+      sLineBreak;
     Result := Result + sLineBreak;
 
     Result := Result + 'constructor T' + msg.DelphiClassName + '.Create;' +
@@ -798,7 +799,8 @@ begin
       Result := Result + 'end;' + sLineBreak;
       Result := Result + sLineBreak;
     end;
-
+    Result := Result + '{$ENDREGION}' + sLineBreak;
+    Result := Result + sLineBreak;
   end;
 end;
 
@@ -1123,11 +1125,65 @@ begin
   Result := Result + '  System.Classes,' + sLineBreak;
   Result := Result + '  Olf.Net.Socket.Messaging;' + sLineBreak;
   Result := Result + sLineBreak;
+  Result := Result + 'type' + sLineBreak;
+
+  // Generate the messages classes
   if (Messages.Count > 0) then
-  begin
-    Result := Result + 'type' + sLineBreak;
     Result := Result + Messages.GetDelphiInterface;
-  end;
+
+  // Generate the server descendant
+  Result := Result + '  T' + DelphiServerClassName + ' = class(TOlfSMServer)' +
+    sLineBreak;
+  Result := Result + '  private' + sLineBreak;
+  Result := Result + '  protected' + sLineBreak;
+  for i := 0 to Messages.Count - 1 do
+    if Messages[i].RegisterMessageInTheServer then
+    begin
+      Result := Result + '    procedure onReceiveMessage' + Messages[i]
+        .MessageID.ToString + '(Const ASender: TOlfSMSrvConnectedClient;' +
+        sLineBreak;
+      Result := Result + '      Const AMessage: TOlfSMMessage);' + sLineBreak;
+    end;
+  Result := Result + '  public' + sLineBreak;
+  for i := 0 to Messages.Count - 1 do
+    if Messages[i].RegisterMessageInTheServer then
+    begin
+      Result := Result + '    onReceive' + Messages[i].DelphiClassName +
+        sLineBreak;
+      Result := Result + '      : TOlfSMReceivedMessageEvent<T' + Messages[i]
+        .DelphiClassName + '>;' + sLineBreak;
+    end;
+  Result := Result + '    constructor Create; override;' + sLineBreak;
+  Result := Result + '  end;' + sLineBreak;
+  Result := Result + sLineBreak;
+
+  // Generate the Client descendant
+  Result := Result + '  T' + DelphiClientClassName + ' = class(TOlfSMClient)' +
+    sLineBreak;
+  Result := Result + '  private' + sLineBreak;
+  Result := Result + '  protected' + sLineBreak;
+  for i := 0 to Messages.Count - 1 do
+    if Messages[i].RegisterMessageInTheClient then
+    begin
+      Result := Result + '    procedure onReceiveMessage' + Messages[i]
+        .MessageID.ToString + '(Const ASender: TOlfSMSrvConnectedClient;' +
+        sLineBreak;
+      Result := Result + '      Const AMessage: TOlfSMMessage);' + sLineBreak;
+    end;
+  Result := Result + '  public' + sLineBreak;
+  for i := 0 to Messages.Count - 1 do
+    if Messages[i].RegisterMessageInTheClient then
+    begin
+      Result := Result + '    onReceive' + Messages[i].DelphiClassName +
+        sLineBreak;
+      Result := Result + '      : TOlfSMReceivedMessageEvent<T' + Messages[i]
+        .DelphiClassName + '>;' + sLineBreak;
+    end;
+  Result := Result + '    constructor Create; override;' + sLineBreak;
+  Result := Result + '  end;' + sLineBreak;
+  Result := Result + sLineBreak;
+
+  //
   Result := Result +
     'procedure RegisterMessagesReceivedByTheServer(Const Server: TOlfSMServer);'
     + sLineBreak;
@@ -1135,15 +1191,20 @@ begin
     'procedure RegisterMessagesReceivedByTheClient(Const Client: TOlfSMClient);'
     + sLineBreak;
   Result := Result + sLineBreak;
+
   Result := Result + 'implementation' + sLineBreak;
   Result := Result + sLineBreak;
   Result := Result + 'uses' + sLineBreak;
   Result := Result + '  System.SysUtils;' + sLineBreak;
   Result := Result + sLineBreak;
+{$REGION 'Olf.RTLVersion.Streams'}
   if NeedOlfRTLStreamsUnit then
   begin
     // From unit Olf.RTL.Streams.pas in repository :
     // https://github.com/DeveloppeurPascal/librairies
+    Result := Result + '{$REGION ''code from Olf.RTLVersion.Streams''}' +
+      sLineBreak;
+    Result := Result + sLineBreak;
     Result := Result +
       'procedure SaveStringToStream(AString: string; AStream: TStream;' +
       sLineBreak;
@@ -1227,7 +1288,10 @@ begin
       '  result := LoadStringFromStream(AStream, TEncoding.UTF8);' + sLineBreak;
     Result := Result + 'end;' + sLineBreak;
     Result := Result + sLineBreak;
+    Result := Result + '{$ENDREGION}' + sLineBreak;
+    Result := Result + sLineBreak;
   end;
+{$ENDREGION}
   Result := Result +
     'procedure RegisterMessagesReceivedByTheServer(Const Server: TOlfSMServer);'
     + sLineBreak;
@@ -1248,6 +1312,93 @@ begin
         .DelphiClassName + '.Create);' + sLineBreak;
   Result := Result + 'end;' + sLineBreak;
   Result := Result + sLineBreak;
+
+  // Generate the server descendant
+  Result := Result + '{$REGION ''T' + DelphiServerClassName + '''}' +
+    sLineBreak;
+  Result := Result + sLineBreak;
+  Result := Result + 'constructor T' + DelphiServerClassName + '.Create;' +
+    sLineBreak;
+  Result := Result + 'begin' + sLineBreak;
+  Result := Result + '  inherited;' + sLineBreak;
+  Result := Result + '  RegisterMessagesReceivedByTheServer(self);' +
+    sLineBreak;
+  for i := 0 to Messages.Count - 1 do
+    if Messages[i].RegisterMessageInTheServer then
+      Result := Result + '  SubscribeToMessage(' + Messages[i]
+        .MessageID.ToString + ', onReceiveMessage' + Messages[i]
+        .MessageID.ToString + ');' + sLineBreak;
+  Result := Result + 'end;' + sLineBreak;
+  Result := Result + sLineBreak;
+  for i := 0 to Messages.Count - 1 do
+    if Messages[i].RegisterMessageInTheServer then
+    begin
+      Result := Result + 'procedure T' + DelphiServerClassName +
+        '.onReceiveMessage' + Messages[i].MessageID.ToString +
+        '(const ASender: TOlfSMSrvConnectedClient;' + sLineBreak;
+      Result := Result + 'const AMessage: TOlfSMMessage);' + sLineBreak;
+      Result := Result + 'var' + sLineBreak;
+      Result := Result + '  msg: T' + Messages[i].DelphiClassName + ';' +
+        sLineBreak;
+      Result := Result + 'begin' + sLineBreak;
+      Result := Result + '  if not(AMessage is T' + Messages[i].DelphiClassName
+        + ') then' + sLineBreak;
+      Result := Result + '    exit;' + sLineBreak;
+      Result := Result + '  if not assigned(onReceive' + Messages[i]
+        .DelphiClassName + ') then' + sLineBreak;
+      Result := Result + '    exit;' + sLineBreak;
+      Result := Result + '  onReceive' + Messages[i].DelphiClassName +
+        '(ASender, AMessage as T' + Messages[i].DelphiClassName + ');' +
+        sLineBreak;
+      Result := Result + 'end;' + sLineBreak;
+      Result := Result + sLineBreak;
+    end;
+  Result := Result + '{$ENDREGION}' + sLineBreak;
+  Result := Result + sLineBreak;
+
+  // Generate the client descendant
+  Result := Result + '{$REGION ''T' + DelphiClientClassName + '''}' +
+    sLineBreak;
+  Result := Result + sLineBreak;
+  Result := Result + 'constructor T' + DelphiClientClassName + '.Create;' +
+    sLineBreak;
+  Result := Result + 'begin' + sLineBreak;
+  Result := Result + '  inherited;' + sLineBreak;
+  Result := Result + '  RegisterMessagesReceivedByTheClient(self);' +
+    sLineBreak;
+  for i := 0 to Messages.Count - 1 do
+    if Messages[i].RegisterMessageInTheClient then
+      Result := Result + '  SubscribeToMessage(' + Messages[i]
+        .MessageID.ToString + ', onReceiveMessage' + Messages[i]
+        .MessageID.ToString + ');' + sLineBreak;
+  Result := Result + 'end;' + sLineBreak;
+  Result := Result + sLineBreak;
+  for i := 0 to Messages.Count - 1 do
+    if Messages[i].RegisterMessageInTheClient then
+    begin
+      Result := Result + 'procedure T' + DelphiClientClassName +
+        '.onReceiveMessage' + Messages[i].MessageID.ToString +
+        '(const ASender: TOlfSMSrvConnectedClient;' + sLineBreak;
+      Result := Result + 'const AMessage: TOlfSMMessage);' + sLineBreak;
+      Result := Result + 'var' + sLineBreak;
+      Result := Result + '  msg: T' + Messages[i].DelphiClassName + ';' +
+        sLineBreak;
+      Result := Result + 'begin' + sLineBreak;
+      Result := Result + '  if not(AMessage is T' + Messages[i].DelphiClassName
+        + ') then' + sLineBreak;
+      Result := Result + '    exit;' + sLineBreak;
+      Result := Result + '  if not assigned(onReceive' + Messages[i]
+        .DelphiClassName + ') then' + sLineBreak;
+      Result := Result + '    exit;' + sLineBreak;
+      Result := Result + '  onReceive' + Messages[i].DelphiClassName +
+        '(ASender, AMessage as T' + Messages[i].DelphiClassName + ');' +
+        sLineBreak;
+      Result := Result + 'end;' + sLineBreak;
+      Result := Result + sLineBreak;
+    end;
+  Result := Result + '{$ENDREGION}' + sLineBreak;
+  Result := Result + sLineBreak;
+  //
   if (Messages.Count > 0) then
     Result := Result + Messages.GetDelphiImplementation;
   Result := Result + 'end.' + sLineBreak;
