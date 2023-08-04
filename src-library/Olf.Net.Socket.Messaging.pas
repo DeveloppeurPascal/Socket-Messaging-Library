@@ -49,6 +49,11 @@ type
   TOlfSMServerEvent = procedure(AServer: TOlfSMServer) of object;
   TOlfSMEncodeDecodeMessageEvent = function(AFrom: TStream): TStream of object;
 
+  TOlfSMDoSomethingOnConnectedClientProc = reference to procedure
+    (Const AConnectedClient: TOlfSMSrvConnectedClient);
+  TOlfSMDoSomethingOnConnectedClientEvent = procedure(Const AConnectedClient
+    : TOlfSMSrvConnectedClient) of object;
+
   TOlfSMServer = class(TInterfacedObject, IOlfSMMessagesRegister)
   private
     FThread: TThread;
@@ -113,6 +118,12 @@ type
     procedure UnsubscribeToMessage(AMessageID: TOlfSMMessageID;
       aReceivedMessageEvent: TOlfReceivedMessageEvent);
     procedure SendMessageToAll(Const AMessage: TOlfSMMessage);
+    procedure ForEachConnectedClient(DoSomethingProc
+      : TOlfSMDoSomethingOnConnectedClientProc;
+      AllowParallelFor: boolean = true); overload;
+    procedure ForEachConnectedClient(DoSomethingEvent
+      : TOlfSMDoSomethingOnConnectedClientEvent;
+      AllowParallelFor: boolean = true); overload;
   end;
 
   TOlfSMClientEvent = procedure(AClient: TOlfSMSrvConnectedClient) of object;
@@ -320,13 +331,70 @@ begin
   FConnectedClients.Remove(AClient);
 end;
 
+procedure TOlfSMServer.ForEachConnectedClient(DoSomethingEvent
+  : TOlfSMDoSomethingOnConnectedClientEvent; AllowParallelFor: boolean);
+begin
+  if not assigned(DoSomethingEvent) then
+    exit;
+
+  ForEachConnectedClient(
+    procedure(Const AConnectedClient: TOlfSMSrvConnectedClient)
+    begin
+      DoSomethingEvent(AConnectedClient);
+    end, AllowParallelFor);
+end;
+
+procedure TOlfSMServer.ForEachConnectedClient(DoSomethingProc
+  : TOlfSMDoSomethingOnConnectedClientProc; AllowParallelFor: boolean);
+var
+  List: TList<TOlfSMSrvConnectedClient>;
+  i: integer;
+begin
+  if not assigned(DoSomethingProc) then
+    exit;
+
+  if AllowParallelFor then
+  begin
+    List := FConnectedClients.LockList;
+    try
+      tparallel.For(0, List.Count - 1,
+        procedure(Index: integer)
+        begin
+          try
+            if assigned(List[index]) then
+              DoSomethingProc(List[index]);
+          except
+
+          end;
+        end);
+    finally
+      FConnectedClients.UnlockList;
+    end;
+  end
+  else
+  begin
+    List := FConnectedClients.LockList;
+    try
+      For i := 0 to List.Count - 1 do
+        try
+          if assigned(List[i]) then
+            DoSomethingProc(List[i]);
+        except
+
+        end;
+    finally
+      FConnectedClients.UnlockList;
+    end;
+  end;
+end;
+
 function TOlfSMServer.GetIP: string;
 begin
   tmonitor.Enter(self);
   try
     Result := FIP;
   finally
-    tmonitor.Exit(self);
+    tmonitor.exit(self);
   end;
 end;
 
@@ -336,7 +404,7 @@ begin
   try
     Result := FPort;
   finally
-    tmonitor.Exit(self);
+    tmonitor.exit(self);
   end;
 end;
 
@@ -346,7 +414,7 @@ begin
   try
     Result := FSocket;
   finally
-    tmonitor.Exit(self);
+    tmonitor.exit(self);
   end;
 end;
 
@@ -359,7 +427,7 @@ begin
     else
       Result := FThreadNameForDebugging;
   finally
-    tmonitor.Exit(self);
+    tmonitor.exit(self);
   end;
 end;
 
@@ -517,7 +585,7 @@ begin
   try
     FIP := Value;
   finally
-    tmonitor.Exit(self);
+    tmonitor.exit(self);
   end;
 end;
 
@@ -549,7 +617,7 @@ begin
   try
     FPort := Value;
   finally
-    tmonitor.Exit(self);
+    tmonitor.exit(self);
   end;
 end;
 
@@ -559,7 +627,7 @@ begin
   try
     FSocket := Value;
   finally
-    tmonitor.Exit(self);
+    tmonitor.exit(self);
   end;
 end;
 
@@ -569,7 +637,7 @@ begin
   try
     FThreadNameForDebugging := Value;
   finally
-    tmonitor.Exit(self);
+    tmonitor.exit(self);
   end;
 end;
 
@@ -582,7 +650,7 @@ var
   // proc: TOlfReceivedMessageEvent;
 begin
   if not assigned(aReceivedMessageEvent) then
-    Exit;
+    exit;
 
   sub := LockSubscribers;
   try
@@ -614,12 +682,12 @@ end;
 
 procedure TOlfSMServer.UnlockMessagesDict;
 begin
-  tmonitor.Exit(FMessagesDict);
+  tmonitor.exit(FMessagesDict);
 end;
 
 procedure TOlfSMServer.UnlockSubscribers;
 begin
-  tmonitor.Exit(FSubscribers);
+  tmonitor.exit(FSubscribers);
 end;
 
 procedure TOlfSMServer.UnsubscribeToMessage(AMessageID: TOlfSMMessageID;
@@ -768,7 +836,7 @@ var
   MessageSubscribers: TOlfMessageSubscribers;
 begin
   if not assigned(FSocketServer) then
-    Exit;
+    exit;
 
   Subscribers := FSocketServer.LockSubscribers;
   try
@@ -790,7 +858,7 @@ var
   msg: TOlfSMMessage;
 begin
   if not assigned(FSocketServer) then
-    Exit(nil);
+    exit(nil);
 
   dict := FSocketServer.LockMessagesDict;
   try
@@ -809,7 +877,7 @@ begin
   try
     Result := FSocket;
   finally
-    tmonitor.Exit(self);
+    tmonitor.exit(self);
   end;
 end;
 
@@ -822,7 +890,7 @@ begin
     else
       Result := FThreadNameForDebugging;
   finally
-    tmonitor.Exit(self);
+    tmonitor.exit(self);
   end;
 end;
 
@@ -839,13 +907,13 @@ var
   ss: TSocketStream;
 begin
   if not assigned(AMessage) then
-    Exit;
+    exit;
 
   if not assigned(FSocket) then
-    Exit;
+    exit;
 
   if not isConnected then
-    Exit;
+    exit;
 
   ms := TMemoryStream.Create;
   try
@@ -915,7 +983,7 @@ begin
   try
     FSocket := Value;
   finally
-    tmonitor.Exit(self);
+    tmonitor.exit(self);
   end;
 end;
 
@@ -951,7 +1019,7 @@ begin
   try
     FThreadNameForDebugging := Value;
   finally
-    tmonitor.Exit(self);
+    tmonitor.exit(self);
   end;
 end;
 
@@ -1043,7 +1111,7 @@ begin
   try
     Result := FServerIP;
   finally
-    tmonitor.Exit(self);
+    tmonitor.exit(self);
   end;
 end;
 
@@ -1053,7 +1121,7 @@ begin
   try
     Result := FServerPort;
   finally
-    tmonitor.Exit(self);
+    tmonitor.exit(self);
   end;
 end;
 
@@ -1115,7 +1183,7 @@ begin
   try
     FServerIP := Value;
   finally
-    tmonitor.Exit(self);
+    tmonitor.exit(self);
   end;
 end;
 
@@ -1125,7 +1193,7 @@ begin
   try
     FServerPort := Value;
   finally
-    tmonitor.Exit(self);
+    tmonitor.exit(self);
   end;
 end;
 
@@ -1138,7 +1206,7 @@ var
   // proc: TOlfReceivedMessageEvent;
 begin
   if not assigned(aReceivedMessageEvent) then
-    Exit;
+    exit;
 
   sub := LockSubscribers;
   try
@@ -1170,12 +1238,12 @@ end;
 
 procedure TOlfSMClient.UnlockMessagesDict;
 begin
-  tmonitor.Exit(FMessagesDict);
+  tmonitor.exit(FMessagesDict);
 end;
 
 procedure TOlfSMClient.UnlockSubscribers;
 begin
-  tmonitor.Exit(FSubscribers);
+  tmonitor.exit(FSubscribers);
 end;
 
 procedure TOlfSMClient.UnsubscribeToMessage(AMessageID: TOlfSMMessageID;
@@ -1199,7 +1267,7 @@ end;
 procedure TOlfSMMessage.LoadFromStream(Stream: TStream);
 begin
   if not assigned(Stream) then
-    Exit;
+    exit;
 
   if (Stream.Read(FMessageID, sizeof(FMessageID)) <> sizeof(FMessageID)) then
     raise TOlfSMException.Create('');
@@ -1208,7 +1276,7 @@ end;
 procedure TOlfSMMessage.SaveToStream(Stream: TStream);
 begin
   if not assigned(Stream) then
-    Exit;
+    exit;
 
   Stream.Write(FMessageID, sizeof(FMessageID));
 end;
