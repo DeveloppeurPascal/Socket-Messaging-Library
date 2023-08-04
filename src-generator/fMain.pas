@@ -197,6 +197,8 @@ begin
 
   FCurrentField.ParentList.Remove(FCurrentField);
   FCurrentField := nil;
+
+  RefreshFormCaption;
 end;
 
 procedure TForm1.btnFieldOkClick(Sender: TObject);
@@ -249,6 +251,8 @@ begin
 
   FCurrentMessage.ParentList.Remove(FCurrentMessage);
   FCurrentMessage := nil;
+
+  RefreshFormCaption;
 end;
 
 procedure TForm1.btnMessageOkClick(Sender: TObject);
@@ -326,6 +330,8 @@ begin
   FieldItem.tag := 2;
 
   tvProject.Selected := FieldItem;
+
+  RefreshFormCaption;
 end;
 
 procedure TForm1.btnNewMessageClick(Sender: TObject);
@@ -348,6 +354,8 @@ begin
   MessageItem.tag := 1;
 
   tvProject.Selected := MessageItem;
+
+  RefreshFormCaption;
 end;
 
 procedure TForm1.btnProjectCancelClick(Sender: TObject);
