@@ -653,6 +653,7 @@ begin
   if not CurrentProject.FileName.IsEmpty then
   begin
     CurrentProject.SaveToFile;
+    RefreshFormCaption;
     exit;
   end;
 
