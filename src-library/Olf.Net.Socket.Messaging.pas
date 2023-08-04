@@ -36,9 +36,11 @@ type
 
   TOlfSMMessagesDict = TObjectDictionary<TOlfSMMessageID, TOlfSMMessage>;
 
-  TOlfReceivedMessageEvent = procedure(Const ASender: TOlfSMSrvConnectedClient;
-    Const AMessage: TOlfSMMessage) of object;
-  TOlfMessageSubscribers = TList<TOlfReceivedMessageEvent>;
+  TOlfSMReceivedMessageEvent = procedure(Const ASender
+    : TOlfSMSrvConnectedClient; Const AMessage: TOlfSMMessage) of object;
+  TOlfSMReceivedMessageEvent<T: TOlfSMMessage> = procedure
+    (Const ASender: TOlfSMSrvConnectedClient; Const AMessage: T) of object;
+  TOlfMessageSubscribers = TList<TOlfSMReceivedMessageEvent>;
   TOlfSubscribers = TObjectDictionary<TOlfSMMessageID, TOlfMessageSubscribers>;
 
   IOlfSMMessagesRegister = interface
@@ -129,9 +131,9 @@ type
     destructor Destroy; override;
     procedure RegisterMessageToReceive(AMessage: TOlfSMMessage);
     procedure SubscribeToMessage(AMessageID: TOlfSMMessageID;
-      aReceivedMessageEvent: TOlfReceivedMessageEvent);
+      aReceivedMessageEvent: TOlfSMReceivedMessageEvent);
     procedure UnsubscribeToMessage(AMessageID: TOlfSMMessageID;
-      aReceivedMessageEvent: TOlfReceivedMessageEvent);
+      aReceivedMessageEvent: TOlfSMReceivedMessageEvent);
     procedure SendMessageToAll(Const AMessage: TOlfSMMessage;
       Const ExceptToClient: TOlfSMSrvConnectedClient = nil);
     procedure ForEachConnectedClient(DoSomethingProc: TOlfSMConnectedClientProc;
@@ -237,9 +239,9 @@ type
     destructor Destroy; override;
     procedure RegisterMessageToReceive(AMessage: TOlfSMMessage);
     procedure SubscribeToMessage(AMessageID: TOlfSMMessageID;
-      aReceivedMessageEvent: TOlfReceivedMessageEvent);
+      aReceivedMessageEvent: TOlfSMReceivedMessageEvent);
     procedure UnsubscribeToMessage(AMessageID: TOlfSMMessageID;
-      aReceivedMessageEvent: TOlfReceivedMessageEvent);
+      aReceivedMessageEvent: TOlfSMReceivedMessageEvent);
   end;
 
   // **************************************************
@@ -283,6 +285,10 @@ type
   /// DEPRECATED : use IOlfSMMessagesRegister
   /// </summary>
   IOlfSocketMessagesRegister = IOlfSMMessagesRegister;
+  /// <summary>
+  /// DEPRECATED : use TOlfSMReceivedMessageEvent
+  /// </summary>
+  TOlfReceivedMessageEvent = TOlfSMReceivedMessageEvent;
 
   // **************************************************
 
@@ -671,12 +677,12 @@ begin
 end;
 
 procedure TOlfSMServer.SubscribeToMessage(AMessageID: TOlfSMMessageID;
-aReceivedMessageEvent: TOlfReceivedMessageEvent);
+aReceivedMessageEvent: TOlfSMReceivedMessageEvent);
 var
   sub: TOlfSubscribers;
   msgSub: TOlfMessageSubscribers;
   // found: boolean;
-  // proc: TOlfReceivedMessageEvent;
+  // proc: TOlfSMReceivedMessageEvent;
 begin
   if not assigned(aReceivedMessageEvent) then
     exit;
@@ -720,7 +726,7 @@ begin
 end;
 
 procedure TOlfSMServer.UnsubscribeToMessage(AMessageID: TOlfSMMessageID;
-aReceivedMessageEvent: TOlfReceivedMessageEvent);
+aReceivedMessageEvent: TOlfSMReceivedMessageEvent);
 begin
   // TODO : unsubscribe the listener
 end;
@@ -1227,12 +1233,12 @@ begin
 end;
 
 procedure TOlfSMClient.SubscribeToMessage(AMessageID: TOlfSMMessageID;
-aReceivedMessageEvent: TOlfReceivedMessageEvent);
+aReceivedMessageEvent: TOlfSMReceivedMessageEvent);
 var
   sub: TOlfSubscribers;
   msgSub: TOlfMessageSubscribers;
   // found: boolean;
-  // proc: TOlfReceivedMessageEvent;
+  // proc: TOlfSMReceivedMessageEvent;
 begin
   if not assigned(aReceivedMessageEvent) then
     exit;
@@ -1276,7 +1282,7 @@ begin
 end;
 
 procedure TOlfSMClient.UnsubscribeToMessage(AMessageID: TOlfSMMessageID;
-aReceivedMessageEvent: TOlfReceivedMessageEvent);
+aReceivedMessageEvent: TOlfSMReceivedMessageEvent);
 begin
   // TODO : unsubscribe the listener
 end;
