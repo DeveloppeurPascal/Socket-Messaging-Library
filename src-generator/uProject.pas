@@ -738,7 +738,8 @@ begin
     if not msg.name.IsEmpty then
     begin
       Result := Result + '  /// <summary>' + sLineBreak;
-      Result := Result + WrapTextWithPrefix('  /// ', msg.name) + sLineBreak;
+      Result := Result + WrapTextWithPrefix('  /// Message ID ', msg.MessageID.ToString +
+        ': ' + msg.name) + sLineBreak;
       Result := Result + '  /// </summary>' + sLineBreak;
     end;
     if not msg.Description.IsEmpty then
