@@ -107,6 +107,10 @@ type
     btnExportDelphiUnit: TButton;
     btnProjectClose: TButton;
     Label1: TLabel;
+    lblProjectDelphiClientClassName: TLabel;
+    edtProjectDelphiClientClassName: TEdit;
+    lblProjectDelphiServerClassName: TLabel;
+    edtProjectDelphiServerClassName: TEdit;
     procedure FormCreate(Sender: TObject);
     procedure mnuQuitClick(Sender: TObject);
     procedure mnuAboutClick(Sender: TObject);
@@ -383,6 +387,22 @@ begin
     CurrentProject.DelphiUnitName :=
       ToDelphiConst(edtProjectDelphiUnitName.Text, true);
 
+  edtProjectDelphiServerClassName.Text :=
+    edtProjectDelphiServerClassName.Text.trim;
+  if edtProjectDelphiServerClassName.Text.IsEmpty then
+    CurrentProject.DelphiServerClassName := ''
+  else
+    CurrentProject.DelphiServerClassName :=
+      ToDelphiConst(edtProjectDelphiServerClassName.Text);
+
+  edtProjectDelphiClientClassName.Text :=
+    edtProjectDelphiClientClassName.Text.trim;
+  if edtProjectDelphiClientClassName.Text.IsEmpty then
+    CurrentProject.DelphiClientClassName := ''
+  else
+    CurrentProject.DelphiClientClassName :=
+      ToDelphiConst(edtProjectDelphiClientClassName.Text);
+
   RefreshFormCaption;
 end;
 
@@ -402,6 +422,10 @@ procedure TForm1.edtProjectNameChange(Sender: TObject);
 begin
   edtProjectDelphiUnitName.TextPrompt := CurrentProject.DefaultDelphiUnitName
     (edtProjectName.Text);
+  edtProjectDelphiServerClassName.TextPrompt :=
+    CurrentProject.DefaultDelphiServerClassName(edtProjectName.Text);
+  edtProjectDelphiClientClassName.TextPrompt :=
+    CurrentProject.DefaultDelphiClientClassName(edtProjectName.Text);
 end;
 
 procedure TForm1.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
@@ -499,10 +523,26 @@ begin
     raise Exception.Create('No project to display !');
 
   edtProjectName.Text := CurrentProject.Name;
+
   if (CurrentProject.DelphiUnitName = CurrentProject.DefaultDelphiUnitName) then
     edtProjectDelphiUnitName.Text := ''
   else
     edtProjectDelphiUnitName.Text := CurrentProject.DelphiUnitName;
+
+  if (CurrentProject.DelphiServerClassName = CurrentProject.
+    DefaultDelphiServerClassName) then
+    edtProjectDelphiServerClassName.Text := ''
+  else
+    edtProjectDelphiServerClassName.Text :=
+      CurrentProject.DelphiServerClassName;
+
+  if (CurrentProject.DelphiClientClassName = CurrentProject.
+    DefaultDelphiClientClassName) then
+    edtProjectDelphiClientClassName.Text := ''
+  else
+    edtProjectDelphiClientClassName.Text :=
+      CurrentProject.DelphiClientClassName;
+
   edtProjectDescription.Text := CurrentProject.Description;
 
   tthread.ForceQueue(nil,

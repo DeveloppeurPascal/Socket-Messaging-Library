@@ -157,7 +157,7 @@ object Form1: TForm1
       Size.Width = 370.000000000000000000
       Size.Height = 785.000000000000000000
       Size.PlatformDefault = False
-      TabIndex = 1
+      TabIndex = 0
       TabOrder = 1
       TabPosition = PlatformDefault
       Sizes = (
@@ -171,7 +171,7 @@ object Form1: TForm1
         CustomIcon = <
           item
           end>
-        IsSelected = False
+        IsSelected = True
         Size.Width = 84.000000000000000000
         Size.Height = 26.000000000000000000
         Size.PlatformDefault = False
@@ -195,12 +195,12 @@ object Form1: TForm1
             Margins.Right = 10.000000000000000000
             Margins.Bottom = 5.000000000000000000
             Position.X = 10.000000000000000000
-            Position.Y = 148.000000000000000000
+            Position.Y = 286.000000000000000000
             Size.Width = 350.000000000000000000
             Size.Height = 17.000000000000000000
             Size.PlatformDefault = False
             Text = 'Project description'
-            TabOrder = 4
+            TabOrder = 8
           end
           object edtProjectName: TEdit
             Touch.InteractiveGestures = [LongTap, DoubleTap]
@@ -269,21 +269,21 @@ object Form1: TForm1
             Margins.Right = 10.000000000000000000
             Margins.Bottom = 10.000000000000000000
             Position.X = 10.000000000000000000
-            Position.Y = 175.000000000000000000
+            Position.Y = 313.000000000000000000
             Size.Width = 350.000000000000000000
             Size.Height = 100.000000000000000000
             Size.PlatformDefault = False
-            TabOrder = 5
+            TabOrder = 9
             Viewport.Width = 346.000000000000000000
             Viewport.Height = 96.000000000000000000
           end
           object GridPanelLayout1: TGridPanelLayout
             Align = Top
-            Position.Y = 285.000000000000000000
+            Position.Y = 423.000000000000000000
             Size.Width = 370.000000000000000000
             Size.Height = 272.000000000000000000
             Size.PlatformDefault = False
-            TabOrder = 6
+            TabOrder = 10
             ColumnCollection = <
               item
                 Value = 50.000000000000000000
@@ -399,13 +399,69 @@ object Form1: TForm1
               OnClick = mnuCloseClick
             end
           end
+          object lblProjectDelphiClientClassName: TLabel
+            Align = Top
+            Margins.Left = 10.000000000000000000
+            Margins.Top = 10.000000000000000000
+            Margins.Right = 10.000000000000000000
+            Margins.Bottom = 5.000000000000000000
+            Position.X = 10.000000000000000000
+            Position.Y = 217.000000000000000000
+            Size.Width = 350.000000000000000000
+            Size.Height = 17.000000000000000000
+            Size.PlatformDefault = False
+            Text = 'Delphi client class name'
+            TabOrder = 6
+          end
+          object edtProjectDelphiClientClassName: TEdit
+            Touch.InteractiveGestures = [LongTap, DoubleTap]
+            Align = Top
+            TabOrder = 7
+            Position.X = 10.000000000000000000
+            Position.Y = 244.000000000000000000
+            Margins.Left = 10.000000000000000000
+            Margins.Top = 5.000000000000000000
+            Margins.Right = 10.000000000000000000
+            Margins.Bottom = 10.000000000000000000
+            Size.Width = 350.000000000000000000
+            Size.Height = 22.000000000000000000
+            Size.PlatformDefault = False
+          end
+          object lblProjectDelphiServerClassName: TLabel
+            Align = Top
+            Margins.Left = 10.000000000000000000
+            Margins.Top = 10.000000000000000000
+            Margins.Right = 10.000000000000000000
+            Margins.Bottom = 5.000000000000000000
+            Position.X = 10.000000000000000000
+            Position.Y = 148.000000000000000000
+            Size.Width = 350.000000000000000000
+            Size.Height = 17.000000000000000000
+            Size.PlatformDefault = False
+            Text = 'Delphi server class name'
+            TabOrder = 4
+          end
+          object edtProjectDelphiServerClassName: TEdit
+            Touch.InteractiveGestures = [LongTap, DoubleTap]
+            Align = Top
+            TabOrder = 5
+            Position.X = 10.000000000000000000
+            Position.Y = 175.000000000000000000
+            Margins.Left = 10.000000000000000000
+            Margins.Top = 5.000000000000000000
+            Margins.Right = 10.000000000000000000
+            Margins.Bottom = 10.000000000000000000
+            Size.Width = 350.000000000000000000
+            Size.Height = 22.000000000000000000
+            Size.PlatformDefault = False
+          end
         end
       end
       object tiMessageEdit: TTabItem
         CustomIcon = <
           item
           end>
-        IsSelected = True
+        IsSelected = False
         Size.Width = 94.000000000000000000
         Size.Height = 26.000000000000000000
         Size.PlatformDefault = False
