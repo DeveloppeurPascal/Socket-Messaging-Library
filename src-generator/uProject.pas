@@ -11,12 +11,16 @@ const
   CVersionLevel = 1;
   CDefaultDelphiMessageClassNamePrefix = '';
   CDefaultDelphiMessageClassNameSuffix = 'Message';
+{$SCOPEDENUMS ON}
 
 type
   TMessageFieldsList = class;
   TMessage = class;
   TMessagesList = class;
   TProject = class;
+
+  TDelphiFieldStreamFormat = (TODO, RWSizeOf, RWString,
+    ClassLoadFromStreamSaveToStream);
 
   TMessageField = class
   private
@@ -27,6 +31,7 @@ type
     FOrder: integer;
     FDescription: string;
     FDelphiFieldType: string;
+    FDelphiFieldStreamFormat: TDelphiFieldStreamFormat;
     procedure SetDefaultValue(const Value: string);
     procedure SetDelphiFieldName(const Value: string);
     procedure SetDelphiFieldType(const Value: string);
@@ -36,6 +41,7 @@ type
     procedure SetAsJSON(const Value: TJSONObject);
     function GetAsJSON: TJSONObject;
     function GetDelphiFieldName: string;
+    procedure SetDelphiFieldStreamFormat(const Value: TDelphiFieldStreamFormat);
   protected
     procedure ValueChanged;
   public
@@ -48,6 +54,8 @@ type
       write SetDelphiFieldName;
     property DelphiFieldType: string read FDelphiFieldType
       write SetDelphiFieldType;
+    property DelphiFieldStreamFormat: TDelphiFieldStreamFormat
+      read FDelphiFieldStreamFormat write SetDelphiFieldStreamFormat;
     property AsJSON: TJSONObject read GetAsJSON write SetAsJSON;
     constructor Create(AParent: TMessageFieldsList); virtual;
     function DefaultDelphiFieldName(AName: string = ''): string;
@@ -314,6 +322,7 @@ begin
   FOrder := 0;
   FDescription := '';
   FDelphiFieldType := '';
+  FDelphiFieldStreamFormat := TDelphiFieldStreamFormat.RWSizeOf;
 end;
 
 function TMessageField.GetAsJSON: TJSONObject;
@@ -325,6 +334,7 @@ begin
   Result.AddPair('delphifieldname', FDelphiFieldName);
   Result.AddPair('delphifieldtype', FDelphiFieldType);
   Result.AddPair('defaultvalue', FDefaultValue);
+  Result.AddPair('dxstreamrw', ord(FDelphiFieldStreamFormat));
 end;
 
 function TMessageField.DefaultDelphiFieldName(AName: string): string;
@@ -344,6 +354,8 @@ begin
 end;
 
 procedure TMessageField.SetAsJSON(const Value: TJSONObject);
+var
+  i: integer;
 begin
   if not assigned(Value) then
     exit;
@@ -361,6 +373,10 @@ begin
     FDelphiFieldType := '';
   if not Value.TryGetValue<string>('defaultvalue', FDefaultValue) then
     FDefaultValue := '';
+  if not Value.TryGetValue<integer>('dxstreamrw', i) then
+    FDelphiFieldStreamFormat := TDelphiFieldStreamFormat.RWSizeOf
+  else
+    FDelphiFieldStreamFormat := TDelphiFieldStreamFormat(i);
 end;
 
 procedure TMessageField.SetDefaultValue(const Value: string);
@@ -377,6 +393,15 @@ begin
     exit;
   ValueChanged;
   FDelphiFieldName := Value;
+end;
+
+procedure TMessageField.SetDelphiFieldStreamFormat
+  (const Value: TDelphiFieldStreamFormat);
+begin
+  if (FDelphiFieldStreamFormat = Value) then
+    exit;
+  ValueChanged;
+  FDelphiFieldStreamFormat := Value;
 end;
 
 procedure TMessageField.SetDelphiFieldType(const Value: string);
@@ -712,17 +737,25 @@ begin
     for j := 0 to msg.Fields.Count - 1 do
     begin
       fld := msg.Fields[j];
-      if (fld.DelphiFieldType.tolower = 'string') then
-        Result := Result + '  F' + fld.DelphiFieldName +
-          ' := LoadStringFromStream(Stream);' + sLineBreak
+      case fld.DelphiFieldStreamFormat of
+        TDelphiFieldStreamFormat.RWSizeOf:
+          begin
+            Result := Result + '  if (Stream.read(F' + fld.DelphiFieldName +
+              ', sizeof(F' + fld.DelphiFieldName + ')) <> sizeof(F' +
+              fld.DelphiFieldName + ')) then' + sLineBreak;
+            Result := Result + '    raise exception.Create(''Can''''t load "' +
+              fld.DelphiFieldName + '" value.'');' + sLineBreak;
+            // TODO : use Name instead of DelphiFieldName (or choose in the field editor)
+          end;
+        TDelphiFieldStreamFormat.RWString:
+          Result := Result + '  F' + fld.DelphiFieldName +
+            ' := LoadStringFromStream(Stream);' + sLineBreak;
+        TDelphiFieldStreamFormat.ClassLoadFromStreamSaveToStream:
+          Result := Result + '  F' + fld.DelphiFieldName +
+            '.LoadFromStream(Stream);' + sLineBreak;
       else
-      begin
-        Result := Result + '  if (Stream.read(F' + fld.DelphiFieldName +
-          ', sizeof(F' + fld.DelphiFieldName + ')) <> sizeof(F' +
-          fld.DelphiFieldName + ')) then' + sLineBreak;
-        Result := Result + '    raise exception.Create(''Can''''t load "' +
-          fld.DelphiFieldName + '" value.'');' + sLineBreak;
-        // TODO : use Name instead of DelphiFieldName (or choose in the field editor)
+        Result := Result + '// TODO : Load "F' + fld.DelphiFieldName +
+          '" from the stream "Stream"' + sLineBreak;
       end;
     end;
     Result := Result + 'end;' + sLineBreak;
@@ -735,13 +768,19 @@ begin
     for j := 0 to msg.Fields.Count - 1 do
     begin
       fld := msg.Fields[j];
-      if (fld.DelphiFieldType.tolower = 'string') then
-        Result := Result + '  SaveStringToStream(F' + fld.DelphiFieldName +
-          ', Stream);' + sLineBreak
+      case fld.DelphiFieldStreamFormat of
+        TDelphiFieldStreamFormat.RWSizeOf:
+          Result := Result + '  Stream.Write(F' + fld.DelphiFieldName +
+            ', sizeof(F' + fld.DelphiFieldName + '));' + sLineBreak;
+        TDelphiFieldStreamFormat.RWString:
+          Result := Result + '  SaveStringToStream(F' + fld.DelphiFieldName +
+            ', Stream);' + sLineBreak;
+        TDelphiFieldStreamFormat.ClassLoadFromStreamSaveToStream:
+          Result := Result + '  F' + fld.DelphiFieldName +
+            '.SaveToStream(Stream);' + sLineBreak;
       else
-      begin
-        Result := Result + '  Stream.Write(F' + fld.DelphiFieldName +
-          ', sizeof(F' + fld.DelphiFieldName + '));' + sLineBreak;
+        Result := Result + '// TODO : Save "F' + fld.DelphiFieldName +
+          '" to the stream "Stream"' + sLineBreak;
       end;
     end;
     Result := Result + 'end;' + sLineBreak;
@@ -1032,7 +1071,8 @@ begin
     for j := 0 to Messages[i].Fields.Count - 1 do
     begin
       NeedOlfRTLStreamsUnit :=
-        (Messages[i].Fields[j].DelphiFieldType.tolower = 'string');
+        (Messages[i].Fields[j].DelphiFieldStreamFormat =
+        TDelphiFieldStreamFormat.RWString);
       if NeedOlfRTLStreamsUnit then
         break;
     end;

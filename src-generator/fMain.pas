@@ -122,6 +122,12 @@ type
     Label4: TLabel;
     Label5: TLabel;
     Label6: TLabel;
+    lblFieldDelphiStreamType: TLabel;
+    GridPanelLayout4: TGridPanelLayout;
+    rbFieldStreamSizeOf: TRadioButton;
+    rbFieldStreamClass: TRadioButton;
+    rbFieldStreamString: TRadioButton;
+    rbFieldStreamTODO: TRadioButton;
     procedure FormCreate(Sender: TObject);
     procedure mnuQuitClick(Sender: TObject);
     procedure mnuAboutClick(Sender: TObject);
@@ -238,6 +244,16 @@ begin
     CurrentField.DelphiFieldName := ''
   else
     CurrentField.DelphiFieldName := ToDelphiConst(edtFieldDelphiFieldName.Text);
+
+  if rbFieldStreamSizeOf.IsChecked then
+    CurrentField.DelphiFieldStreamFormat := TDelphiFieldStreamFormat.RWSizeOf
+  else if rbFieldStreamClass.IsChecked then
+    CurrentField.DelphiFieldStreamFormat :=
+      TDelphiFieldStreamFormat.ClassLoadFromStreamSaveToStream
+  else if rbFieldStreamString.IsChecked then
+    CurrentField.DelphiFieldStreamFormat := TDelphiFieldStreamFormat.RWString
+  else if rbFieldStreamTODO.IsChecked then
+    CurrentField.DelphiFieldStreamFormat := TDelphiFieldStreamFormat.TODO;
 
   RefreshFormCaption;
 end;
@@ -501,6 +517,15 @@ begin
   edtFieldDescription.Text := CurrentField.Description;
 
   lblFieldOrder.Text := 'Internal : ' + CurrentField.order.ToString;
+
+  rbFieldStreamSizeOf.IsChecked := CurrentField.DelphiFieldStreamFormat =
+    TDelphiFieldStreamFormat.RWSizeOf;
+  rbFieldStreamClass.IsChecked := CurrentField.DelphiFieldStreamFormat =
+    TDelphiFieldStreamFormat.ClassLoadFromStreamSaveToStream;
+  rbFieldStreamString.IsChecked := CurrentField.DelphiFieldStreamFormat =
+    TDelphiFieldStreamFormat.RWString;
+  rbFieldStreamTODO.IsChecked := CurrentField.DelphiFieldStreamFormat =
+    TDelphiFieldStreamFormat.TODO;
 
   tthread.ForceQueue(nil,
     procedure
