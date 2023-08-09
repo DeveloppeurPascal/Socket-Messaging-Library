@@ -22,7 +22,7 @@ To download this project you better should use "git" command but you also can do
 
 This project depends on :
 
-* none
+* [DeveloppeurPascal/librairies](https://github.com/DeveloppeurPascal/librairies) in the subfolder ./lib-externes/librairies
 
 ## How to ask a new feature, report a bug or a security issue ?
 
