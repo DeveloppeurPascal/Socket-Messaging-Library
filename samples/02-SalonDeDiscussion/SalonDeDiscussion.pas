@@ -7,7 +7,7 @@
 // ****************************************
 // File generator : Socket Message Generator (v1.0)
 // Website : https://socketmessaging.developpeur-pascal.fr/ 
-// Generation date : 03/08/2023 21:46:53
+// Generation date : 04/08/2023 21:28:48
 // 
 // Don't do any change on this file. They will be erased by next generation !
 // ****************************************
@@ -18,12 +18,6 @@
 // Direct link to the file :
 // https://raw.githubusercontent.com/DeveloppeurPascal/Socket-Messaging-Library/main/src-library/Olf.Net.Socket.Messaging.pas
 
-// To compile this unit you need Olf.RTL.Streams.pas from
-// https://github.com/DeveloppeurPascal/librairies
-//
-// Direct link to the file :
-// https://raw.githubusercontent.com/DeveloppeurPascal/librairies/master/Olf.RTL.Streams.pas
-
 interface
 
 uses
@@ -32,7 +26,7 @@ uses
 
 type
   /// <summary>
-  /// Envoi d'un message à quelqu'un
+  /// Message ID 3: Envoi d'un message à quelqu'un
   /// </summary>
   TEnvoiDUnMessageAQuelquUnMessage = class(TOlfSMMessage)
   private
@@ -56,7 +50,7 @@ type
   end;
 
   /// <summary>
-  /// Envoi d'un message à tous
+  /// Message ID 2: Envoi d'un message à tous
   /// </summary>
   TEnvoiDUnMessageATousMessage = class(TOlfSMMessage)
   private
@@ -80,7 +74,7 @@ type
   end;
 
   /// <summary>
-  /// Identification d'un utilisateur
+  /// Message ID 1: Identification d'un utilisateur
   /// </summary>
   TIdentificationDUnUtilisateurMessage = class(TOlfSMMessage)
   private
@@ -98,7 +92,7 @@ type
   end;
 
   /// <summary>
-  /// Transmission d'un message reçu
+  /// Message ID 4: Transmission d'un message reçu
   /// </summary>
   TTransmissionDUnMessageRecuMessage = class(TOlfSMMessage)
   private
@@ -121,14 +115,106 @@ type
     function GetNewInstance: TOlfSMMessage; override;
   end;
 
+  TSalonDeDiscussionServer = class(TOlfSMServer)
+  private
+  protected
+    procedure onReceiveMessage3(Const ASender: TOlfSMSrvConnectedClient;
+      Const AMessage: TOlfSMMessage);
+    procedure onReceiveMessage2(Const ASender: TOlfSMSrvConnectedClient;
+      Const AMessage: TOlfSMMessage);
+    procedure onReceiveMessage1(Const ASender: TOlfSMSrvConnectedClient;
+      Const AMessage: TOlfSMMessage);
+  public
+    onReceiveEnvoiDUnMessageAQuelquUnMessage
+      : TOlfSMReceivedMessageEvent<TEnvoiDUnMessageAQuelquUnMessage>;
+    onReceiveEnvoiDUnMessageATousMessage
+      : TOlfSMReceivedMessageEvent<TEnvoiDUnMessageATousMessage>;
+    onReceiveIdentificationDUnUtilisateurMessage
+      : TOlfSMReceivedMessageEvent<TIdentificationDUnUtilisateurMessage>;
+    constructor Create; override;
+  end;
+
+  TSalonDeDiscussionClient = class(TOlfSMClient)
+  private
+  protected
+    procedure onReceiveMessage4(Const ASender: TOlfSMSrvConnectedClient;
+      Const AMessage: TOlfSMMessage);
+  public
+    onReceiveTransmissionDUnMessageRecuMessage
+      : TOlfSMReceivedMessageEvent<TTransmissionDUnMessageRecuMessage>;
+    constructor Create; override;
+  end;
+
 procedure RegisterMessagesReceivedByTheServer(Const Server: TOlfSMServer);
 procedure RegisterMessagesReceivedByTheClient(Const Client: TOlfSMClient);
 
 implementation
 
 uses
-  Olf.RTL.Streams,
   System.SysUtils;
+
+{$REGION 'Olf.RTLVersion.Streams'}
+
+procedure SaveStringToStream(AString: string; AStream: TStream;
+  AEncoding: TEncoding); overload;
+// From unit Olf.RTL.Streams.pas in repository :
+// https://github.com/DeveloppeurPascal/librairies
+var
+  StrLen: int64; // typeof(System.Classes.TStream.size)
+  StrStream: TStringStream;
+begin
+  StrStream := TStringStream.Create(AString, AEncoding);
+  try
+    StrLen := StrStream.Size;
+    AStream.write(StrLen, sizeof(StrLen));
+    if (StrLen > 0) then
+    begin
+      StrStream.Position := 0;
+      AStream.CopyFrom(StrStream);
+    end;
+  finally
+    StrStream.Free;
+  end;
+end;
+
+procedure SaveStringToStream(AString: string; AStream: TStream); overload;
+// From unit Olf.RTL.Streams.pas in repository :
+// https://github.com/DeveloppeurPascal/librairies
+begin
+  SaveStringToStream(AString, AStream, TEncoding.UTF8);
+end;
+
+function LoadStringFromStream(AStream: TStream; AEncoding: TEncoding)
+  : string; overload;
+// From unit Olf.RTL.Streams.pas in repository :
+// https://github.com/DeveloppeurPascal/librairies
+var
+  StrLen: int64; // typeof(System.Classes.TStream.size)
+  StrStream: TStringStream;
+begin
+  AStream.Read(StrLen, sizeof(StrLen));
+  if (StrLen > 0) then
+  begin
+    StrStream := TStringStream.Create('', AEncoding);
+    try
+      StrStream.CopyFrom(AStream, StrLen);
+      result := StrStream.DataString;
+    finally
+      StrStream.Free;
+    end;
+  end
+  else
+    result := '';
+end;
+
+function LoadStringFromStream(AStream: TStream): string; overload;
+// From unit Olf.RTL.Streams.pas in repository :
+// https://github.com/DeveloppeurPascal/librairies
+begin
+  result := LoadStringFromStream(AStream, TEncoding.UTF8);
+end;
+
+{$ENDREGION}
 
 procedure RegisterMessagesReceivedByTheServer(Const Server: TOlfSMServer);
 begin
@@ -142,7 +228,79 @@ begin
   Client.RegisterMessageToReceive(TTransmissionDUnMessageRecuMessage.Create);
 end;
 
-{ TEnvoiDUnMessageAQuelquUnMessage }
+{$REGION TSalonDeDiscussionServer}
+
+constructor TSalonDeDiscussionServer.Create;
+begin
+  inherited;
+  RegisterMessagesReceivedByTheServer(self);
+  SubscribeToMessage(3, onReceiveMessage3);
+  SubscribeToMessage(2, onReceiveMessage2);
+  SubscribeToMessage(1, onReceiveMessage1);
+end;
+
+procedure TSalonDeDiscussionServer.onReceiveMessage3(const ASender: TOlfSMSrvConnectedClient;
+const AMessage: TOlfSMMessage);
+var
+  msg: TEnvoiDUnMessageAQuelquUnMessage;
+begin
+  if not(AMessage is TEnvoiDUnMessageAQuelquUnMessage) then
+    exit;
+  if not assigned(onReceiveEnvoiDUnMessageAQuelquUnMessage) then
+    exit;
+  onReceiveEnvoiDUnMessageAQuelquUnMessage(ASender, AMessage as TEnvoiDUnMessageAQuelquUnMessage);
+end;
+
+procedure TSalonDeDiscussionServer.onReceiveMessage2(const ASender: TOlfSMSrvConnectedClient;
+const AMessage: TOlfSMMessage);
+var
+  msg: TEnvoiDUnMessageATousMessage;
+begin
+  if not(AMessage is TEnvoiDUnMessageATousMessage) then
+    exit;
+  if not assigned(onReceiveEnvoiDUnMessageATousMessage) then
+    exit;
+  onReceiveEnvoiDUnMessageATousMessage(ASender, AMessage as TEnvoiDUnMessageATousMessage);
+end;
+
+procedure TSalonDeDiscussionServer.onReceiveMessage1(const ASender: TOlfSMSrvConnectedClient;
+const AMessage: TOlfSMMessage);
+var
+  msg: TIdentificationDUnUtilisateurMessage;
+begin
+  if not(AMessage is TIdentificationDUnUtilisateurMessage) then
+    exit;
+  if not assigned(onReceiveIdentificationDUnUtilisateurMessage) then
+    exit;
+  onReceiveIdentificationDUnUtilisateurMessage(ASender, AMessage as TIdentificationDUnUtilisateurMessage);
+end;
+
+{$ENDREGION}
+
+{$REGION TSalonDeDiscussionClient}
+
+constructor TSalonDeDiscussionClient.Create;
+begin
+  inherited;
+  RegisterMessagesReceivedByTheClient(self);
+  SubscribeToMessage(4, onReceiveMessage4);
+end;
+
+procedure TSalonDeDiscussionClient.onReceiveMessage4(const ASender: TOlfSMSrvConnectedClient;
+const AMessage: TOlfSMMessage);
+var
+  msg: TTransmissionDUnMessageRecuMessage;
+begin
+  if not(AMessage is TTransmissionDUnMessageRecuMessage) then
+    exit;
+  if not assigned(onReceiveTransmissionDUnMessageRecuMessage) then
+    exit;
+  onReceiveTransmissionDUnMessageRecuMessage(ASender, AMessage as TTransmissionDUnMessageRecuMessage);
+end;
+
+{$ENDREGION}
+
+{$REGION TEnvoiDUnMessageAQuelquUnMessage }
 
 constructor TEnvoiDUnMessageAQuelquUnMessage.Create;
 begin
@@ -179,7 +337,9 @@ begin
   FTexte := Value;
 end;
 
-{ TEnvoiDUnMessageATousMessage }
+{$ENDREGION}
+
+{$REGION TEnvoiDUnMessageATousMessage }
 
 constructor TEnvoiDUnMessageATousMessage.Create;
 begin
@@ -216,7 +376,9 @@ begin
   FTexte := Value;
 end;
 
-{ TIdentificationDUnUtilisateurMessage }
+{$ENDREGION}
+
+{$REGION TIdentificationDUnUtilisateurMessage }
 
 constructor TIdentificationDUnUtilisateurMessage.Create;
 begin
@@ -246,7 +408,9 @@ begin
   FPseudo := Value;
 end;
 
-{ TTransmissionDUnMessageRecuMessage }
+{$ENDREGION}
+
+{$REGION TTransmissionDUnMessageRecuMessage }
 
 constructor TTransmissionDUnMessageRecuMessage.Create;
 begin
@@ -282,5 +446,7 @@ procedure TTransmissionDUnMessageRecuMessage.SetTexte(const Value: string);
 begin
   FTexte := Value;
 end;
+
+{$ENDREGION}
 
 end.

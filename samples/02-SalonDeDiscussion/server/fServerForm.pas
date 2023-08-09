@@ -17,7 +17,7 @@ uses
   FMX.Memo.Types,
   FMX.Controls.Presentation,
   FMX.ScrollBox,
-  FMX.Memo;
+  FMX.Memo, SalonDeDiscussion;
 
 type
   TServer = class(tolfsmserver)
@@ -36,6 +36,8 @@ type
 
     procedure AddLog(Const Txt: string);
   public
+    onMessage1
+      : TOlfSMReceivedMessageEvent<TIdentificationDUnUtilisateurMessage>;
     constructor Create(AIP: string; APort: Word); override;
     destructor Destroy; override;
   end;
@@ -55,8 +57,6 @@ var
 implementation
 
 {$R *.fmx}
-
-uses SalonDeDiscussion;
 
 procedure TForm2.FormCreate(Sender: TObject);
 begin
@@ -120,6 +120,9 @@ begin
 
   AddLog(msg.Pseudo + ' connected');
   ASender.TagString := msg.Pseudo;
+  if not assigned(onMessage1) then
+    exit;
+  onMessage1(ASender, AMessage as TIdentificationDUnUtilisateurMessage);
 end;
 
 procedure TServer.onPrivateMessage(const ASender: TOlfSMSrvConnectedClient;
