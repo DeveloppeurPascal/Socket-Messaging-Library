@@ -6,7 +6,7 @@ uses
   fClientForm in 'fClientForm.pas' {Form1},
   SalonDeDiscussion in '..\SalonDeDiscussion.pas',
   Olf.RTL.Streams in '..\..\..\lib-externes\librairies\Olf.RTL.Streams.pas',
-  Olf.Net.Socket.Messaging in '..\..\..\src-library\Olf.Net.Socket.Messaging.pas';
+  Olf.Net.Socket.Messaging in '..\..\..\src\Olf.Net.Socket.Messaging.pas';
 
 {$R *.res}
 
