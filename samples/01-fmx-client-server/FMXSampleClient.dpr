@@ -5,7 +5,7 @@ uses
   FMX.Forms,
   fClientForm in 'fClientForm.pas' {frmClient},
   uTestMessages in 'uTestMessages.pas',
-  Olf.Net.Socket.Messaging in '..\..\src-library\Olf.Net.Socket.Messaging.pas',
+  Olf.Net.Socket.Messaging in '..\..\src\Olf.Net.Socket.Messaging.pas',
   Olf.RTL.Streams in '..\..\lib-externes\librairies\Olf.RTL.Streams.pas';
 
 {$R *.res}

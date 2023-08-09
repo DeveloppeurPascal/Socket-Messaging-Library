@@ -286,7 +286,7 @@
             <FormType>fmx</FormType>
         </DCCReference>
         <DCCReference Include="uTestMessages.pas"/>
-        <DCCReference Include="..\..\src-library\Olf.Net.Socket.Messaging.pas"/>
+        <DCCReference Include="..\..\src\Olf.Net.Socket.Messaging.pas"/>
         <DCCReference Include="..\..\lib-externes\librairies\Olf.RTL.Streams.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>

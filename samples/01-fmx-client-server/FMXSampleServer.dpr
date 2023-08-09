@@ -4,8 +4,8 @@ uses
   System.StartUpCopy,
   FMX.Forms,
   fServerForm in 'fServerForm.pas' {frmServer},
-  Olf.Net.Socket.Messaging in '..\..\src-library\Olf.Net.Socket.Messaging.pas',
   uTestMessages in 'uTestMessages.pas',
+  Olf.Net.Socket.Messaging in '..\..\src\Olf.Net.Socket.Messaging.pas',
   Olf.RTL.Streams in '..\..\lib-externes\librairies\Olf.RTL.Streams.pas';
 
 {$R *.res}
