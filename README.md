@@ -2,11 +2,13 @@
 
 [Cette page en français.](LISEZMOI.md)
 
-Library and tool for managing a messaging system over TCP sockets.
+Socket Messaging is a Delphi Library for managing a messaging system over TCP/IP sockets between clients and servers or peer to peer programs.
 
-The library can be used in any Delphi project.
+The library can be used in any Delphi project on recent versions of the environment. It uses the TSocket class from System.Net.Socket, threads and generic collections.
 
-The utility allows you to generate complete source code rather than doing everything by hand in each project.
+To use this library more simply, and obtain the source code you need to use a client and server in your project, with your own interface, without coding, use [this code generator](https://smcodegenerator.olfsoftware.fr/).
+
+A presentation of the project and its use is planned at the [Delphi Coding Bootcamp 2023](https://learndelphi.org/coding-bootcamp-2023/) on Thursday August 17 at 12:00 NN (Central time) (7pm in Paris?).
 
 This code repository contains a project developed in Object Pascal language under Delphi. You don't know what Delphi is and where to download it ? You'll learn more [on this web site](https://delphi-resources.developpeur-pascal.fr/).
 
@@ -20,8 +22,7 @@ To download this project you better should use "git" command but you also can do
 
 This project depends on :
 
-* [DeveloppeurPascal/AboutDialog-Delphi-Component](https://github.com/DeveloppeurPascal/AboutDialog-Delphi-Component) in the subfolder ./lib-externes/AboutDialog-Delphi-Component
-* [DeveloppeurPascal/librairies](https://github.com/DeveloppeurPascal/librairies) in the subfolder ./lib-externes/librairies
+* none
 
 ## How to ask a new feature, report a bug or a security issue ?
 

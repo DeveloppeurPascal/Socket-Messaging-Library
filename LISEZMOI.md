@@ -2,11 +2,13 @@
 
 [This page in english.](README.md)
 
-Librairie et utilitaire permettant de gérer un sstème de messagerie sur des sockets TCP.
+Socket Messaging est une librairie Delphi permettant de gérer un sstème de messagerie sur des sockets TCP/IP entre des programmes clients et un serveur ou en point à point (P2P).
 
-La librairie est utilisable dans tout projet Delphi.
+La librairie est utilisable dans tout projet Delphi sur des versions récentes de l'environnement. Elle utilise la classe TSocket de System.Net.Socket, des processus secondaires et des collections génériques.
 
-L'utilitaire permet de générer un code source complet plutôt que tout faire à la main dans chaque projet.
+Pour utiliser plus simplement cette librairie et obtenir sans coder le code source nécessaire à l'utilisation d'un client et d'un serveur dans votre projet, avec votre interface, utilisez [ce générateur de code](https://smcodegenerator.olfsoftware.fr/).
+
+Une présentation du projet et de son utilisation est prévue lors du [Delphi Coding Bootcamp 2023](https://learndelphi.org/fr/coding-bootcamp-2023/) le jeudi 17 août à 12:00 NN (Central time) (19 heures à Paris ?).
 
 Ce dépôt de code contient un projet développé en langage Pascal Objet sous Delphi. Vous ne savez pas ce qu'est Dephi ni où le télécharger ? Vous en saurez plus [sur ce site web](https://delphi-resources.developpeur-pascal.fr/).
 
@@ -20,8 +22,7 @@ Pour télécharger ce projet il est recommandé de passer par "git" mais vous po
 
 Ce dépôt de code dépend des dépôts suivants :
 
-* [DeveloppeurPascal/AboutDialog-Delphi-Component](https://github.com/DeveloppeurPascal/AboutDialog-Delphi-Component) dans le sous-dossier ./lib-externes/AboutDialog-Delphi-Component
-* [DeveloppeurPascal/librairies](https://github.com/DeveloppeurPascal/librairies) dans le sous-dossier ./lib-externes/librairies
+* aucune
 
 ## Comment demander une nouvelle fonctionnalité, signaler un bogue ou une faille de sécurité ?
 
