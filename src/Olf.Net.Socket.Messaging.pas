@@ -522,6 +522,10 @@ begin
   FThread.NameThreadForDebugging(ThreadNameForDebugging);
 {$ENDIF}
   FThread.Start;
+
+{$IFDEF CONSOLE}
+  FThread.WaitFor;
+{$ENDIF}
 end;
 
 procedure TOlfSMServer.SendMessageToAll(const AMessage: TOlfSMMessage;
