@@ -767,7 +767,12 @@ begin
       try
         while not TThread.CheckTerminated do
         begin
-          RecCount := FSocket.Receive(Buffer);
+          tmonitor.Enter(self);
+          try
+            RecCount := FSocket.Receive(Buffer);
+          finally
+            tmonitor.exit(self);
+          end;
           if (RecCount > 0) then
             for i := 0 to RecCount - 1 do
             begin
@@ -964,18 +969,23 @@ begin
     end
     else
       msEncoded := ms;
-    ss := TSocketStream.Create(FSocket, false);
+    tmonitor.Enter(self);
     try
-      if (msEncoded.Size > high(TOlfSMMessageSize)) then
-        raise exception.Create('Message too big (' + ms.Size.ToString + ').');
-      MessageSize := msEncoded.Size;
-      FSocket.Send(MessageSize, sizeof(MessageSize));
-      msEncoded.Position := 0;
-      ss.CopyFrom(msEncoded);
+      ss := TSocketStream.Create(FSocket, false);
+      try
+        if (msEncoded.Size > high(TOlfSMMessageSize)) then
+          raise exception.Create('Message too big (' + ms.Size.ToString + ').');
+        MessageSize := msEncoded.Size;
+        FSocket.Send(MessageSize, sizeof(MessageSize));
+        msEncoded.Position := 0;
+        ss.CopyFrom(msEncoded);
+      finally
+        ss.Free;
+        if msEncoded <> ms then
+          msEncoded.Free;
+      end;
     finally
-      ss.Free;
-      if msEncoded <> ms then
-        msEncoded.Free;
+      tmonitor.exit(self);
     end;
   finally
     ms.Free;
