@@ -1,0 +1,48 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{A4B186E8-9B29-461F-B9BA-82AB521893D6}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="Client\MultiUserDraw.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Server\MultiUserDrawServer.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="MultiUserDraw">
+        <MSBuild Projects="Client\MultiUserDraw.dproj"/>
+    </Target>
+    <Target Name="MultiUserDraw:Clean">
+        <MSBuild Projects="Client\MultiUserDraw.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="MultiUserDraw:Make">
+        <MSBuild Projects="Client\MultiUserDraw.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="MultiUserDrawServer">
+        <MSBuild Projects="Server\MultiUserDrawServer.dproj"/>
+    </Target>
+    <Target Name="MultiUserDrawServer:Clean">
+        <MSBuild Projects="Server\MultiUserDrawServer.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="MultiUserDrawServer:Make">
+        <MSBuild Projects="Server\MultiUserDrawServer.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="MultiUserDraw;MultiUserDrawServer"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="MultiUserDraw:Clean;MultiUserDrawServer:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="MultiUserDraw:Make;MultiUserDrawServer:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>

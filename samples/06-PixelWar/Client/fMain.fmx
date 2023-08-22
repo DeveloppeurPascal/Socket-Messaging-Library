@@ -1,0 +1,30 @@
+object Form1: TForm1
+  Left = 0
+  Top = 0
+  Caption = 'Form1'
+  ClientHeight = 601
+  ClientWidth = 781
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  OnResize = FormResize
+  DesignerMasterStyle = 0
+  object ScaledLayout1: TScaledLayout
+    Align = Center
+    OriginalWidth = 500.000000000000000000
+    OriginalHeight = 500.000000000000000000
+  end
+  object ComboColorBox1: TComboColorBox
+    Anchors = [akRight, akBottom]
+    Color = claWhite
+    Position.X = 713.000000000000000000
+    Position.Y = 571.000000000000000000
+    Size.Width = 60.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 2
+    OnChange = ComboColorBox1Change
+  end
+end
