@@ -8,7 +8,7 @@ The library can be used in any Delphi project on recent versions of the environm
 
 To use this library more simply, and obtain the source code you need to use a client and server in your project, with your own interface, without coding, use [this code generator](https://smcodegenerator.olfsoftware.fr/).
 
-A presentation of the project and its use is planned at the [Delphi Coding Bootcamp 2023](https://learndelphi.org/coding-bootcamp-2023/) on Thursday August 17 at 12:00 NN (Central time) (7pm in Paris?).
+A [presentation of the project and its use](https://github.com/DeveloppeurPascal/DCB2023-Socket-Messaging-library-and-generator) has been made during the [Delphi Coding Bootcamp 2023](https://learndelphi.org/coding-bootcamp-2023/).
 
 This code repository contains a project developed in Object Pascal language under Delphi. You don't know what Delphi is and where to download it ? You'll learn more [on this web site](https://delphi-resources.developpeur-pascal.fr/).
 

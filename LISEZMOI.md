@@ -8,7 +8,7 @@ La librairie est utilisable dans tout projet Delphi sur des versions récentes d
 
 Pour utiliser plus simplement cette librairie et obtenir sans coder le code source nécessaire à l'utilisation d'un client et d'un serveur dans votre projet, avec votre interface, utilisez [ce générateur de code](https://smcodegenerator.olfsoftware.fr/).
 
-Une présentation du projet et de son utilisation est prévue lors du [Delphi Coding Bootcamp 2023](https://learndelphi.org/fr/coding-bootcamp-2023/) le jeudi 17 août à 12:00 NN (Central time) (19 heures à Paris ?).
+Une [présentation du projet et de son utilisation](https://github.com/DeveloppeurPascal/DCB2023-Socket-Messaging-library-and-generator) a été faite lors du [Delphi Coding Bootcamp 2023](https://learndelphi.org/fr/coding-bootcamp-2023/).
 
 Ce dépôt de code contient un projet développé en langage Pascal Objet sous Delphi. Vous ne savez pas ce qu'est Dephi ni où le télécharger ? Vous en saurez plus [sur ce site web](https://delphi-resources.developpeur-pascal.fr/).
 
