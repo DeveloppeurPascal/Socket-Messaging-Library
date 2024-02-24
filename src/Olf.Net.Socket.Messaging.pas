@@ -11,7 +11,7 @@ uses
 type
   TOlfSMMessageID = byte; // 256 messages (0..255)
 
-  TOlfSMMessageSize = word; // 65535 bytes for a message (0..65535)
+  TOlfSMMessageSize = int64; // typeOf(TStream.Size)
 
   TOlfSMServer = class;
   TOlfSMSrvConnectedClient = class;
