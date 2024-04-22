@@ -5,9 +5,9 @@
 // ****************************************
 // 
 // ****************************************
-// File generator : Socket Message Generator (v1.0)
-// Website : https://socketmessaging.developpeur-pascal.fr/ 
-// Generation date : 04/08/2023 21:36:34
+// File generator : Socket Messaging Code Generator (v1.1)
+// Website : https://smcodegenerator.olfsoftware.fr/ 
+// Generation date : 22/04/2024 14:55:41
 // 
 // Don't do any change on this file. They will be erased by next generation !
 // ****************************************
@@ -16,7 +16,7 @@
 // https://github.com/DeveloppeurPascal/Socket-Messaging-Library
 //
 // Direct link to the file :
-// https://raw.githubusercontent.com/DeveloppeurPascal/Socket-Messaging-Library/main/src-library/Olf.Net.Socket.Messaging.pas
+// https://raw.githubusercontent.com/DeveloppeurPascal/Socket-Messaging-Library/main/src/Olf.Net.Socket.Messaging.pas
 
 interface
 
@@ -97,7 +97,7 @@ implementation
 uses
   System.SysUtils;
 
-{$REGION 'code from Olf.RTLVersion.Streams'}
+{$REGION 'code from Olf.RTL.Streams'}
 
 procedure SaveStringToStream(AString: string; AStream: TStream;
   AEncoding: TEncoding); overload;
@@ -181,8 +181,6 @@ end;
 
 procedure TClockSampleServer.onReceiveMessage2(const ASender: TOlfSMSrvConnectedClient;
 const AMessage: TOlfSMMessage);
-var
-  msg: TACKDateTimeMessage;
 begin
   if not(AMessage is TACKDateTimeMessage) then
     exit;
@@ -204,8 +202,6 @@ end;
 
 procedure TClockSampleClient.onReceiveMessage1(const ASender: TOlfSMSrvConnectedClient;
 const AMessage: TOlfSMMessage);
-var
-  msg: TCurrentDateAndTimeMessage;
 begin
   if not(AMessage is TCurrentDateAndTimeMessage) then
     exit;
