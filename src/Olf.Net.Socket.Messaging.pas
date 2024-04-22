@@ -175,6 +175,7 @@ type
     procedure SetTagObject(const Value: TObject);
     procedure SetTagString(const Value: string);
   protected
+    FErrorDuringSend: boolean;
     property Socket: TSocket read GetSocket write SetSocket;
     procedure ClientLoop; virtual;
     procedure StartClientLoop; virtual;
@@ -297,6 +298,36 @@ implementation
 uses
   System.Threading;
 
+procedure TerminateAThreadAndWait(var Thread: TThread);
+begin
+  if assigned(Thread) then
+  begin
+    Thread.FreeOnTerminate := false;
+    Thread.Terminate;
+    Thread.WaitFor;
+    Thread.free;
+    Thread := nil;
+  end;
+end;
+
+procedure CloseFreeAndNilASocket(var Socket: TSocket);
+begin
+  if assigned(Socket) then
+  begin
+    if TSocketState.Connected in Socket.State then
+      try
+        if TSocketState.Listening in Socket.State then
+          Socket.Close(true)
+        else
+          Socket.Close;
+      except
+        Socket.Close(true);
+      end;
+    Socket.free;
+    Socket := nil;
+  end;
+end;
+
 { TOlfSMServer }
 
 constructor TOlfSMServer.Create;
@@ -329,26 +360,23 @@ end;
 
 destructor TOlfSMServer.Destroy;
 var
-  i: integer;
   lst: TList<TOlfSMSrvConnectedClient>;
 begin
+  // On arrête la boucle d'attente de nouveau client
+  TerminateAThreadAndWait(FThread);
+
+  // On arrête les connections des clients connectés
   lst := FConnectedClients.LockList;
   try
-    for i := 0 to lst.Count - 1 do
-      try
-        lst[i].Free;
-      except
-
-      end;
+    while lst.count > 0 do
+      lst[0].free;
   finally
     FConnectedClients.UnlockList;
   end;
-  if assigned(FThread) then
-    FThread.Terminate;
-  // FSocket.Free; // done by the thread
-  FConnectedClients.Free;
-  FMessagesDict.Free;
-  FSubscribers.Free;
+
+  FConnectedClients.free;
+  FMessagesDict.free;
+  FSubscribers.free;
   inherited;
 end;
 
@@ -363,16 +391,18 @@ procedure TOlfSMServer.DoClientDisconnected(const AClient
   : TOlfSMSrvConnectedClient);
 begin
   FConnectedClients.Remove(AClient);
-  if assigned(onClientLostConnection) then
-    onClientLostConnection(AClient);
+  if assigned(onClientDisconnected) then
+    onClientDisconnected(AClient);
 end;
 
 procedure TOlfSMServer.DoClientLostConnexion(const AClient
   : TOlfSMSrvConnectedClient);
 begin
   FConnectedClients.Remove(AClient);
-  if assigned(onClientDisconnected) then
-    onClientDisconnected(AClient);
+  if assigned(onClientLostConnection) then
+    onClientLostConnection(AClient);
+
+  AClient.free;
 end;
 
 procedure TOlfSMServer.ForEachConnectedClient(DoSomethingEvent
@@ -401,7 +431,7 @@ begin
   begin
     List := FConnectedClients.LockList;
     try
-      tparallel.For(0, List.Count - 1,
+      tparallel.For(0, List.count - 1,
         procedure(Index: integer)
         begin
           try
@@ -419,7 +449,7 @@ begin
   begin
     List := FConnectedClients.LockList;
     try
-      For i := 0 to List.Count - 1 do
+      For i := 0 to List.count - 1 do
         try
           if assigned(List[i]) then
             DoSomethingProc(List[i]);
@@ -477,7 +507,7 @@ end;
 
 function TOlfSMServer.isConnected: boolean;
 begin
-  Result := assigned(FSocket) and (TSocketState.connected in FSocket.State);
+  Result := assigned(FSocket) and (TSocketState.Connected in FSocket.State);
 end;
 
 function TOlfSMServer.isListening: boolean;
@@ -518,8 +548,7 @@ end;
 
 procedure TOlfSMServer.Listen;
 begin
-  if assigned(FThread) then
-    FThread.Terminate;
+  TerminateAThreadAndWait(FThread);
 
   FThread := TThread.CreateAnonymousThread(
     procedure
@@ -556,56 +585,52 @@ begin
   Socket := TSocket.Create(tsockettype.tcp, tencoding.UTF8);
   try
     Socket.Listen(IP, '', Port);
-    try
-      if (isConnected) then
+    if (isConnected) then
+    begin
+      if (isListening) then
       begin
-        if (isListening) then
-        begin
-          if assigned(onServerConnected) then
-            TThread.Synchronize(nil,
-              procedure
-              begin
-                if assigned(onServerConnected) then
-                  onServerConnected(self);
-              end);
-          while not TThread.CheckTerminated do
-          begin
-            try
-              NewClientSocket := Socket.accept(100); // wait 0.1 second max
-              if assigned(NewClientSocket) then
-              begin
-                SrvClient := TOlfSMSrvConnectedClient.Create(self,
-                  NewClientSocket);
-                FConnectedClients.Add(SrvClient);
-                SrvClient.onConnected := DoClientConnected;
-                SrvClient.onLostConnection := DoClientLostConnexion;
-                SrvClient.onDisconnected := DoClientDisconnected;
-                SrvClient.StartClientLoop;
-              end
-            except
-              on e: exception do
-                exception.RaiseOuterException
-                  (TOlfSMException.Create('Server except: ' + e.Message));
-            end;
-          end
-        end
-        else
-          raise TOlfSMException.Create('Server not listening.');
-        if assigned(onServerDisconnected) then
+        if assigned(onServerConnected) then
           TThread.Synchronize(nil,
             procedure
             begin
-              if assigned(onServerDisconnected) then
-                onServerDisconnected(self);
+              if assigned(onServerConnected) then
+                onServerConnected(self);
             end);
+        while not TThread.CheckTerminated do
+        begin
+          try
+            NewClientSocket := Socket.accept(100); // wait 0.1 second max
+            if assigned(NewClientSocket) then
+            begin
+              SrvClient := TOlfSMSrvConnectedClient.Create(self,
+                NewClientSocket);
+              FConnectedClients.Add(SrvClient);
+              SrvClient.onConnected := DoClientConnected;
+              SrvClient.onLostConnection := DoClientLostConnexion;
+              SrvClient.onDisconnected := DoClientDisconnected;
+              SrvClient.StartClientLoop;
+            end
+          except
+            on e: exception do
+              exception.RaiseOuterException
+                (TOlfSMException.Create('Server except: ' + e.Message));
+          end;
+        end
       end
       else
-        raise TOlfSMException.Create('Server not connected.');
-    finally
-      Socket.Close;
-    end;
+        raise TOlfSMException.Create('Server not listening.');
+      if assigned(onServerDisconnected) then
+        TThread.Synchronize(nil,
+          procedure
+          begin
+            if assigned(onServerDisconnected) then
+              onServerDisconnected(self);
+          end);
+    end
+    else
+      raise TOlfSMException.Create('Server not connected.');
   finally
-    FreeAndNil(Socket);
+    CloseFreeAndNilASocket(FSocket);
   end;
 end;
 
@@ -708,7 +733,7 @@ begin
       sub.Add(AMessageID, msgSub);
       msgSub.Add(aReceivedMessageEvent);
     end
-    else if (msgSub.Count < 1) then
+    else if (msgSub.count < 1) then
       msgSub.Add(aReceivedMessageEvent)
     else
     begin
@@ -780,6 +805,9 @@ begin
       try
         while not TThread.CheckTerminated do
         begin
+          if FErrorDuringSend then
+            raise TOlfSocketMessagingException.Create
+              ('Error detected during send.');
           tmonitor.Enter(self);
           try
             RecCount := FSocket.Receive(Buffer);
@@ -824,13 +852,13 @@ begin
                     ReceivedMessage.LoadFromStream(msDecoded);
                     DispatchReceivedMessage(ReceivedMessage);
                   finally
-                    ReceivedMessage.Free;
+                    ReceivedMessage.free;
                   end
                 else
                   raise TOlfSMException.Create('No message with ID ' +
                     MessageID.ToString);
                 if (msDecoded <> ms) then
-                  msDecoded.Free;
+                  msDecoded.free;
                 ms.Clear;
                 MessageSize := 0;
               end;
@@ -839,7 +867,7 @@ begin
             sleep(100);
         end;
       finally
-        ms.Free;
+        ms.free;
       end;
     except
       if assigned(onLostConnection) then
@@ -869,6 +897,7 @@ end;
 constructor TOlfSMSrvConnectedClient.Create;
 begin
   inherited;
+  FErrorDuringSend := false;
   FThread := nil;
   FSocket := nil;
   FSocketServer := nil;
@@ -881,9 +910,9 @@ end;
 
 destructor TOlfSMSrvConnectedClient.Destroy;
 begin
-  if assigned(FThread) then
-    FThread.Terminate;
-  Socket.Free;
+  if not FErrorDuringSend then
+    TerminateAThreadAndWait(FThread);
+  CloseFreeAndNilASocket(FSocket);
   inherited;
 end;
 
@@ -899,7 +928,7 @@ begin
   Subscribers := FSocketServer.LockSubscribers;
   try
     if Subscribers.TryGetValue(AMessage.MessageID, MessageSubscribers) then
-      tparallel.For(0, MessageSubscribers.Count - 1,
+      tparallel.For(0, MessageSubscribers.count - 1,
         procedure(Index: integer)
         begin
           MessageSubscribers[index](self, AMessage);
@@ -954,7 +983,7 @@ end;
 
 function TOlfSMSrvConnectedClient.isConnected: boolean;
 begin
-  Result := assigned(FSocket) and (TSocketState.connected in FSocket.State);
+  Result := assigned(FSocket) and (TSocketState.Connected in FSocket.State);
 end;
 
 procedure TOlfSMSrvConnectedClient.SendMessage(Const AMessage: TOlfSMMessage);
@@ -971,6 +1000,9 @@ begin
     exit;
 
   if not isConnected then
+    exit;
+
+  if FErrorDuringSend then
     exit;
 
   ms := TMemoryStream.Create;
@@ -994,19 +1026,24 @@ begin
         if (msEncoded.Size > high(TOlfSMMessageSize)) then
           raise exception.Create('Message too big (' + ms.Size.ToString + ').');
         MessageSize := msEncoded.Size;
-        FSocket.Send(MessageSize, sizeof(MessageSize));
+        try
+          FSocket.Send(MessageSize, sizeof(MessageSize));
+        except
+          FErrorDuringSend := true;
+          raise;
+        end;
         msEncoded.Position := 0;
         ss.CopyFrom(msEncoded);
       finally
-        ss.Free;
+        ss.free;
         if msEncoded <> ms then
-          msEncoded.Free;
+          msEncoded.free;
       end;
     finally
       tmonitor.exit(self);
     end;
   finally
-    ms.Free;
+    ms.free;
   end;
 end;
 
@@ -1088,11 +1125,7 @@ end;
 
 procedure TOlfSMSrvConnectedClient.StartClientLoop;
 begin
-  if assigned(FThread) then
-  begin
-    FThread.Terminate;
-    Connect;
-  end;
+  TerminateAThreadAndWait(FThread); // ne devrait pas exister, mais au cas où
 
   if isConnected then
   begin
@@ -1115,7 +1148,7 @@ end;
 procedure TOlfSMClient.Connect;
 begin
   if assigned(Socket) then
-    Socket.Free;
+    CloseFreeAndNilASocket(FSocket);
 
   Socket := TSocket.Create(tsockettype.tcp, tencoding.UTF8);
   if assigned(Socket) then
@@ -1145,8 +1178,8 @@ end;
 
 destructor TOlfSMClient.Destroy;
 begin
-  FMessagesDict.Free;
-  FSubscribers.Free;
+  FMessagesDict.free;
+  FSubscribers.free;
   inherited;
 end;
 
@@ -1158,7 +1191,7 @@ begin
   Subscribers := LockSubscribers;
   try
     if Subscribers.TryGetValue(AMessage.MessageID, MessageSubscribers) then
-      tparallel.For(0, MessageSubscribers.Count - 1,
+      tparallel.For(0, MessageSubscribers.count - 1,
         procedure(Index: integer)
         begin
           MessageSubscribers[index](self, AMessage);
@@ -1279,7 +1312,7 @@ begin
       sub.Add(AMessageID, msgSub);
       msgSub.Add(aReceivedMessageEvent);
     end
-    else if (msgSub.Count < 1) then
+    else if (msgSub.count < 1) then
       msgSub.Add(aReceivedMessageEvent)
     else
     begin
