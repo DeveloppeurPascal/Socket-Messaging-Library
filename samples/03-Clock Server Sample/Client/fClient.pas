@@ -58,12 +58,20 @@ begin
   MyClient := TClockSampleClient.Create;
   MyClient.onReceiveCurrentDateAndTimeMessage :=
     DoReceiveCurrentDateAndTimeMessage;
-  MyClient.Connect('127.0.0.1', 8080);
+  try
+    MyClient.Connect('127.0.0.1', 8080);
+  except
+    ShowMessage('Connexion avec le serveur imposible');
+  end;
 end;
 
 procedure TForm2.FormDestroy(Sender: TObject);
 begin
   MyClient.Free;
 end;
+
+initialization
+
+ReportMemoryLeaksOnShutdown := true;
 
 end.
