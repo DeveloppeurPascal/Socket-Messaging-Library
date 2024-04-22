@@ -306,6 +306,15 @@ begin
   FPort := 0;
   FSocket := nil;
   FThread := nil;
+  FonServerConnected := nil;
+  FonServerDisconnected := nil;
+  FonDecodeReceivedMessage := nil;
+  FonEncodeMessageToSend := nil;
+  FonClientConnected := nil;
+  FonClientDisconnected := nil;
+  FonClientLostConnection := nil;
+  FonDecodeReceivedMessage := nil;
+  FonEncodeMessageToSend := nil;
   FMessagesDict := TOlfSMMessagesDict.Create([doOwnsValues]);
   FSubscribers := TOlfSubscribers.Create([doOwnsValues]);
   FConnectedClients := TOlfSMSrvConnectedClientsList.Create;
@@ -863,6 +872,11 @@ begin
   FThread := nil;
   FSocket := nil;
   FSocketServer := nil;
+  FonConnected := nil;
+  FonDisconnected := nil;
+  FonLostConnection := nil;
+  FonDecodeReceivedMessage := nil;
+  FonEncodeMessageToSend := nil;
 end;
 
 destructor TOlfSMSrvConnectedClient.Destroy;
@@ -1305,6 +1319,7 @@ end;
 
 constructor TOlfSMMessage.Create;
 begin
+  inherited;
   FMessageID := 0;
 end;
 
