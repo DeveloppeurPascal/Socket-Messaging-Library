@@ -1027,7 +1027,12 @@ begin
           raise exception.Create('Message too big (' + ms.Size.ToString + ').');
         MessageSize := msEncoded.Size;
         try
-          FSocket.Send(MessageSize, sizeof(MessageSize));
+          tmonitor.Enter(FSocket);
+          try
+            FSocket.Send(MessageSize, sizeof(MessageSize));
+          finally
+            tmonitor.exit(FSocket);
+          end;
         except
           FErrorDuringSend := true;
           raise;
