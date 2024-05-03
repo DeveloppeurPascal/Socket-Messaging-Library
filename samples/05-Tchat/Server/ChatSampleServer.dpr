@@ -6,7 +6,7 @@ program ChatSampleServer;
 uses
   System.SysUtils,
   UDialMessages in '..\UDialMessages.pas',
-  Olf.Net.Socket.Messaging in '..\Olf.Net.Socket.Messaging.pas';
+  Olf.Net.Socket.Messaging in '..\..\..\src\Olf.Net.Socket.Messaging.pas';
 
 type
   TMyServer = class(tdialserver)
