@@ -4,8 +4,8 @@ uses
   System.StartUpCopy,
   FMX.Forms,
   fMain in 'fMain.pas' {Form1},
-  Olf.Net.Socket.Messaging in '..\Olf.Net.Socket.Messaging.pas',
-  UMultiUserDrawMessages in '..\UMultiUserDrawMessages.pas';
+  UMultiUserDrawMessages in '..\UMultiUserDrawMessages.pas',
+  Olf.Net.Socket.Messaging in '..\..\..\src\Olf.Net.Socket.Messaging.pas';
 
 {$R *.res}
 

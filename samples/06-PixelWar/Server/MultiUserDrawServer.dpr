@@ -4,17 +4,17 @@ program MultiUserDrawServer;
 {$R *.res}
 
 uses
-{$IFDEF LINUX}
+  {$IFDEF LINUX}
   Posix.Stdlib,
   Posix.SysStat,
   Posix.SysTypes,
   Posix.Unistd,
   Posix.Signal,
   Posix.Fcntl,
-{$ENDIF}
+  {$ENDIF }
   System.SysUtils,
-  Olf.Net.Socket.Messaging in '..\Olf.Net.Socket.Messaging.pas',
-  UMultiUserDrawMessages in '..\UMultiUserDrawMessages.pas';
+  UMultiUserDrawMessages in '..\UMultiUserDrawMessages.pas',
+  Olf.Net.Socket.Messaging in '..\..\..\src\Olf.Net.Socket.Messaging.pas';
 
 type
   TMyServer = class(TMultiUserDrawServer)
@@ -100,7 +100,7 @@ begin
     Writeln('See https://github.com/DeveloppeurPascal/DCB2023-Socket-Messaging-library-and-generator for informations about this program.');
     Writeln('');
     Writeln('-h => display this help');
-    Writeln('-port number => port number to listen (8080 by default)');
+    Writeln('-port number => port number to listen (8081 by default)');
 {$IFDEF LINUX}
     Writeln('-daemon => start the server as Linux daemon');
 {$ENDIF}
@@ -110,7 +110,7 @@ begin
     if findcmdlineswitch('port', paramvalue, True, [clstValueNextParam]) then
       port := paramvalue.ToInteger
     else
-      port := 8080;
+      port := 8081;
 
 {$IFDEF LINUX}
     // Want to understand how to create a Linux daemon ?
