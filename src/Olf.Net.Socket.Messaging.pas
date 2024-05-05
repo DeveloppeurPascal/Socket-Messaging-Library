@@ -808,11 +808,11 @@ begin
           if FErrorDuringSend then
             raise TOlfSocketMessagingException.Create
               ('Error detected during send.');
-          tmonitor.Enter(self);
+          tmonitor.Enter(FSocket);
           try
             RecCount := FSocket.Receive(Buffer);
           finally
-            tmonitor.exit(self);
+            tmonitor.exit(FSocket);
           end;
           if (RecCount > 0) then
             for i := 0 to RecCount - 1 do
@@ -931,7 +931,11 @@ begin
       tparallel.For(0, MessageSubscribers.count - 1,
         procedure(Index: integer)
         begin
-          MessageSubscribers[index](self, AMessage);
+          try
+            MessageSubscribers[index](self, AMessage);
+          except
+
+          end;
         end);
   finally
     FSocketServer.UnlockSubscribers;
@@ -1199,7 +1203,11 @@ begin
       tparallel.For(0, MessageSubscribers.count - 1,
         procedure(Index: integer)
         begin
-          MessageSubscribers[index](self, AMessage);
+          try
+            MessageSubscribers[index](self, AMessage);
+          except
+
+          end;
         end);
   finally
     UnlockSubscribers;
