@@ -1,6 +1,6 @@
 # Socket Messaging Library
 
-[This page in english.](README.md)
+[This page in English.](README.md)
 
 Socket Messaging est une librairie Delphi permettant de gérer un sstème de messagerie sur des sockets TCP/IP entre des programmes clients et un serveur ou en point à point (P2P).
 
