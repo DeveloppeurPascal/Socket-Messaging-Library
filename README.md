@@ -8,9 +8,17 @@ The library can be used in any Delphi project on recent versions of the environm
 
 To use this library more simply, and obtain the source code you need to use a client and server in your project, with your own interface, without coding, use [this code generator](https://smcodegenerator.olfsoftware.fr/).
 
-A [presentation of the project and its use](https://github.com/DeveloppeurPascal/DCB2023-Socket-Messaging-library-and-generator) has been made during the [Delphi Coding Bootcamp 2023](https://serialstreameur.fr/learn-delphi-coding-bootcamp-2023.html).
-
 This code repository contains a project developed in Object Pascal language under Delphi. You don't know what Delphi is and where to download it ? You'll learn more [on this web site](https://delphi-resources.developpeur-pascal.fr/).
+
+## Talks and conferences
+
+### Coding Bootcamp 2023
+
+* [Client server made easy with the Socket Messaging library for Delphi](https://serialstreameur.fr/client-server-made-easy-with-the-socket-messaging-library-for-delphi-coding-bootcamp-2023.html) (in English)
+
+### Twitch
+
+Follow my live game development coding sessions on [my Twitch channel](https://www.twitch.tv/patrickpremartin) or as replays on [Serial Streameur](https://serialstreameur.fr/socket-messaging-library.html) mostly in French.
 
 ## Source code installation
 
