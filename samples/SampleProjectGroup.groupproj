@@ -1,0 +1,156 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{933EC22F-2223-492C-BD20-852607450012}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="01-fmx-client-server\FMXSampleClient.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="01-fmx-client-server\FMXSampleServer.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="02-SalonDeDiscussion\client\TchatClient.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="02-SalonDeDiscussion\server\TchatServer.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="03-Clock Server Sample\Client\ClockClient.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="03-Clock Server Sample\Server\ClockServer.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="04-Bourrinage\Bourrinage.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="05-Tchat\Client\ChatSampleClient.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="05-Tchat\Server\ChatSampleServer.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="06-PixelWar\Client\MultiUserDraw.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="06-PixelWar\Server\MultiUserDrawServer.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="FMXSampleClient">
+        <MSBuild Projects="01-fmx-client-server\FMXSampleClient.dproj"/>
+    </Target>
+    <Target Name="FMXSampleClient:Clean">
+        <MSBuild Projects="01-fmx-client-server\FMXSampleClient.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="FMXSampleClient:Make">
+        <MSBuild Projects="01-fmx-client-server\FMXSampleClient.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="FMXSampleServer">
+        <MSBuild Projects="01-fmx-client-server\FMXSampleServer.dproj"/>
+    </Target>
+    <Target Name="FMXSampleServer:Clean">
+        <MSBuild Projects="01-fmx-client-server\FMXSampleServer.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="FMXSampleServer:Make">
+        <MSBuild Projects="01-fmx-client-server\FMXSampleServer.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="TchatClient">
+        <MSBuild Projects="02-SalonDeDiscussion\client\TchatClient.dproj"/>
+    </Target>
+    <Target Name="TchatClient:Clean">
+        <MSBuild Projects="02-SalonDeDiscussion\client\TchatClient.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="TchatClient:Make">
+        <MSBuild Projects="02-SalonDeDiscussion\client\TchatClient.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="TchatServer">
+        <MSBuild Projects="02-SalonDeDiscussion\server\TchatServer.dproj"/>
+    </Target>
+    <Target Name="TchatServer:Clean">
+        <MSBuild Projects="02-SalonDeDiscussion\server\TchatServer.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="TchatServer:Make">
+        <MSBuild Projects="02-SalonDeDiscussion\server\TchatServer.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="ClockClient">
+        <MSBuild Projects="03-Clock Server Sample\Client\ClockClient.dproj"/>
+    </Target>
+    <Target Name="ClockClient:Clean">
+        <MSBuild Projects="03-Clock Server Sample\Client\ClockClient.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="ClockClient:Make">
+        <MSBuild Projects="03-Clock Server Sample\Client\ClockClient.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="ClockServer">
+        <MSBuild Projects="03-Clock Server Sample\Server\ClockServer.dproj"/>
+    </Target>
+    <Target Name="ClockServer:Clean">
+        <MSBuild Projects="03-Clock Server Sample\Server\ClockServer.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="ClockServer:Make">
+        <MSBuild Projects="03-Clock Server Sample\Server\ClockServer.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Bourrinage">
+        <MSBuild Projects="04-Bourrinage\Bourrinage.dproj"/>
+    </Target>
+    <Target Name="Bourrinage:Clean">
+        <MSBuild Projects="04-Bourrinage\Bourrinage.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="Bourrinage:Make">
+        <MSBuild Projects="04-Bourrinage\Bourrinage.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="ChatSampleClient">
+        <MSBuild Projects="05-Tchat\Client\ChatSampleClient.dproj"/>
+    </Target>
+    <Target Name="ChatSampleClient:Clean">
+        <MSBuild Projects="05-Tchat\Client\ChatSampleClient.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="ChatSampleClient:Make">
+        <MSBuild Projects="05-Tchat\Client\ChatSampleClient.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="ChatSampleServer">
+        <MSBuild Projects="05-Tchat\Server\ChatSampleServer.dproj"/>
+    </Target>
+    <Target Name="ChatSampleServer:Clean">
+        <MSBuild Projects="05-Tchat\Server\ChatSampleServer.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="ChatSampleServer:Make">
+        <MSBuild Projects="05-Tchat\Server\ChatSampleServer.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="MultiUserDraw">
+        <MSBuild Projects="06-PixelWar\Client\MultiUserDraw.dproj"/>
+    </Target>
+    <Target Name="MultiUserDraw:Clean">
+        <MSBuild Projects="06-PixelWar\Client\MultiUserDraw.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="MultiUserDraw:Make">
+        <MSBuild Projects="06-PixelWar\Client\MultiUserDraw.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="MultiUserDrawServer">
+        <MSBuild Projects="06-PixelWar\Server\MultiUserDrawServer.dproj"/>
+    </Target>
+    <Target Name="MultiUserDrawServer:Clean">
+        <MSBuild Projects="06-PixelWar\Server\MultiUserDrawServer.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="MultiUserDrawServer:Make">
+        <MSBuild Projects="06-PixelWar\Server\MultiUserDrawServer.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="FMXSampleClient;FMXSampleServer;TchatClient;TchatServer;ClockClient;ClockServer;Bourrinage;ChatSampleClient;ChatSampleServer;MultiUserDraw;MultiUserDrawServer"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="FMXSampleClient:Clean;FMXSampleServer:Clean;TchatClient:Clean;TchatServer:Clean;ClockClient:Clean;ClockServer:Clean;Bourrinage:Clean;ChatSampleClient:Clean;ChatSampleServer:Clean;MultiUserDraw:Clean;MultiUserDrawServer:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="FMXSampleClient:Make;FMXSampleServer:Make;TchatClient:Make;TchatServer:Make;ClockClient:Make;ClockServer:Make;Bourrinage:Make;ChatSampleClient:Make;ChatSampleServer:Make;MultiUserDraw:Make;MultiUserDrawServer:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>
