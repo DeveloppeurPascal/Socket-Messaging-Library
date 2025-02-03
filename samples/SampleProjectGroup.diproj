@@ -1,0 +1,55 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Project Version="1.0">
+  <Title>Socket Messaging Library</Title>
+  <Summary>A client / server messaging library to use with TCP sockets in Delphi or C++Builder (one day in the future)</Summary>
+  <Author>Patrick PREMARTIN</Author>
+  <Email>patrick@premartin.fr</Email>
+  <Copyright>(c) 2023-2025 Patrick PREMARTIN</Copyright>
+  <Comment/>
+  <Language>2057</Language>
+  <Charset>1</Charset>
+  <HeaderHtml>&lt;%TopicTitle%&gt;</HeaderHtml>
+  <FooterHtml>&lt;a href="https://socketmessaging.developpeur-pascal.fr/" target="_blank"&gt;Socket Messaging Library&lt;/a&gt; (c) 2023-2025 &lt;a href="https://patrick.premartin.fr" target="_blank"&gt;Patrick PREMARTIN&lt;/a&gt; - Powered by &lt;a href="https://devjetsoftware.com/products/documentation-insight/" target="_blank"&gt;DocInsight&lt;/a&gt;</FooterHtml>
+  <CustomDefines/>
+  <ShowImplementationSection>false</ShowImplementationSection>
+  <ShowPrivateMembers>false</ShowPrivateMembers>
+  <ShowProtectedMembers>true</ShowProtectedMembers>
+  <ShowInheritedMembers>true</ShowInheritedMembers>
+  <ShowPropertyAccessors>true</ShowPropertyAccessors>
+  <FileNamePolicy>0</FileNamePolicy>
+  <CompilerVersion>27</CompilerVersion>
+  <TargetPlatform>0</TargetPlatform>
+  <Sources>
+    <Source>.\01-fmx-client-server\FMXSampleClient.dpr</Source>
+    <Source>.\01-fmx-client-server\FMXSampleServer.dpr</Source>
+    <Source>.\02-SalonDeDiscussion\client\TchatClient.dpr</Source>
+    <Source>.\02-SalonDeDiscussion\server\TchatServer.dpr</Source>
+    <Source>.\03-Clock Server Sample\Client\ClockClient.dpr</Source>
+    <Source>.\03-Clock Server Sample\Server\ClockServer.dpr</Source>
+    <Source>.\04-Bourrinage\Bourrinage.dpr</Source>
+    <Source>.\05-Tchat\Client\ChatSampleClient.dpr</Source>
+    <Source>.\05-Tchat\Server\ChatSampleServer.dpr</Source>
+    <Source>.\06-PixelWar\Client\MultiUserDraw.dpr</Source>
+    <Source>.\06-PixelWar\Server\MultiUserDrawServer.dpr</Source>
+  </Sources>
+  <Outputs>
+    <Output Type="HTML">
+      <Active>true</Active>
+      <OutputDirectory>..\docs</OutputDirectory>
+    </Output>
+    <Output Type="CHM">
+      <Active>true</Active>
+      <OutputFileName>..\SocketMessagingLibrary.chm</OutputFileName>
+    </Output>
+    <Output Type="MSHELP2">
+      <Active>false</Active>
+      <OutputFileName>build\docs\mshelp2\SampleProjectGroup.HxS</OutputFileName>
+      <Namespace>SampleProjectGroup</Namespace>
+      <TitleID>library</TitleID>
+    </Output>
+    <Output Type="HelpAndManual">
+      <Active>false</Active>
+      <OutputFileName>build\docs\hm\SampleProjectGroup.hmxp</OutputFileName>
+    </Output>
+  </Outputs>
+</Project>
