@@ -28,6 +28,8 @@ This project uses dependencies in the form of sub-modules. They will be absent f
 
 * [DeveloppeurPascal/librairies](https://github.com/DeveloppeurPascal/librairies) in the subfolder ./lib-externes/librairies
 
+# Documentation and support
+
 The project's technical documentation, generated with [DocInsight](https://devjetsoftware.com/products/documentation-insight/), is available in the ./docs folder and on [GitHub Pages](https://developpeurpascal.github.io/Socket-Messaging-Library). Further information and related links are available on [the project website](https://socketmessaging.developpeur-pascal.fr/).
 
 If you need explanations or help in using this project in your own, please [contact me](https://developpeur-pascal.fr/nous-contacter.php). I can either direct you to an online resource, or offer you assistance on a fee-for-service basis. You can also contact me at a conference or an online presentation.
@@ -77,4 +79,6 @@ You can use one of those services :
 * [Liberapay](https://liberapay.com/PatrickPremartin)
 * [Paypal](https://www.paypal.com/paypalme/patrickpremartin)
 
-or if you speack french you can [subscribe to Zone Abo](https://zone-abo.fr/nos-abonnements.php) on a monthly or yearly basis and get a lot of resources as videos and articles.
+You can buy [my softwares](https://lic.olfsoftware.fr/products.php?lng=en), [my video games](https://lic.gamolf.fr/products.php?lng=en) or [a developer license for my libraries](https://lic.developpeur-pascal.fr/products.php?lng=en) if you use them in your projects.
+
+If you speak French [subscribe to Zone Abo](https://zone-abo.fr/nos-abonnements.php) to access my complete online archive (articles, videos, training videos, ebooks).
