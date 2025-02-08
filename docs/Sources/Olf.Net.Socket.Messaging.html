@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Socket Messaging Library: Olf.Net.Socket.Messaging</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="generator" content="PasDoc 0.16.0">
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<link rel="StyleSheet" type="text/css" href="pasdoc.css">
+</head>
+<body>
+<div class="container"><div class="navigation">
+<h2><a href="index.html">Socket Messaging Library</a></h2><ul><li><a href="AllUnits.html">Units</a></li><li><a href="ClassHierarchy.html">Class Hierarchy</a></li><li><a href="AllClasses.html">Classes, Interfaces, Objects and Records</a></li><li><a href="AllTypes.html">Types</a></li><li><a href="AllVariables.html">Variables</a></li><li><a href="AllConstants.html">Constants</a></li><li><a href="AllFunctions.html">Functions and Procedures</a></li><li><a href="AllIdentifiers.html">Identifiers</a></li></ul></div><div class="content">
+<h1 class="unit">Unit Olf.Net.Socket.Messaging</h1>
+<div class="sections">
+<div class="one_section"><a class="section" href="#PasDoc-Description">Description</a></div><div class="one_section"><a class="section" href="#PasDoc-Uses">Uses</a></div><div class="one_section"><a class="section" href="#PasDoc-Classes">Classes, Interfaces, Objects and Records</a></div><div class="one_section">Functions and Procedures</div><div class="one_section"><a class="section" href="#PasDoc-Types">Types</a></div><div class="one_section">Constants</div><div class="one_section">Variables</div></div>
+<span id="PasDoc-Description"></span><h2 class="description">Description</h2>
+<p>
+ ***************************************************************************
+
+<p>Socket Messaging Library
+
+<p>Copyright 2023-2024 Patrick Prémartin under AGPL 3.0 license.
+
+<p>THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+<p>***************************************************************************
+
+<p>Socket Messaging is a Delphi Library for managing a messaging system over TCP/IP sockets between clients and servers or peer to peer programs.
+
+<p>The library can be used in any Delphi project on recent versions of the environment. It uses the TSocket class from System.Net.Socket, threads and generic collections.
+
+<p>To use this library more simply, and obtain the source code you need to use a client and server in your project, with your own interface, without coding, use this code generator : <a href="https://smcodegenerator.olfsoftware.fr/">https://smcodegenerator.olfsoftware.fr/</a>
+
+<p>***************************************************************************
+
+<p>Author(s) : Patrick PREMARTIN
+
+<p>Site : <a href="https://socketmessaging.developpeur-pascal.fr/">https://socketmessaging.developpeur-pascal.fr/</a>
+
+<p>Project site : <a href="https://github.com/DeveloppeurPascal/Socket-Messaging-Library">https://github.com/DeveloppeurPascal/Socket-Messaging-Library</a>
+
+<p>*************************************************************************** File last update : 28/05/2024 12:19:19 Signature : 8bc0536e5b81b097a02934e6b9ce4a388f5c9ff9 *************************************************************************** </p>
+<span id="PasDoc-Uses"></span><h2 class="uses">Uses</h2>
+<ul class="useslist"><li>System.Generics.Collections</li><li>System.SysUtils</li><li>System.Net.Socket</li><li>System.Classes</li></ul><h2 class="overview">Overview</h2>
+<span id="PasDoc-Classes"></span><h3 class="cio">Classes, Interfaces, Objects and Records</h3>
+<table class="classestable wide_list">
+<tr class="listheader">
+<th class="itemname">Name</th>
+<th class="itemdesc">Description</th>
+</tr>
+<tr class="list">
+<td class="itemname">Class&nbsp;<a class="bold" href="Olf.Net.Socket.Messaging.TOlfSMException.html"><code>TOlfSMException</code></a></td>
+<td class="itemdesc">&nbsp;</td>
+</tr>
+<tr class="list2">
+<td class="itemname">Class&nbsp;<a class="bold" href="Olf.Net.Socket.Messaging.TOlfSMMessage.html"><code>TOlfSMMessage</code></a></td>
+<td class="itemdesc">&nbsp;</td>
+</tr>
+<tr class="list">
+<td class="itemname">Interface&nbsp;<a class="bold" href="Olf.Net.Socket.Messaging.IOlfSMMessagesRegister.html"><code>IOlfSMMessagesRegister</code></a></td>
+<td class="itemdesc">&nbsp;</td>
+</tr>
+<tr class="list2">
+<td class="itemname">Class&nbsp;<a class="bold" href="Olf.Net.Socket.Messaging.TOlfSMServer.html"><code>TOlfSMServer</code></a></td>
+<td class="itemdesc">&nbsp;</td>
+</tr>
+<tr class="list">
+<td class="itemname">Class&nbsp;<a class="bold" href="Olf.Net.Socket.Messaging.TOlfSMSrvConnectedClient.html"><code>TOlfSMSrvConnectedClient</code></a></td>
+<td class="itemdesc">&nbsp;</td>
+</tr>
+<tr class="list2">
+<td class="itemname">Class&nbsp;<a class="bold" href="Olf.Net.Socket.Messaging.TOlfSMSrvConnectedClientsList.html"><code>TOlfSMSrvConnectedClientsList</code></a></td>
+<td class="itemdesc">&nbsp;</td>
+</tr>
+<tr class="list">
+<td class="itemname">Class&nbsp;<a class="bold" href="Olf.Net.Socket.Messaging.TOlfSMClient.html"><code>TOlfSMClient</code></a></td>
+<td class="itemdesc">&nbsp;</td>
+</tr>
+</table>
+<span id="PasDoc-Types"></span><h3 class="summary">Types</h3>
+<table class="summary wide_list">
+<tr class="list">
+<td class="itemcode"><code><strong><a href="Olf.Net.Socket.Messaging.html#TOlfSMMessageID">TOlfSMMessageID</a></strong> = byte;</code></td>
+</tr>
+<tr class="list2">
+<td class="itemcode"><code><strong><a href="Olf.Net.Socket.Messaging.html#TOlfSMMessageSize">TOlfSMMessageSize</a></strong> = int64;</code></td>
+</tr>
+<tr class="list">
+<td class="itemcode"><code><strong><a href="Olf.Net.Socket.Messaging.html#TOlfSMMessagesDict">TOlfSMMessagesDict</a></strong> = TObjectDictionary&lt;<a href="Olf.Net.Socket.Messaging.html#TOlfSMMessageID">TOlfSMMessageID</a>, <a href="Olf.Net.Socket.Messaging.TOlfSMMessage.html">TOlfSMMessage</a>&gt;;</code></td>
+</tr>
+<tr class="list2">
+<td class="itemcode"><code><strong><a href="Olf.Net.Socket.Messaging.html#TOlfSMReceivedMessageEvent">TOlfSMReceivedMessageEvent</a></strong> = procedure(Const ASender : <a href="Olf.Net.Socket.Messaging.TOlfSMSrvConnectedClient.html">TOlfSMSrvConnectedClient</a>; Const AMessage: <a href="Olf.Net.Socket.Messaging.TOlfSMMessage.html">TOlfSMMessage</a>) of object;</code></td>
+</tr>
+<tr class="list">
+<td class="itemcode"><code><strong><a href="Olf.Net.Socket.Messaging.html#TOlfSMReceivedMessageEvent">TOlfSMReceivedMessageEvent</a></strong> = procedure (Const ASender: <a href="Olf.Net.Socket.Messaging.TOlfSMSrvConnectedClient.html">TOlfSMSrvConnectedClient</a>; Const AMessage: T) of object;</code></td>
+</tr>
+<tr class="list2">
+<td class="itemcode"><code><strong><a href="Olf.Net.Socket.Messaging.html#TOlfMessageSubscribers">TOlfMessageSubscribers</a></strong> = TList&lt;<a href="Olf.Net.Socket.Messaging.html#TOlfSMReceivedMessageEvent">TOlfSMReceivedMessageEvent</a>&gt;;</code></td>
+</tr>
+<tr class="list">
+<td class="itemcode"><code><strong><a href="Olf.Net.Socket.Messaging.html#TOlfSubscribers">TOlfSubscribers</a></strong> = TObjectDictionary&lt;<a href="Olf.Net.Socket.Messaging.html#TOlfSMMessageID">TOlfSMMessageID</a>, <a href="Olf.Net.Socket.Messaging.html#TOlfMessageSubscribers">TOlfMessageSubscribers</a>&gt;;</code></td>
+</tr>
+<tr class="list2">
+<td class="itemcode"><code><strong><a href="Olf.Net.Socket.Messaging.html#TOlfSMServerEvent">TOlfSMServerEvent</a></strong> = procedure(AServer: <a href="Olf.Net.Socket.Messaging.TOlfSMServer.html">TOlfSMServer</a>) of object;</code></td>
+</tr>
+<tr class="list">
+<td class="itemcode"><code><strong><a href="Olf.Net.Socket.Messaging.html#TOlfSMEncodeDecodeMessageEvent">TOlfSMEncodeDecodeMessageEvent</a></strong> = function(AFrom: TStream): TStream of object;</code></td>
+</tr>
+<tr class="list2">
+<td class="itemcode"><code><strong><a href="Olf.Net.Socket.Messaging.html#TOlfSMConnectedClientProc">TOlfSMConnectedClientProc</a></strong> = reference to procedure(Const AConnectedClient
+    : <a href="Olf.Net.Socket.Messaging.TOlfSMSrvConnectedClient.html">TOlfSMSrvConnectedClient</a>);</code></td>
+</tr>
+<tr class="list">
+<td class="itemcode"><code><strong><a href="Olf.Net.Socket.Messaging.html#TOlfSMConnectedClientEvent">TOlfSMConnectedClientEvent</a></strong> = procedure(Const AConnectedClient : <a href="Olf.Net.Socket.Messaging.TOlfSMSrvConnectedClient.html">TOlfSMSrvConnectedClient</a>) of object;</code></td>
+</tr>
+<tr class="list2">
+<td class="itemcode"><code><strong><a href="Olf.Net.Socket.Messaging.html#TOlfMessageID">TOlfMessageID</a></strong> = <a href="Olf.Net.Socket.Messaging.html#TOlfSMMessageID">TOlfSMMessageID</a>;</code></td>
+</tr>
+<tr class="list">
+<td class="itemcode"><code><strong><a href="Olf.Net.Socket.Messaging.html#TOlfMessageSize">TOlfMessageSize</a></strong> = <a href="Olf.Net.Socket.Messaging.html#TOlfSMMessageSize">TOlfSMMessageSize</a>;</code></td>
+</tr>
+<tr class="list2">
+<td class="itemcode"><code><strong><a href="Olf.Net.Socket.Messaging.html#TOlfSocketMessagingServerConnectedClient">TOlfSocketMessagingServerConnectedClient</a></strong> = <a href="Olf.Net.Socket.Messaging.TOlfSMSrvConnectedClient.html">TOlfSMSrvConnectedClient</a>;</code></td>
+</tr>
+<tr class="list">
+<td class="itemcode"><code><strong><a href="Olf.Net.Socket.Messaging.html#TOlfSocketMessagingException">TOlfSocketMessagingException</a></strong> = <a href="Olf.Net.Socket.Messaging.TOlfSMException.html">TOlfSMException</a>;</code></td>
+</tr>
+<tr class="list2">
+<td class="itemcode"><code><strong><a href="Olf.Net.Socket.Messaging.html#TOlfSocketMessagingServer">TOlfSocketMessagingServer</a></strong> = <a href="Olf.Net.Socket.Messaging.TOlfSMServer.html">TOlfSMServer</a>;</code></td>
+</tr>
+<tr class="list">
+<td class="itemcode"><code><strong><a href="Olf.Net.Socket.Messaging.html#TOlfSocketMessagingClient">TOlfSocketMessagingClient</a></strong> = <a href="Olf.Net.Socket.Messaging.TOlfSMClient.html">TOlfSMClient</a>;</code></td>
+</tr>
+<tr class="list2">
+<td class="itemcode"><code><strong><a href="Olf.Net.Socket.Messaging.html#TOlfSocketMessage">TOlfSocketMessage</a></strong> = <a href="Olf.Net.Socket.Messaging.TOlfSMMessage.html">TOlfSMMessage</a>;</code></td>
+</tr>
+<tr class="list">
+<td class="itemcode"><code><strong><a href="Olf.Net.Socket.Messaging.html#TOlfSocketMessagesDict">TOlfSocketMessagesDict</a></strong> = <a href="Olf.Net.Socket.Messaging.html#TOlfSMMessagesDict">TOlfSMMessagesDict</a>;</code></td>
+</tr>
+<tr class="list2">
+<td class="itemcode"><code><strong><a href="Olf.Net.Socket.Messaging.html#IOlfSocketMessagesRegister">IOlfSocketMessagesRegister</a></strong> = <a href="Olf.Net.Socket.Messaging.IOlfSMMessagesRegister.html">IOlfSMMessagesRegister</a>;</code></td>
+</tr>
+<tr class="list">
+<td class="itemcode"><code><strong><a href="Olf.Net.Socket.Messaging.html#TOlfReceivedMessageEvent">TOlfReceivedMessageEvent</a></strong> = <a href="Olf.Net.Socket.Messaging.html#TOlfSMReceivedMessageEvent">TOlfSMReceivedMessageEvent</a>;</code></td>
+</tr>
+</table>
+<h2 class="description">Description</h2>
+<h3 class="detail">Types</h3>
+<table class="detail wide_list">
+<tr class="list">
+<td class="itemcode"><span id="TOlfSMMessageID"></span><code><strong>TOlfSMMessageID</strong> = byte;</code></td>
+</tr>
+<tr><td colspan="1">
+&nbsp;</td></tr>
+</table>
+<table class="detail wide_list">
+<tr class="list">
+<td class="itemcode"><span id="TOlfSMMessageSize"></span><code><strong>TOlfSMMessageSize</strong> = int64;</code></td>
+</tr>
+<tr><td colspan="1">
+<p>
+256 messages (0..255)</p>
+</td></tr>
+</table>
+<table class="detail wide_list">
+<tr class="list">
+<td class="itemcode"><span id="TOlfSMMessagesDict"></span><code><strong>TOlfSMMessagesDict</strong> = TObjectDictionary&lt;<a href="Olf.Net.Socket.Messaging.html#TOlfSMMessageID">TOlfSMMessageID</a>, <a href="Olf.Net.Socket.Messaging.TOlfSMMessage.html">TOlfSMMessage</a>&gt;;</code></td>
+</tr>
+<tr><td colspan="1">
+&nbsp;</td></tr>
+</table>
+<table class="detail wide_list">
+<tr class="list">
+<td class="itemcode"><span id="TOlfSMReceivedMessageEvent"></span><code><strong>TOlfSMReceivedMessageEvent</strong> = procedure(Const ASender : <a href="Olf.Net.Socket.Messaging.TOlfSMSrvConnectedClient.html">TOlfSMSrvConnectedClient</a>; Const AMessage: <a href="Olf.Net.Socket.Messaging.TOlfSMMessage.html">TOlfSMMessage</a>) of object;</code></td>
+</tr>
+<tr><td colspan="1">
+&nbsp;</td></tr>
+</table>
+<table class="detail wide_list">
+<tr class="list">
+<td class="itemcode"><span id="TOlfSMReceivedMessageEvent"></span><code><strong>TOlfSMReceivedMessageEvent</strong> = procedure (Const ASender: <a href="Olf.Net.Socket.Messaging.TOlfSMSrvConnectedClient.html">TOlfSMSrvConnectedClient</a>; Const AMessage: T) of object;</code></td>
+</tr>
+<tr><td colspan="1">
+&nbsp;</td></tr>
+</table>
+<table class="detail wide_list">
+<tr class="list">
+<td class="itemcode"><span id="TOlfMessageSubscribers"></span><code><strong>TOlfMessageSubscribers</strong> = TList&lt;<a href="Olf.Net.Socket.Messaging.html#TOlfSMReceivedMessageEvent">TOlfSMReceivedMessageEvent</a>&gt;;</code></td>
+</tr>
+<tr><td colspan="1">
+&nbsp;</td></tr>
+</table>
+<table class="detail wide_list">
+<tr class="list">
+<td class="itemcode"><span id="TOlfSubscribers"></span><code><strong>TOlfSubscribers</strong> = TObjectDictionary&lt;<a href="Olf.Net.Socket.Messaging.html#TOlfSMMessageID">TOlfSMMessageID</a>, <a href="Olf.Net.Socket.Messaging.html#TOlfMessageSubscribers">TOlfMessageSubscribers</a>&gt;;</code></td>
+</tr>
+<tr><td colspan="1">
+&nbsp;</td></tr>
+</table>
+<table class="detail wide_list">
+<tr class="list">
+<td class="itemcode"><span id="TOlfSMServerEvent"></span><code><strong>TOlfSMServerEvent</strong> = procedure(AServer: <a href="Olf.Net.Socket.Messaging.TOlfSMServer.html">TOlfSMServer</a>) of object;</code></td>
+</tr>
+<tr><td colspan="1">
+&nbsp;</td></tr>
+</table>
+<table class="detail wide_list">
+<tr class="list">
+<td class="itemcode"><span id="TOlfSMEncodeDecodeMessageEvent"></span><code><strong>TOlfSMEncodeDecodeMessageEvent</strong> = function(AFrom: TStream): TStream of object;</code></td>
+</tr>
+<tr><td colspan="1">
+&nbsp;</td></tr>
+</table>
+<table class="detail wide_list">
+<tr class="list">
+<td class="itemcode"><span id="TOlfSMConnectedClientProc"></span><code><strong>TOlfSMConnectedClientProc</strong> = reference to procedure(Const AConnectedClient
+    : <a href="Olf.Net.Socket.Messaging.TOlfSMSrvConnectedClient.html">TOlfSMSrvConnectedClient</a>);</code></td>
+</tr>
+<tr><td colspan="1">
+&nbsp;</td></tr>
+</table>
+<table class="detail wide_list">
+<tr class="list">
+<td class="itemcode"><span id="TOlfSMConnectedClientEvent"></span><code><strong>TOlfSMConnectedClientEvent</strong> = procedure(Const AConnectedClient : <a href="Olf.Net.Socket.Messaging.TOlfSMSrvConnectedClient.html">TOlfSMSrvConnectedClient</a>) of object;</code></td>
+</tr>
+<tr><td colspan="1">
+&nbsp;</td></tr>
+</table>
+<table class="detail wide_list">
+<tr class="list">
+<td class="itemcode"><span id="TOlfMessageID"></span><code><strong>TOlfMessageID</strong> = <a href="Olf.Net.Socket.Messaging.html#TOlfSMMessageID">TOlfSMMessageID</a>;</code></td>
+</tr>
+<tr><td colspan="1">
+<p>
+************************************************** * For compatibility with existing code * Don't use this types in a new project. ************************************************** &lt;summary&gt; DEPRECATED : use TOlfSMMessageID &lt;/summary&gt;</p>
+</td></tr>
+</table>
+<table class="detail wide_list">
+<tr class="list">
+<td class="itemcode"><span id="TOlfMessageSize"></span><code><strong>TOlfMessageSize</strong> = <a href="Olf.Net.Socket.Messaging.html#TOlfSMMessageSize">TOlfSMMessageSize</a>;</code></td>
+</tr>
+<tr><td colspan="1">
+<p>
+ DEPRECATED : use TOlfSMMessageSize </p>
+</td></tr>
+</table>
+<table class="detail wide_list">
+<tr class="list">
+<td class="itemcode"><span id="TOlfSocketMessagingServerConnectedClient"></span><code><strong>TOlfSocketMessagingServerConnectedClient</strong> = <a href="Olf.Net.Socket.Messaging.TOlfSMSrvConnectedClient.html">TOlfSMSrvConnectedClient</a>;</code></td>
+</tr>
+<tr><td colspan="1">
+<p>
+ DEPRECATED : use TOlfSMSrvConnectedClient </p>
+</td></tr>
+</table>
+<table class="detail wide_list">
+<tr class="list">
+<td class="itemcode"><span id="TOlfSocketMessagingException"></span><code><strong>TOlfSocketMessagingException</strong> = <a href="Olf.Net.Socket.Messaging.TOlfSMException.html">TOlfSMException</a>;</code></td>
+</tr>
+<tr><td colspan="1">
+<p>
+ DEPRECATED : use TOlfSMException </p>
+</td></tr>
+</table>
+<table class="detail wide_list">
+<tr class="list">
+<td class="itemcode"><span id="TOlfSocketMessagingServer"></span><code><strong>TOlfSocketMessagingServer</strong> = <a href="Olf.Net.Socket.Messaging.TOlfSMServer.html">TOlfSMServer</a>;</code></td>
+</tr>
+<tr><td colspan="1">
+<p>
+ DEPRECATED : use TOlfSMServer </p>
+</td></tr>
+</table>
+<table class="detail wide_list">
+<tr class="list">
+<td class="itemcode"><span id="TOlfSocketMessagingClient"></span><code><strong>TOlfSocketMessagingClient</strong> = <a href="Olf.Net.Socket.Messaging.TOlfSMClient.html">TOlfSMClient</a>;</code></td>
+</tr>
+<tr><td colspan="1">
+<p>
+ DEPRECATED : use TOlfSMClient </p>
+</td></tr>
+</table>
+<table class="detail wide_list">
+<tr class="list">
+<td class="itemcode"><span id="TOlfSocketMessage"></span><code><strong>TOlfSocketMessage</strong> = <a href="Olf.Net.Socket.Messaging.TOlfSMMessage.html">TOlfSMMessage</a>;</code></td>
+</tr>
+<tr><td colspan="1">
+<p>
+ DEPRECATED : use TOlfSMMessage </p>
+</td></tr>
+</table>
+<table class="detail wide_list">
+<tr class="list">
+<td class="itemcode"><span id="TOlfSocketMessagesDict"></span><code><strong>TOlfSocketMessagesDict</strong> = <a href="Olf.Net.Socket.Messaging.html#TOlfSMMessagesDict">TOlfSMMessagesDict</a>;</code></td>
+</tr>
+<tr><td colspan="1">
+<p>
+ DEPRECATED : use TOlfSMMessagesDict </p>
+</td></tr>
+</table>
+<table class="detail wide_list">
+<tr class="list">
+<td class="itemcode"><span id="IOlfSocketMessagesRegister"></span><code><strong>IOlfSocketMessagesRegister</strong> = <a href="Olf.Net.Socket.Messaging.IOlfSMMessagesRegister.html">IOlfSMMessagesRegister</a>;</code></td>
+</tr>
+<tr><td colspan="1">
+<p>
+ DEPRECATED : use IOlfSMMessagesRegister </p>
+</td></tr>
+</table>
+<table class="detail wide_list">
+<tr class="list">
+<td class="itemcode"><span id="TOlfReceivedMessageEvent"></span><code><strong>TOlfReceivedMessageEvent</strong> = <a href="Olf.Net.Socket.Messaging.html#TOlfSMReceivedMessageEvent">TOlfSMReceivedMessageEvent</a>;</code></td>
+</tr>
+<tr><td colspan="1">
+<p>
+ DEPRECATED : use TOlfSMReceivedMessageEvent </p>
+</td></tr>
+</table>
+<a href="https://socketmessaging.developpeur-pascal.fr/" target="_blank">Socket Messaging Library</a> (c) 2023-2025 <a href="https://patrick.premartin.fr" target="_blank">Patrick PREMARTIN</a> - Powered by <a href="https://pasdoc.github.io/" target="_blank">PasDoc</a>
+<hr><span class="appinfo"><em>Generated by <a href="https://pasdoc.github.io/">PasDoc 0.16.0</a>. </em>
+</span>
+</div></div></body></html>

@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Socket Messaging Library: Olf.Net.Socket.Messaging: Class TOlfSMSrvConnectedClient</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="generator" content="PasDoc 0.16.0">
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<link rel="StyleSheet" type="text/css" href="pasdoc.css">
+</head>
+<body>
+<div class="container"><div class="navigation">
+<h2><a href="index.html">Socket Messaging Library</a></h2><ul><li><a href="AllUnits.html">Units</a></li><li><a href="ClassHierarchy.html">Class Hierarchy</a></li><li><a href="AllClasses.html">Classes, Interfaces, Objects and Records</a></li><li><a href="AllTypes.html">Types</a></li><li><a href="AllVariables.html">Variables</a></li><li><a href="AllConstants.html">Constants</a></li><li><a href="AllFunctions.html">Functions and Procedures</a></li><li><a href="AllIdentifiers.html">Identifiers</a></li></ul></div><div class="content">
+<span id="TOlfSMSrvConnectedClient"></span><h1 class="cio">Class TOlfSMSrvConnectedClient</h1>
+<div class="sections">
+<div class="one_section"><a class="section" href="#PasDoc-Description">Description</a></div><div class="one_section"><a class="section" href="#PasDoc-Hierarchy">Hierarchy</a></div><div class="one_section"><a class="section" href="#PasDoc-Fields">Fields</a></div><div class="one_section"><a class="section" href="#PasDoc-Methods">Methods</a></div><div class="one_section"><a class="section" href="#PasDoc-Properties">Properties</a></div></div>
+<span id="PasDoc-Description"></span><h2 class="unit">Unit</h2>
+<p class="unitlink">
+<a href="Olf.Net.Socket.Messaging.html">Olf.Net.Socket.Messaging</a></p>
+<h2 class="declaration">Declaration</h2>
+<p class="declaration">
+<code>type TOlfSMSrvConnectedClient = class(TInterfacedObject)</code></p>
+<h2 class="description">Description</h2>
+<span id="PasDoc-Hierarchy"></span><h2 class="hierarchy">Hierarchy</h2>
+<ul class="hierarchy"><li class="ancestor">TInterfacedObject</li>
+<li class="thisitem">TOlfSMSrvConnectedClient</li></ul><h2 class="overview">Overview</h2>
+<span id="PasDoc-Fields"></span><h3 class="summary">Fields</h3>
+<table class="summary wide_list">
+<tr class="list">
+<td class="visibility"><a href="legend.html"><img  src="protected.gif" alt="Protected" title="Protected"></a></td>
+<td class="itemcode"><code><strong><a href="Olf.Net.Socket.Messaging.TOlfSMSrvConnectedClient.html#FErrorDuringSend">FErrorDuringSend</a></strong>: boolean;</code></td>
+</tr>
+</table>
+<span id="PasDoc-Methods"></span><h3 class="summary">Methods</h3>
+<table class="summary wide_list">
+<tr class="list">
+<td class="visibility"><a href="legend.html"><img  src="protected.gif" alt="Protected" title="Protected"></a></td>
+<td class="itemcode"><code>procedure <strong><a href="Olf.Net.Socket.Messaging.TOlfSMSrvConnectedClient.html#ClientLoop">ClientLoop</a></strong>; virtual;</code></td>
+</tr>
+<tr class="list2">
+<td class="visibility"><a href="legend.html"><img  src="protected.gif" alt="Protected" title="Protected"></a></td>
+<td class="itemcode"><code>procedure <strong><a href="Olf.Net.Socket.Messaging.TOlfSMSrvConnectedClient.html#StartClientLoop">StartClientLoop</a></strong>; virtual;</code></td>
+</tr>
+<tr class="list">
+<td class="visibility"><a href="legend.html"><img  src="protected.gif" alt="Protected" title="Protected"></a></td>
+<td class="itemcode"><code>function <strong><a href="Olf.Net.Socket.Messaging.TOlfSMSrvConnectedClient.html#GetNewMessageInstance">GetNewMessageInstance</a></strong>(AMessageID: <a href="Olf.Net.Socket.Messaging.html#TOlfSMMessageID">TOlfSMMessageID</a>) : <a href="Olf.Net.Socket.Messaging.TOlfSMMessage.html">TOlfSMMessage</a>; virtual;</code></td>
+</tr>
+<tr class="list2">
+<td class="visibility"><a href="legend.html"><img  src="protected.gif" alt="Protected" title="Protected"></a></td>
+<td class="itemcode"><code>procedure <strong><a href="Olf.Net.Socket.Messaging.TOlfSMSrvConnectedClient.html#DispatchReceivedMessage">DispatchReceivedMessage</a></strong>(AMessage: <a href="Olf.Net.Socket.Messaging.TOlfSMMessage.html">TOlfSMMessage</a>); virtual;</code></td>
+</tr>
+<tr class="list">
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
+<td class="itemcode"><code>constructor <strong><a href="Olf.Net.Socket.Messaging.TOlfSMSrvConnectedClient.html#Create">Create</a></strong>(AServer: <a href="Olf.Net.Socket.Messaging.TOlfSMServer.html">TOlfSMServer</a>; AClientSocket: TSocket); overload; virtual;</code></td>
+</tr>
+<tr class="list2">
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
+<td class="itemcode"><code>constructor <strong><a href="Olf.Net.Socket.Messaging.TOlfSMSrvConnectedClient.html#Create">Create</a></strong>; overload; virtual;</code></td>
+</tr>
+<tr class="list">
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
+<td class="itemcode"><code>destructor <strong><a href="Olf.Net.Socket.Messaging.TOlfSMSrvConnectedClient.html#Destroy">Destroy</a></strong>; override;</code></td>
+</tr>
+<tr class="list2">
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
+<td class="itemcode"><code>procedure <strong><a href="Olf.Net.Socket.Messaging.TOlfSMSrvConnectedClient.html#Connect">Connect</a></strong>; virtual;</code></td>
+</tr>
+<tr class="list">
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
+<td class="itemcode"><code>procedure <strong><a href="Olf.Net.Socket.Messaging.TOlfSMSrvConnectedClient.html#SendMessage">SendMessage</a></strong>(Const AMessage: <a href="Olf.Net.Socket.Messaging.TOlfSMMessage.html">TOlfSMMessage</a>);</code></td>
+</tr>
+<tr class="list2">
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
+<td class="itemcode"><code>function <strong><a href="Olf.Net.Socket.Messaging.TOlfSMSrvConnectedClient.html#isConnected">isConnected</a></strong>: boolean;</code></td>
+</tr>
+</table>
+<span id="PasDoc-Properties"></span><h3 class="summary">Properties</h3>
+<table class="summary wide_list">
+<tr class="list">
+<td class="visibility"><a href="legend.html"><img  src="protected.gif" alt="Protected" title="Protected"></a></td>
+<td class="itemcode"><code>property <strong><a href="Olf.Net.Socket.Messaging.TOlfSMSrvConnectedClient.html#Socket">Socket</a></strong>: TSocket read GetSocket write SetSocket;</code></td>
+</tr>
+<tr class="list2">
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
+<td class="itemcode"><code>property <strong><a href="Olf.Net.Socket.Messaging.TOlfSMSrvConnectedClient.html#ThreadNameForDebugging">ThreadNameForDebugging</a></strong>: string read GetThreadNameForDebugging
+      write SetThreadNameForDebugging;</code></td>
+</tr>
+<tr class="list">
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
+<td class="itemcode"><code>property <strong><a href="Olf.Net.Socket.Messaging.TOlfSMSrvConnectedClient.html#onConnected">onConnected</a></strong>: <a href="Olf.Net.Socket.Messaging.html#TOlfSMConnectedClientEvent">TOlfSMConnectedClientEvent</a> read FonConnected
+      write SetonConnected;</code></td>
+</tr>
+<tr class="list2">
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
+<td class="itemcode"><code>property <strong><a href="Olf.Net.Socket.Messaging.TOlfSMSrvConnectedClient.html#onLostConnection">onLostConnection</a></strong>: <a href="Olf.Net.Socket.Messaging.html#TOlfSMConnectedClientEvent">TOlfSMConnectedClientEvent</a> read FonLostConnection
+      write SetonLostConnection;</code></td>
+</tr>
+<tr class="list">
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
+<td class="itemcode"><code>property <strong><a href="Olf.Net.Socket.Messaging.TOlfSMSrvConnectedClient.html#onDisconnected">onDisconnected</a></strong>: <a href="Olf.Net.Socket.Messaging.html#TOlfSMConnectedClientEvent">TOlfSMConnectedClientEvent</a> read FonDisconnected
+      write SetonDisconnected;</code></td>
+</tr>
+<tr class="list2">
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
+<td class="itemcode"><code>property <strong><a href="Olf.Net.Socket.Messaging.TOlfSMSrvConnectedClient.html#onEncodeMessageToSend">onEncodeMessageToSend</a></strong>: <a href="Olf.Net.Socket.Messaging.html#TOlfSMEncodeDecodeMessageEvent">TOlfSMEncodeDecodeMessageEvent</a>
+      read FonEncodeMessageToSend write SetonEncodeMessageToSend;</code></td>
+</tr>
+<tr class="list">
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
+<td class="itemcode"><code>property <strong><a href="Olf.Net.Socket.Messaging.TOlfSMSrvConnectedClient.html#onDecodeReceivedMessage">onDecodeReceivedMessage</a></strong>: <a href="Olf.Net.Socket.Messaging.html#TOlfSMEncodeDecodeMessageEvent">TOlfSMEncodeDecodeMessageEvent</a>
+      read FonDecodeReceivedMessage write SetonDecodeReceivedMessage;</code></td>
+</tr>
+<tr class="list2">
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
+<td class="itemcode"><code>property <strong><a href="Olf.Net.Socket.Messaging.TOlfSMSrvConnectedClient.html#Tag">Tag</a></strong>: nativeint read FTag write SetTag;</code></td>
+</tr>
+<tr class="list">
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
+<td class="itemcode"><code>property <strong><a href="Olf.Net.Socket.Messaging.TOlfSMSrvConnectedClient.html#TagBool">TagBool</a></strong>: boolean read FTagBool write SetTagBool;</code></td>
+</tr>
+<tr class="list2">
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
+<td class="itemcode"><code>property <strong><a href="Olf.Net.Socket.Messaging.TOlfSMSrvConnectedClient.html#TagString">TagString</a></strong>: string read FTagString write SetTagString;</code></td>
+</tr>
+<tr class="list">
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
+<td class="itemcode"><code>property <strong><a href="Olf.Net.Socket.Messaging.TOlfSMSrvConnectedClient.html#TagFloat">TagFloat</a></strong>: single read FTagFloat write SetTagFloat;</code></td>
+</tr>
+<tr class="list2">
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
+<td class="itemcode"><code>property <strong><a href="Olf.Net.Socket.Messaging.TOlfSMSrvConnectedClient.html#TagObject">TagObject</a></strong>: TObject read FTagObject write SetTagObject;</code></td>
+</tr>
+</table>
+<h2 class="description">Description</h2>
+<h3 class="detail">Fields</h3>
+<table class="detail wide_list">
+<tr class="list">
+<td class="visibility"><a href="legend.html"><img  src="protected.gif" alt="Protected" title="Protected"></a></td>
+<td class="itemcode"><span id="FErrorDuringSend"></span><code><strong>FErrorDuringSend</strong>: boolean;</code></td>
+</tr>
+<tr><td colspan="2">
+&nbsp;</td></tr>
+</table>
+<h3 class="detail">Methods</h3>
+<table class="detail wide_list">
+<tr class="list">
+<td class="visibility"><a href="legend.html"><img  src="protected.gif" alt="Protected" title="Protected"></a></td>
+<td class="itemcode"><span id="ClientLoop"></span><code>procedure <strong>ClientLoop</strong>; virtual;</code></td>
+</tr>
+<tr><td colspan="2">
+&nbsp;</td></tr>
+</table>
+<table class="detail wide_list">
+<tr class="list">
+<td class="visibility"><a href="legend.html"><img  src="protected.gif" alt="Protected" title="Protected"></a></td>
+<td class="itemcode"><span id="StartClientLoop"></span><code>procedure <strong>StartClientLoop</strong>; virtual;</code></td>
+</tr>
+<tr><td colspan="2">
+&nbsp;</td></tr>
+</table>
+<table class="detail wide_list">
+<tr class="list">
+<td class="visibility"><a href="legend.html"><img  src="protected.gif" alt="Protected" title="Protected"></a></td>
+<td class="itemcode"><span id="GetNewMessageInstance"></span><code>function <strong>GetNewMessageInstance</strong>(AMessageID: <a href="Olf.Net.Socket.Messaging.html#TOlfSMMessageID">TOlfSMMessageID</a>) : <a href="Olf.Net.Socket.Messaging.TOlfSMMessage.html">TOlfSMMessage</a>; virtual;</code></td>
+</tr>
+<tr><td colspan="2">
+&nbsp;</td></tr>
+</table>
+<table class="detail wide_list">
+<tr class="list">
+<td class="visibility"><a href="legend.html"><img  src="protected.gif" alt="Protected" title="Protected"></a></td>
+<td class="itemcode"><span id="DispatchReceivedMessage"></span><code>procedure <strong>DispatchReceivedMessage</strong>(AMessage: <a href="Olf.Net.Socket.Messaging.TOlfSMMessage.html">TOlfSMMessage</a>); virtual;</code></td>
+</tr>
+<tr><td colspan="2">
+&nbsp;</td></tr>
+</table>
+<table class="detail wide_list">
+<tr class="list">
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
+<td class="itemcode"><span id="Create"></span><code>constructor <strong>Create</strong>(AServer: <a href="Olf.Net.Socket.Messaging.TOlfSMServer.html">TOlfSMServer</a>; AClientSocket: TSocket); overload; virtual;</code></td>
+</tr>
+<tr><td colspan="2">
+&nbsp;</td></tr>
+</table>
+<table class="detail wide_list">
+<tr class="list">
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
+<td class="itemcode"><span id="Create"></span><code>constructor <strong>Create</strong>; overload; virtual;</code></td>
+</tr>
+<tr><td colspan="2">
+&nbsp;</td></tr>
+</table>
+<table class="detail wide_list">
+<tr class="list">
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
+<td class="itemcode"><span id="Destroy"></span><code>destructor <strong>Destroy</strong>; override;</code></td>
+</tr>
+<tr><td colspan="2">
+&nbsp;</td></tr>
+</table>
+<table class="detail wide_list">
+<tr class="list">
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
+<td class="itemcode"><span id="Connect"></span><code>procedure <strong>Connect</strong>; virtual;</code></td>
+</tr>
+<tr><td colspan="2">
+&nbsp;</td></tr>
+</table>
+<table class="detail wide_list">
+<tr class="list">
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
+<td class="itemcode"><span id="SendMessage"></span><code>procedure <strong>SendMessage</strong>(Const AMessage: <a href="Olf.Net.Socket.Messaging.TOlfSMMessage.html">TOlfSMMessage</a>);</code></td>
+</tr>
+<tr><td colspan="2">
+&nbsp;</td></tr>
+</table>
+<table class="detail wide_list">
+<tr class="list">
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
+<td class="itemcode"><span id="isConnected"></span><code>function <strong>isConnected</strong>: boolean;</code></td>
+</tr>
+<tr><td colspan="2">
+&nbsp;</td></tr>
+</table>
+<h3 class="detail">Properties</h3>
+<table class="detail wide_list">
+<tr class="list">
+<td class="visibility"><a href="legend.html"><img  src="protected.gif" alt="Protected" title="Protected"></a></td>
+<td class="itemcode"><span id="Socket"></span><code>property <strong>Socket</strong>: TSocket read GetSocket write SetSocket;</code></td>
+</tr>
+<tr><td colspan="2">
+&nbsp;</td></tr>
+</table>
+<table class="detail wide_list">
+<tr class="list">
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
+<td class="itemcode"><span id="ThreadNameForDebugging"></span><code>property <strong>ThreadNameForDebugging</strong>: string read GetThreadNameForDebugging
+      write SetThreadNameForDebugging;</code></td>
+</tr>
+<tr><td colspan="2">
+&nbsp;</td></tr>
+</table>
+<table class="detail wide_list">
+<tr class="list">
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
+<td class="itemcode"><span id="onConnected"></span><code>property <strong>onConnected</strong>: <a href="Olf.Net.Socket.Messaging.html#TOlfSMConnectedClientEvent">TOlfSMConnectedClientEvent</a> read FonConnected
+      write SetonConnected;</code></td>
+</tr>
+<tr><td colspan="2">
+&nbsp;</td></tr>
+</table>
+<table class="detail wide_list">
+<tr class="list">
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
+<td class="itemcode"><span id="onLostConnection"></span><code>property <strong>onLostConnection</strong>: <a href="Olf.Net.Socket.Messaging.html#TOlfSMConnectedClientEvent">TOlfSMConnectedClientEvent</a> read FonLostConnection
+      write SetonLostConnection;</code></td>
+</tr>
+<tr><td colspan="2">
+&nbsp;</td></tr>
+</table>
+<table class="detail wide_list">
+<tr class="list">
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
+<td class="itemcode"><span id="onDisconnected"></span><code>property <strong>onDisconnected</strong>: <a href="Olf.Net.Socket.Messaging.html#TOlfSMConnectedClientEvent">TOlfSMConnectedClientEvent</a> read FonDisconnected
+      write SetonDisconnected;</code></td>
+</tr>
+<tr><td colspan="2">
+&nbsp;</td></tr>
+</table>
+<table class="detail wide_list">
+<tr class="list">
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
+<td class="itemcode"><span id="onEncodeMessageToSend"></span><code>property <strong>onEncodeMessageToSend</strong>: <a href="Olf.Net.Socket.Messaging.html#TOlfSMEncodeDecodeMessageEvent">TOlfSMEncodeDecodeMessageEvent</a>
+      read FonEncodeMessageToSend write SetonEncodeMessageToSend;</code></td>
+</tr>
+<tr><td colspan="2">
+&nbsp;</td></tr>
+</table>
+<table class="detail wide_list">
+<tr class="list">
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
+<td class="itemcode"><span id="onDecodeReceivedMessage"></span><code>property <strong>onDecodeReceivedMessage</strong>: <a href="Olf.Net.Socket.Messaging.html#TOlfSMEncodeDecodeMessageEvent">TOlfSMEncodeDecodeMessageEvent</a>
+      read FonDecodeReceivedMessage write SetonDecodeReceivedMessage;</code></td>
+</tr>
+<tr><td colspan="2">
+&nbsp;</td></tr>
+</table>
+<table class="detail wide_list">
+<tr class="list">
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
+<td class="itemcode"><span id="Tag"></span><code>property <strong>Tag</strong>: nativeint read FTag write SetTag;</code></td>
+</tr>
+<tr><td colspan="2">
+&nbsp;</td></tr>
+</table>
+<table class="detail wide_list">
+<tr class="list">
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
+<td class="itemcode"><span id="TagBool"></span><code>property <strong>TagBool</strong>: boolean read FTagBool write SetTagBool;</code></td>
+</tr>
+<tr><td colspan="2">
+&nbsp;</td></tr>
+</table>
+<table class="detail wide_list">
+<tr class="list">
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
+<td class="itemcode"><span id="TagString"></span><code>property <strong>TagString</strong>: string read FTagString write SetTagString;</code></td>
+</tr>
+<tr><td colspan="2">
+&nbsp;</td></tr>
+</table>
+<table class="detail wide_list">
+<tr class="list">
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
+<td class="itemcode"><span id="TagFloat"></span><code>property <strong>TagFloat</strong>: single read FTagFloat write SetTagFloat;</code></td>
+</tr>
+<tr><td colspan="2">
+&nbsp;</td></tr>
+</table>
+<table class="detail wide_list">
+<tr class="list">
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
+<td class="itemcode"><span id="TagObject"></span><code>property <strong>TagObject</strong>: TObject read FTagObject write SetTagObject;</code></td>
+</tr>
+<tr><td colspan="2">
+&nbsp;</td></tr>
+</table>
+<a href="https://socketmessaging.developpeur-pascal.fr/" target="_blank">Socket Messaging Library</a> (c) 2023-2025 <a href="https://patrick.premartin.fr" target="_blank">Patrick PREMARTIN</a> - Powered by <a href="https://pasdoc.github.io/" target="_blank">PasDoc</a>
+<hr><span class="appinfo"><em>Generated by <a href="https://pasdoc.github.io/">PasDoc 0.16.0</a>. </em>
+</span>
+</div></div></body></html>
