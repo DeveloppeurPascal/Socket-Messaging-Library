@@ -161,8 +161,6 @@ end;
 
 procedure TBourrinageServer.onReceiveMessage1(const ASender: TOlfSMSrvConnectedClient;
 const AMessage: TOlfSMMessage);
-var
-  msg: TBourrinClientToServerMessage;
 begin
   if not(AMessage is TBourrinClientToServerMessage) then
     exit;
@@ -184,8 +182,6 @@ end;
 
 procedure TBourrinageClient.onReceiveMessage2(const ASender: TOlfSMSrvConnectedClient;
 const AMessage: TOlfSMMessage);
-var
-  msg: TBourrinServerToClientMessage;
 begin
   if not(AMessage is TBourrinServerToClientMessage) then
     exit;

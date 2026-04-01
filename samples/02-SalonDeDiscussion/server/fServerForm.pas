@@ -175,7 +175,6 @@ const AMessage: TOlfSMMessage);
 var
   msg: TEnvoiDUnMessageAQuelquUnMessage;
   msg2: TTransmissionDUnMessageRecuMessage;
-  cli: TOlfSMSrvConnectedClient;
 begin
   if not(AMessage is TEnvoiDUnMessageAQuelquUnMessage) then
     exit;

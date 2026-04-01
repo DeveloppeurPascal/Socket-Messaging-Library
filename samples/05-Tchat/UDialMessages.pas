@@ -238,8 +238,6 @@ end;
 
 procedure TDialServer.onReceiveMessage1(const ASender: TOlfSMSrvConnectedClient;
 const AMessage: TOlfSMMessage);
-var
-  msg: TSendMessage;
 begin
   if not(AMessage is TSendMessage) then
     exit;
@@ -261,8 +259,6 @@ end;
 
 procedure TDialClient.onReceiveMessage2(const ASender: TOlfSMSrvConnectedClient;
 const AMessage: TOlfSMMessage);
-var
-  msg: TBroadcastMessage;
 begin
   if not(AMessage is TBroadcastMessage) then
     exit;

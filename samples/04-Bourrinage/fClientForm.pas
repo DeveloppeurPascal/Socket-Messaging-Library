@@ -111,8 +111,6 @@ uses
 procedure TfrmClients.DoReceiveBourrinServerToClientMessage
   (const ASender: TOlfSMSrvConnectedClient;
   const AMessage: TBourrinServerToClientMessage);
-var
-  msg: TBourrinClientToServerMessage;
 begin
   tthread.Synchronize(nil,
     procedure

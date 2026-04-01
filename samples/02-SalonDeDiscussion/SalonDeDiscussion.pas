@@ -286,8 +286,6 @@ end;
 
 procedure TSalonDeDiscussionServer.onReceiveMessage3(const ASender: TOlfSMSrvConnectedClient;
 const AMessage: TOlfSMMessage);
-var
-  msg: TEnvoiDUnMessageAQuelquUnMessage;
 begin
   if not(AMessage is TEnvoiDUnMessageAQuelquUnMessage) then
     exit;
@@ -298,8 +296,6 @@ end;
 
 procedure TSalonDeDiscussionServer.onReceiveMessage2(const ASender: TOlfSMSrvConnectedClient;
 const AMessage: TOlfSMMessage);
-var
-  msg: TEnvoiDUnMessageATousMessage;
 begin
   if not(AMessage is TEnvoiDUnMessageATousMessage) then
     exit;
@@ -310,8 +306,6 @@ end;
 
 procedure TSalonDeDiscussionServer.onReceiveMessage1(const ASender: TOlfSMSrvConnectedClient;
 const AMessage: TOlfSMMessage);
-var
-  msg: TIdentificationDUnUtilisateurMessage;
 begin
   if not(AMessage is TIdentificationDUnUtilisateurMessage) then
     exit;
@@ -333,8 +327,6 @@ end;
 
 procedure TSalonDeDiscussionClient.onReceiveMessage4(const ASender: TOlfSMSrvConnectedClient;
 const AMessage: TOlfSMMessage);
-var
-  msg: TTransmissionDUnMessageRecuMessage;
 begin
   if not(AMessage is TTransmissionDUnMessageRecuMessage) then
     exit;

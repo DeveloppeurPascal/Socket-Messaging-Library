@@ -185,8 +185,6 @@ end;
 
 procedure TMultiUserDrawServer.onReceiveMessage1(const ASender: TOlfSMSrvConnectedClient;
 const AMessage: TOlfSMMessage);
-var
-  msg: TMUDAddAPixelMessage;
 begin
   if not(AMessage is TMUDAddAPixelMessage) then
     exit;
@@ -208,8 +206,6 @@ end;
 
 procedure TMultiUserDrawClient.onReceiveMessage2(const ASender: TOlfSMSrvConnectedClient;
 const AMessage: TOlfSMMessage);
-var
-  msg: TMUDChangePixelColorFromAnOtherUserMessage;
 begin
   if not(AMessage is TMUDChangePixelColorFromAnOtherUserMessage) then
     exit;
