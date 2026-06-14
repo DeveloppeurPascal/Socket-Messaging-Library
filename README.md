@@ -14,11 +14,11 @@ This code repository contains a project developed in Object Pascal language unde
 
 ### Coding Bootcamp 2023
 
-* [Client server made easy with the Socket Messaging library for Delphi](https://serialstreameur.fr/client-server-made-easy-with-the-socket-messaging-library-for-delphi-coding-bootcamp-2023.html) (in English)
+* [Client server made easy with the Socket Messaging library for Delphi](https://apprendre-delphi.fr/client-server-made-easy-with-the-socket-messaging-library-for-delphi--coding-bootcamp-2023.html) (in English)
 
 ### Twitch
 
-Follow my development streams of software, video games, mobile applications and websites on [my Twitch channel](https://www.twitch.tv/patrickpremartin) or as replays on [Serial Streameur](https://serialstreameur.fr/socket-messaging-library.html) mostly in French.
+Follow my development streams of software, video games, mobile applications and websites on [my Twitch channel](https://www.twitch.tv/patrickpremartin) or as replays on [Serial Streameur](https://serialstreameur.fr) mostly in French.
 
 ## Source code installation
 

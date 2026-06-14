@@ -14,11 +14,11 @@ Ce dépôt de code contient un projet développé en langage Pascal Objet sous D
 
 ### Coding Bootcamp 2023
 
-* [Client server made easy with the Socket Messaging library for Delphi](https://serialstreameur.fr/client-server-made-easy-with-the-socket-messaging-library-for-delphi-coding-bootcamp-2023.html) (en anglais)
+* [Client server made easy with the Socket Messaging library for Delphi](https://apprendre-delphi.fr/client-server-made-easy-with-the-socket-messaging-library-for-delphi--coding-bootcamp-2023.html) (en anglais)
 
 ### Twitch
 
-Suivez mes streams de développement de logiciels, jeux vidéo, applications mobiles et sites web sur [ma chaîne Twitch](https://www.twitch.tv/patrickpremartin) ou en rediffusion sur [Serial Streameur](https://serialstreameur.fr/socket-messaging-library.html) la plupart du temps en français.
+Suivez mes streams de développement de logiciels, jeux vidéo, applications mobiles et sites web sur [ma chaîne Twitch](https://www.twitch.tv/patrickpremartin) ou en rediffusion sur [Serial Streameur](https://serialstreameur.fr) la plupart du temps en français.
 
 ## Installation des codes sources
 
